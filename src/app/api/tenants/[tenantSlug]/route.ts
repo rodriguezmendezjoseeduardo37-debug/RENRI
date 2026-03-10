@@ -3,10 +3,11 @@ import { getTenantBySlug } from "@/lib/auth-helpers";
 
 export async function GET(
     request: Request,
-    { params }: { params: { tenantSlug: string } }
+    { params }: { params: Promise<{ tenantSlug: string }> }
 ) {
     try {
-        const tenant = await getTenantBySlug(params.tenantSlug);
+        const resolvedParams = await params;
+        const tenant = await getTenantBySlug(resolvedParams.tenantSlug);
         if (!tenant) {
             return NextResponse.json({ error: "Tenant no encontrado" }, { status: 404 });
         }
