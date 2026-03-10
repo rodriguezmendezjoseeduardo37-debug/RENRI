@@ -1,0 +1,29 @@
+
+> renri@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+Error: Neither apiKey nor config.authenticator provided
+    at n._setAuthenticator (D:\SaaS\renri\.next\server\chunks\360.js:1:89449)
+    at new n (D:\SaaS\renri\.next\server\chunks\360.js:1:84062)
+    at 46029 (D:\SaaS\renri\.next\server\app\api\webhooks\stripe\route.js:1:20273)
+    at t (D:\SaaS\renri\.next\server\webpack-runtime.js:1:127)
+    at 96129 (D:\SaaS\renri\.next\server\app\api\webhooks\stripe\route.js:1:1053)
+    at t (D:\SaaS\renri\.next\server\webpack-runtime.js:1:127)
+    at n (D:\SaaS\renri\.next\server\app\api\webhooks\stripe\route.js:1:20684)
+    at D:\SaaS\renri\.next\server\app\api\webhooks\stripe\route.js:1:20723
+    at t.X (D:\SaaS\renri\.next\server\webpack-runtime.js:1:1191)
+    at D:\SaaS\renri\.next\server\app\api\webhooks\stripe\route.js:1:20697
+
+> Build error occurred
+Error: Failed to collect page data for /api/webhooks/stripe
+    at D:\SaaS\renri\node_modules\next\dist\build\utils.js:1269:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  type: 'Error'
+}

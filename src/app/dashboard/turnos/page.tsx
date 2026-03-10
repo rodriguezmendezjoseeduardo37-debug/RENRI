@@ -1,0 +1,157 @@
+"use client";
+
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useTurnsRealtime } from "@/hooks/use-turns-realtime";
+import {
+    createTurn,
+    callNextTurn,
+    completeTurn,
+    skipTurn,
+    resetDailyTurns,
+} from "@/actions/turns";
+import type { Turn } from "@/types/turns";
+import { QueueList } from "@/components/dashboard/turnos/queue-list";
+import { CurrentTurnDisplay } from "@/components/dashboard/turnos/current-turn-display";
+import { NewTurnModal } from "@/components/dashboard/turnos/new-turn-modal";
+import { RealtimeIndicator } from "@/components/dashboard/turnos/realtime-indicator";
+import { toast } from "sonner";
+import { Plus, RotateCcw } from "lucide-react";
+
+export default function TurnosDashboardPage() {
+    const { data: session } = useSession();
+    const tenantId = session?.user?.tenantId as string;
+
+    // Realtime state from hook
+    const { turns, currentTurn, isConnected } = useTurnsRealtime(tenantId);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Derived lists
+    const waitingTurns = turns.filter((t) => t.status === "waiting");
+    const skippedTurns = turns.filter((t) => t.status === "skipped");
+
+    // Actions
+    const handleCallNext = async () => {
+        try {
+            setIsLoading(true);
+            const nextTurn = await callNextTurn(tenantId);
+            if (!nextTurn) {
+                toast("No hay pacientes en espera", { description: "La cola está vacía." });
+            }
+        } catch {
+            toast.error("Error al llamar el turno");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleComplete = async (id: string) => {
+        try {
+            setIsLoading(true);
+            await completeTurn(id, tenantId);
+        } catch {
+            toast.error("Error al completar el turno");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSkip = async (id: string) => {
+        try {
+            await skipTurn(id, tenantId);
+        } catch {
+            toast.error("Error al omitir el turno");
+        }
+    };
+
+    const handleCreateTurn = async (data: { clientName: string; clientPhone?: string }) => {
+        try {
+            await createTurn({ tenantId, ...data });
+            toast.success("Turno agregado a la cola");
+            window.location.reload(); // Aggressive refetch to jumpstart slow Supabase real-time
+        } catch {
+            toast.error("Error al agregar el turno");
+        }
+    };
+
+    const handleReset = async () => {
+        if (confirm("¿Estás seguro de reiniciar la cola? Esto omitirá todos los turnos actuales.")) {
+            try {
+                await resetDailyTurns(tenantId);
+                toast.success("Cola reiniciada exitosamente");
+            } catch {
+                toast.error("Error al reiniciar la cola");
+            }
+        }
+    };
+
+    // Safe cast for display components
+    // The backend action mapTurn already handles typing, ensuring strings for components
+    const displayCurrentTurn = currentTurn as Turn | null;
+    const displayWaiting = waitingTurns as Turn[];
+    const displaySkipped = skippedTurns as Turn[];
+
+    return (
+        <div className="flex flex-col h-[calc(100vh-8rem)]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+                <div>
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)]">
+                        TURNOS
+                    </h1>
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-[#888888] uppercase">
+                        {new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(new Date())}
+                    </p>
+                </div>
+                <RealtimeIndicator isConnected={isConnected} />
+            </div>
+
+            {/* Split View */}
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
+                <div className="lg:col-span-7 flex flex-col min-h-0">
+                    <QueueList
+                        waitingTurns={displayWaiting}
+                        skippedTurns={displaySkipped}
+                        onSkip={handleSkip}
+                    />
+                </div>
+
+                <div className="lg:col-span-5 flex flex-col min-h-0">
+                    <CurrentTurnDisplay
+                        currentTurn={displayCurrentTurn}
+                        onCallNext={handleCallNext}
+                        onComplete={handleComplete}
+                        isLoading={isLoading}
+                    />
+                </div>
+            </div>
+
+            {/* Bottom Actions */}
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#222222]">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                >
+                    <Plus className="h-4 w-4" />
+                    NUEVO TURNO MANUAL
+                </button>
+
+                <button
+                    onClick={handleReset}
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-[#888888] hover:text-white transition-colors"
+                >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    REINICIAR COLA
+                </button>
+            </div>
+
+            <NewTurnModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleCreateTurn}
+            />
+        </div>
+    );
+}
