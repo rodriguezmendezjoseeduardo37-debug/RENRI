@@ -2,7 +2,6 @@ import Stripe from "stripe";
 
 // Initialize Stripe server client
 export const stripeServer = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_123", {
-    apiVersion: "2026-02-25.clover", // Use latest compatible or locked version
     typescript: true,
 });
 
@@ -33,11 +32,10 @@ export async function createPaymentIntent(
 export async function createStripeCustomer(email: string, name?: string, tenantId?: string) {
     const customerParams: Stripe.CustomerCreateParams = {
         email,
-        metadata: {},
+        metadata: tenantId ? { tenantId } : undefined,
     };
 
     if (name) customerParams.name = name;
-    if (tenantId) (customerParams.metadata as Record<string, string>).tenantId = tenantId;
 
     const customer = await stripeServer.customers.create(customerParams);
     return customer;

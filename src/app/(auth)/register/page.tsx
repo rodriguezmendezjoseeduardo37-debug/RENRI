@@ -103,7 +103,7 @@ export default function RegisterPage() {
                 <CardHeader className="text-center space-y-2">
                     <div className="mx-auto mb-2">
                         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
-                            ProHUB
+                            RENRI
                         </h1>
                     </div>
                     <CardTitle className="text-xl text-white">Crear Cuenta</CardTitle>
