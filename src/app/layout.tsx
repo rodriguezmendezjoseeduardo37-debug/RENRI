@@ -17,7 +17,19 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "RENRI — Gestión para Profesionistas",
-  description: "Plataforma de gestión de citas, turnos, pagos y clientes para profesionistas y PYMEs de México.",
+  description: "Citas, turnos, pagos y clientes en una sola plataforma para profesionistas y PYMEs de México.",
+  openGraph: {
+    title: 'RENRI — Gestión para Profesionistas',
+    description: 'Citas, turnos, pagos y clientes en una sola plataforma.',
+    url: 'https://renri.vercel.app',
+    siteName: 'RENRI',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'RENRI',
+    description: 'Gestión para profesionistas y PYMEs de México.',
+  },
 };
 
 export default function RootLayout({

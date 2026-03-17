@@ -2,6 +2,7 @@ import Stripe from "stripe";
 
 // Initialize Stripe server client
 export const stripeServer = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_123", {
+    apiVersion: "2026-02-25.clover",
     typescript: true,
 });
 

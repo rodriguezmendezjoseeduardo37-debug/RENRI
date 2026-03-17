@@ -168,7 +168,20 @@ function LoginForm() {
 export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,3.9%)] px-4">
-            <Suspense fallback={<div className="text-white">Cargando...</div>}>
+            <Suspense fallback={
+                <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
+                    <CardHeader className="text-center space-y-2">
+                        <div className="mx-auto mb-2">
+                            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                                RENRI
+                            </h1>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="flex justify-center py-10">
+                        <Loader2 className="h-6 w-6 animate-spin text-white" />
+                    </CardContent>
+                </Card>
+            }>
                 <LoginForm />
             </Suspense>
         </div>

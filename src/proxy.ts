@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
 
@@ -10,10 +11,11 @@ export default auth((req) => {
     const userRole = (req.auth?.user as { role?: string } | undefined)?.role;
 
     // ─── Tenant resolver: read subdomain from Host header ───
+    let requestHeaders: Headers | undefined;
     const host = req.headers.get("host") ?? "";
     const parts = host.split(".");
     if (parts.length >= 3) {
-        const requestHeaders = new Headers(req.headers);
+        requestHeaders = new Headers(req.headers);
         requestHeaders.set("x-tenant-slug", parts[0]);
     }
 
@@ -23,11 +25,6 @@ export default auth((req) => {
     // ─── Redirect logged-in users away from auth pages ───
     if (AUTH_ROUTES.some((r) => pathname.startsWith(r)) && isLoggedIn) {
         return Response.redirect(new URL("/dashboard", nextUrl));
-    }
-
-    // ─── Allow public routes ───
-    if (PUBLIC_ROUTES.some((r) => pathname === r || (r !== "/" && pathname.startsWith(r)))) {
-        return;
     }
 
     // ─── Protect role-based routes ───
@@ -49,6 +46,19 @@ export default auth((req) => {
                 return Response.redirect(new URL("/unauthorized", nextUrl));
             }
         }
+    }
+
+    // Allow public routes without headers if not multi-tenant
+    if (PUBLIC_ROUTES.some((r) => pathname === r || (r !== "/" && pathname.startsWith(r)))) {
+        if (requestHeaders) {
+            return NextResponse.next({ request: { headers: requestHeaders } });
+        }
+        return;
+    }
+
+    // If nothing returned, pass the headers anyway
+    if (requestHeaders) {
+        return NextResponse.next({ request: { headers: requestHeaders } });
     }
 });
 
