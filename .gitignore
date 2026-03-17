@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local test and log files
+build_err.txt
+ts_errors.txt
+eslint_out.txt
+test-db.js
+test-signin.js
