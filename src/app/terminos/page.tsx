@@ -1,52 +1,30 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function TerminosPage() {
     return (
-        <div className="min-h-screen bg-black text-white px-6 py-20">
-            <div className="max-w-3xl mx-auto space-y-12">
-                <div className="border-b border-[#222222] pb-8 mb-12">
-                    <Link href="/" className="text-[#666666] hover:text-white transition-colors text-[10px] font-bold tracking-[0.2em] uppercase mb-8 block">
-                        ← VOLVER AL INICIO
-                    </Link>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] font-[family-name:var(--font-heading)] uppercase mb-4">
-                        Términos y Condiciones
-                    </h1>
-                    <p className="text-[#888888] font-mono text-xs uppercase tracking-widest">
-                        FECHA DE VIGENCIA: MARZO 2026
-                    </p>
-                </div>
+        <div className="min-h-screen bg-black text-white p-8 md:p-16">
+            <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white uppercase transition-colors mb-12">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                VOLVER AL INICIO
+            </Link>
+            
+            <div className="max-w-3xl mx-auto space-y-8">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] font-[family-name:var(--font-heading)] uppercase mb-12">
+                    TÉRMINOS DEL SERVICIO
+                </h1>
+                
+                <section className="space-y-4 text-sm text-[#888888] leading-relaxed">
+                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">1. Aceptación</h2>
+                    <p>Toda vez que accedas al sitio web de RENRI asumes y aceptas el estar sujeto a los presentes términos de servicio y aceptas estar en responsabilidad de cumplir la legislación aplicable.</p>
+                </section>
 
-                <div className="prose prose-invert prose-p:text-[#cccccc] prose-p:font-mono prose-p:text-sm prose-p:leading-relaxed prose-headings:font-[family-name:var(--font-heading)] prose-headings:uppercase prose-headings:tracking-[0.05em] prose-h2:text-xl prose-h2:mb-4 prose-h2:mt-10">
-                    <h2>1. ACEPTACIÓN DE LOS TÉRMINOS</h2>
-                    <p>
-                        Al acceder y utilizar la plataforma RENRI, usted acepta estar sujeto a los presentes Términos y Condiciones de uso. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder a la plataforma ni utilizar sus servicios.
-                    </p>
+                <section className="space-y-4 text-sm text-[#888888] leading-relaxed">
+                    <h2 className="text-white text-lg font-bold tracking-widest uppercase">2. Licencia de uso</h2>
+                    <p>Se concede autorización de acceso al software "As A Service" según las normativas de tu plan facturado, sin fines de desensamblaje, transferencia comercial del código o uso en la nube para cometer acciones fraudulentas o ilegales.</p>
+                </section>
 
-                    <h2>2. DESCRIPCIÓN DEL SERVICIO</h2>
-                    <p>
-                        RENRI es un Software as a Service (SaaS) multi-tenant diseñado para profesionistas de la salud y prestadores de servicios en México. Ofrece herramientas de gestión de citas, portales públicos, control de pagos e inventarios. RENRI se proporciona "tal cual" y "según disponibilidad".
-                    </p>
-
-                    <h2>3. CUENTAS DE USUARIO Y TENANTS</h2>
-                    <p>
-                        Para utilizar el sistema, debe registrarse proporcionando información precisa y actualizada. Usted es responsable de salvaguardar su contraseña y de todas las actividades que ocurran bajo su cuenta u organización (Tenant). Notifique inmediatamente cualquier violación de seguridad.
-                    </p>
-
-                    <h2>4. PAGOS Y SUSCRIPCIONES</h2>
-                    <p>
-                        Ciertas características de RENRI requieren una suscripción de pago. Los pagos son procesados a través de Stripe y están sujetos a sus propios términos de servicio. Las suscripciones se renuevan automáticamente a menos que sean canceladas previamente en el panel de configuración. No existen reembolsos por periodos parciales utilizados.
-                    </p>
-
-                    <h2>5. RESPONSABILIDAD DE DATOS (HIPAA/NOM)</h2>
-                    <p>
-                        RENRI actúa únicamente como el procesador tecnológico. Cada Tenant (Clínica o Profesional) es el único responsable legal de mantener el cumplimiento normativo aplicable al manejo del expediente clínico e información confidencial de sus pacientes según la legislación mexicana vigente (e.g. NOM-004-SSA3-2012).
-                    </p>
-
-                    <h2>6. LIMITACIÓN DE RESPONSABILIDAD</h2>
-                    <p>
-                        En ningún caso RENRI será responsable por daños indirectos, incidentales, especiales o consecuentes que surjan del uso o incapacidad de uso de la plataforma, incluyendo pero no limitado a la pérdida de información o lucro cesante.
-                    </p>
-                </div>
+                <p className="text-xs font-mono text-[#444444] pt-12 border-t border-[#222222]">Última actualización: 17 de Marzo de 2026</p>
             </div>
         </div>
     );

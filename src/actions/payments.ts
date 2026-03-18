@@ -3,11 +3,15 @@
 import { db } from "@/db";
 import { payments, appointments } from "@/db/schema";
 import { and, eq, gte, lte, desc } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { createPaymentIntent as stripeCreatePaymentIntent, refundPayment as stripeRefundPayment } from "@/lib/stripe";
 import { format, subDays, subMonths, subYears, startOfDay, endOfDay } from "date-fns";
 
 export async function getPayments(tenantId: string, filters?: { status?: "pending" | "processing" | "completed" | "failed" | "refunded", dateRange?: { from: Date, to: Date }, type?: "appointment" | "order" }) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const conditions = [eq(payments.tenantId, tenantId)];
 
     if (filters?.status) conditions.push(eq(payments.status, filters.status));
@@ -24,12 +28,18 @@ export async function getPayments(tenantId: string, filters?: { status?: "pendin
 }
 
 export async function getPaymentById(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     return await db.query.payments.findFirst({
         where: and(eq(payments.id, id), eq(payments.tenantId, tenantId))
     });
 }
 
 export async function createPaymentForAppointment(appointmentId: string, amount: number, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [payment] = await db.insert(payments).values({
         tenantId,
         referenceId: appointmentId,
@@ -44,6 +54,9 @@ export async function createPaymentForAppointment(appointmentId: string, amount:
 }
 
 export async function createPaymentForOrder(orderId: string, amount: number, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [payment] = await db.insert(payments).values({
         tenantId,
         referenceId: orderId,
@@ -58,12 +71,15 @@ export async function createPaymentForOrder(orderId: string, amount: number, ten
 }
 
 export async function processPayment(paymentId: string) {
+    const user = await requireAuth();
+
     // 1. Get payment record
     const payment = await db.query.payments.findFirst({
         where: eq(payments.id, paymentId)
     });
 
     if (!payment) throw new Error("Payment not found");
+    if (user.tenantId !== payment.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
     if (payment.status === "completed") throw new Error("Payment already completed");
 
     // 2. Create Stripe Intent 
@@ -108,6 +124,9 @@ export async function markPaymentAsPaid(paymentId: string, stripePaymentIntentId
 }
 
 export async function refundPaymentAction(paymentId: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const payment = await db.query.payments.findFirst({
         where: and(eq(payments.id, paymentId), eq(payments.tenantId, tenantId))
     });
@@ -131,6 +150,9 @@ export async function refundPaymentAction(paymentId: string, tenantId: string) {
 }
 
 export async function getRevenueStats(tenantId: string, period: "day" | "week" | "month" | "year") {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const now = new Date();
     let startDate = startOfDay(now);
 

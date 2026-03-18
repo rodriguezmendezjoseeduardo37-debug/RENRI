@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth-helpers";
 import { getOrders, getOrderStats } from "@/actions/orders";
 import { OrderKanban } from "@/components/dashboard/pedidos/order-kanban";
 import { OrderCard } from "@/components/dashboard/pedidos/order-card";
+import { OrderFilters } from "@/components/dashboard/pedidos/order-filters";
 import { ORDER_STATUS_LABELS } from "@/types/orders";
 import type { Order } from "@/types/orders";
 import Link from "next/link";
@@ -97,31 +98,7 @@ export default async function PedidosPage({
                 </div>
 
                 {viewMode === "list" && (
-                    <form className="flex items-center gap-3 flex-1">
-                        <input
-                            name="search"
-                            defaultValue={searchParams.search || ""}
-                            placeholder="Buscar por cliente..."
-                            className="bg-black border border-[#222222] text-white text-sm px-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
-                        />
-                        <select
-                            name="status"
-                            defaultValue={searchParams.status || ""}
-                            className="bg-black border border-[#222222] text-white text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
-                        >
-                            <option value="">TODOS</option>
-                            {Object.entries(ORDER_STATUS_LABELS).map(([k, v]) => (
-                                <option key={k} value={k}>{v}</option>
-                            ))}
-                        </select>
-                        <input name="view" type="hidden" value="list" />
-                        <button
-                            type="submit"
-                            className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
-                        >
-                            FILTRAR
-                        </button>
-                    </form>
+                    <OrderFilters />
                 )}
             </div>
 

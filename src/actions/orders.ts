@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { orders, orderItems, products } from "@/db/schema";
 import { and, eq, desc, ilike, gte, lte, sql } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import type { CreateOrderInput, OrderStatus } from "@/types/orders";
 
@@ -11,6 +12,9 @@ export async function getOrders(
     tenantId: string,
     filters?: { status?: string; search?: string; dateFrom?: string; dateTo?: string }
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const conditions = [eq(orders.tenantId, tenantId)];
 
     if (filters?.status) {
@@ -41,6 +45,9 @@ export async function getOrders(
 
 // ─── Get Order By Id ─────────────────────────────────────
 export async function getOrderById(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const order = await db.query.orders.findFirst({
         where: and(eq(orders.id, id), eq(orders.tenantId, tenantId)),
     });
@@ -70,6 +77,9 @@ export async function getOrderById(id: string, tenantId: string) {
 
 // ─── Create Order ────────────────────────────────────────
 export async function createOrder(data: CreateOrderInput) {
+    const user = await requireAuth();
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     // 1. Fetch product prices and validate stock
     const productIds = data.items.map((i) => i.productId);
     const productRows = await db
@@ -163,6 +173,9 @@ export async function updateOrderStatus(
     status: OrderStatus,
     tenantId: string
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [updated] = await db
         .update(orders)
         .set({ status, updatedAt: new Date() })
@@ -176,6 +189,9 @@ export async function updateOrderStatus(
 
 // ─── Cancel Order ────────────────────────────────────────
 export async function cancelOrder(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     // 1. Get order items to restore stock
     const items = await db
         .select()
@@ -207,6 +223,9 @@ export async function cancelOrder(id: string, tenantId: string) {
 
 // ─── Get Order Stats ─────────────────────────────────────
 export async function getOrderStats(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [stats] = await db
         .select({
             total: sql<number>`count(*)`,

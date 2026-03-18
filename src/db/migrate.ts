@@ -1,6 +1,9 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
+import * as dotenv from "dotenv";
+
+dotenv.config({ path: ".env.local" });
 
 async function main() {
     const connectionString = process.env.DIRECT_URL ?? process.env.DATABASE_URL;

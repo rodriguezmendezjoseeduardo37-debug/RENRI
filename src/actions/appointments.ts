@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { appointments, schedules, users } from "@/db/schema";
 import { and, eq, sql, asc } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import type {
     AppointmentFilters,
     CreateAppointmentInput,
@@ -47,6 +48,9 @@ export async function getAppointments(
     tenantId: string,
     filters: AppointmentFilters = {}
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { date, staffId, status, search, page = 1, limit = 20 } = filters;
 
     const conditions = [eq(appointments.tenantId, tenantId)];
@@ -98,6 +102,9 @@ export async function getAppointments(
 
 // ─── Get Appointment By ID ─────────────────────────────────
 export async function getAppointmentById(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const rows = await db
         .select({
             appointment: appointments,
@@ -116,6 +123,9 @@ export async function getAppointmentById(id: string, tenantId: string) {
 
 // ─── Create Appointment ────────────────────────────────────
 export async function createAppointment(data: CreateAppointmentInput) {
+    const user = await requireAuth();
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [row] = await db
         .insert(appointments)
         .values({
@@ -141,6 +151,9 @@ export async function updateAppointment(
     tenantId: string,
     data: UpdateAppointmentInput
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [row] = await db
         .update(appointments)
         .set({ ...data, updatedAt: new Date() })
@@ -156,6 +169,9 @@ export async function cancelAppointment(
     tenantId: string,
     reason?: string
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const notes = reason ? `Cancelado: ${reason}` : undefined;
     const [row] = await db
         .update(appointments)
@@ -172,6 +188,9 @@ export async function cancelAppointment(
 
 // ─── Confirm Appointment ───────────────────────────────────
 export async function confirmAppointment(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [row] = await db
         .update(appointments)
         .set({ status: "confirmed", updatedAt: new Date() })
@@ -183,6 +202,9 @@ export async function confirmAppointment(id: string, tenantId: string) {
 
 // ─── Complete Appointment ──────────────────────────────────
 export async function completeAppointment(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [row] = await db
         .update(appointments)
         .set({ status: "completed", updatedAt: new Date() })
@@ -198,6 +220,9 @@ export async function getAvailableSlots(
     date: string,
     tenantId: string
 ): Promise<TimeSlot[]> {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     // 1. Get day of week (0=Sunday ... 6=Saturday)
     const dayOfWeek = new Date(date + "T00:00:00").getDay();
 

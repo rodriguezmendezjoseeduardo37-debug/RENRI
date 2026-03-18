@@ -6,6 +6,7 @@ import {
     timestamp,
     index,
     uniqueIndex,
+    jsonb,
 } from "drizzle-orm/pg-core";
 import { pgEnum } from "drizzle-orm/pg-core";
 
@@ -34,6 +35,7 @@ export const tenants = pgTable(
         accountType: accountTypeEnum("account_type").default("servicios").notNull(),
         stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
         stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+        logoUrl: varchar("logo_url", { length: 2048 }),
         isActive: boolean("is_active").default(true).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()
@@ -41,6 +43,8 @@ export const tenants = pgTable(
         updatedAt: timestamp("updated_at", { withTimezone: true })
             .defaultNow()
             .notNull(),
+        clinicalSettings: jsonb("clinical_settings").default({}).notNull(),
+        billingSettings: jsonb("billing_settings").default({}).notNull(),
     },
     (table) => ({
         slugIdx: uniqueIndex("tenants_slug_idx").on(table.slug),

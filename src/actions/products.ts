@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { products, stockMovements } from "@/db/schema";
 import { and, eq, lte, desc, ilike, sql } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import type { CreateProductInput, UpdateProductInput } from "@/types/products";
 
@@ -11,6 +12,9 @@ export async function getProducts(
     tenantId: string,
     filters?: { search?: string; category?: string; lowStock?: boolean }
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const conditions = [eq(products.tenantId, tenantId)];
 
     if (filters?.search) {
@@ -40,6 +44,9 @@ export async function getProducts(
 
 // ─── Get Product By Id ───────────────────────────────────
 export async function getProductById(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const product = await db.query.products.findFirst({
         where: and(eq(products.id, id), eq(products.tenantId, tenantId)),
     });
@@ -53,6 +60,9 @@ export async function getProductById(id: string, tenantId: string) {
 
 // ─── Create Product ──────────────────────────────────────
 export async function createProduct(data: CreateProductInput) {
+    const user = await requireAuth();
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [product] = await db
         .insert(products)
         .values({
@@ -90,6 +100,9 @@ export async function updateProduct(
     data: UpdateProductInput,
     tenantId: string
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [updated] = await db
         .update(products)
         .set({
@@ -111,6 +124,9 @@ export async function updateProduct(
 
 // ─── Delete Product ──────────────────────────────────────
 export async function deleteProduct(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     await db
         .delete(products)
         .where(and(eq(products.id, id), eq(products.tenantId, tenantId)));
@@ -127,6 +143,9 @@ export async function adjustStock(
     tenantId: string,
     userId?: string
 ) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const product = await db.query.products.findFirst({
         where: and(eq(products.id, id), eq(products.tenantId, tenantId)),
     });
@@ -159,6 +178,9 @@ export async function adjustStock(
 
 // ─── Get Low Stock Products ──────────────────────────────
 export async function getLowStockProducts(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     return db
         .select()
         .from(products)
@@ -174,6 +196,9 @@ export async function getLowStockProducts(tenantId: string) {
 
 // ─── Get Categories ──────────────────────────────────────
 export async function getCategories(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const rows = await db
         .selectDistinct({ category: products.category })
         .from(products)
@@ -186,6 +211,9 @@ export async function getCategories(tenantId: string) {
 
 // ─── Get Stock Movements ─────────────────────────────────
 export async function getStockMovements(productId: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const rows = await db
         .select()
         .from(stockMovements)
@@ -205,6 +233,9 @@ export async function getStockMovements(productId: string, tenantId: string) {
 
 // ─── Get Inventory Stats ─────────────────────────────────
 export async function getInventoryStats(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [stats] = await db
         .select({
             totalProducts: sql<number>`count(*)`,

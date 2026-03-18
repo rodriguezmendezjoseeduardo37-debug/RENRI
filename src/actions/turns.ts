@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { turns } from "@/db/schema";
 import { and, eq, sql, desc, asc, gte, lt } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import type { Turn, CreateTurnInput } from "@/types/turns";
 
 // ─── Helpers ───────────────────────────────────────────────
@@ -30,6 +31,9 @@ function mapTurn(row: typeof turns.$inferSelect): Turn {
 // ─── Get all turns for a tenant today ──────────────────────
 
 export async function getTurns(tenantId: string, dateStr?: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange(dateStr);
 
     const rows = await db
@@ -124,6 +128,9 @@ export async function getQueuePosition(tenantId: string) {
 // ─── Call Next Turn ────────────────────────────────────────
 
 export async function callNextTurn(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange();
 
     // 1. Find currently in_progress turn and mark completed
@@ -169,6 +176,9 @@ export async function callNextTurn(tenantId: string) {
 // ─── Complete Turn ─────────────────────────────────────────
 
 export async function completeTurn(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [updated] = await db
         .update(turns)
         .set({ status: "completed", completedAt: new Date() })
@@ -181,6 +191,9 @@ export async function completeTurn(id: string, tenantId: string) {
 // ─── Skip Turn ─────────────────────────────────────────────
 
 export async function skipTurn(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const [updated] = await db
         .update(turns)
         .set({ status: "skipped" })
@@ -193,6 +206,9 @@ export async function skipTurn(id: string, tenantId: string) {
 // ─── Reset Daily Turns ─────────────────────────────────────
 
 export async function resetDailyTurns(tenantId: string) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange();
 
     // Mark all incomplete turns today as cancelled/skipped (decided skipped is safer so we have history)

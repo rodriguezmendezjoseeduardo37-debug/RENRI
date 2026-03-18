@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
-import { Building2, UserCircle, KeyRound, MonitorSmartphone } from "lucide-react";
+import { Building2, UserCircle, KeyRound, MonitorSmartphone, CreditCard } from "lucide-react";
 import Link from "next/link";
 
 export default async function ConfiguracionPage() {
@@ -32,6 +32,13 @@ export default async function ConfiguracionPage() {
             desc: "Conexiones de pasarelas de pago, Webhooks externos y llaves de acceso para desarrolladores.",
             icon: KeyRound,
             href: "/dashboard/configuracion/apis",
+            restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role)
+        },
+        {
+            title: "PLANES DE PAGO",
+            desc: "Planes transparentes diseñados para escalar junto con tu crecimiento profesional.",
+            icon: CreditCard,
+            href: "/dashboard/configuracion/planes",
             restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role)
         }
     ];

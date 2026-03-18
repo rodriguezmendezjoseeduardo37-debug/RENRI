@@ -8,6 +8,13 @@
       "when": 1773122252103,
       "tag": "0000_brainy_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773807564280,
+      "tag": "0001_tiresome_hex",
+      "breakpoints": true
     }
   ]
 }

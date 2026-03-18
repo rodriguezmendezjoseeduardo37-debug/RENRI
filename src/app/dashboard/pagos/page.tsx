@@ -4,6 +4,7 @@ import { getPayments, getRevenueStats } from "@/actions/payments";
 import { PaymentStats } from "@/components/dashboard/pagos/payment-stats";
 import { RevenueChart } from "@/components/dashboard/pagos/revenue-chart";
 import { PaymentRow } from "@/components/dashboard/pagos/payment-row";
+import { ExportCsvButton } from "@/components/dashboard/pagos/export-csv-button";
 import { Download } from "lucide-react";
 import { db } from "@/db";
 import { inArray } from "drizzle-orm";
@@ -53,25 +54,41 @@ export default async function PagosPage() {
         });
     }
 
-    return (
-        <div className="space-y-10">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#222222] pb-6">
-                <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
-                        PAGOS & INGRESOS
-                    </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
-                        RESUMEN CONTABLE Y TRANSACCIONES
-                    </p>
+        const csvData = paymentsData.map(p => {
+            let cName = "Desconocido";
+            let concept = "Pedido Comercial";
+
+            if (p.referenceType === "appointment") {
+                cName = appointmentsMap[p.referenceId]?.clientName || cName;
+                concept = appointmentsMap[p.referenceId]?.concept || "Cita de Servicio";
+            }
+
+            return {
+                Referencia: p.referenceType === "appointment" ? "Cita" : "Pedido",
+                Cliente: cName,
+                Concepto: concept,
+                Monto: p.amount,
+                Estado: p.status,
+                Fecha: new Date(p.createdAt).toLocaleDateString("es-MX")
+            };
+        });
+
+        return (
+            <div className="space-y-10">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#222222] pb-6">
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                            PAGOS & INGRESOS
+                        </h1>
+                        <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                            RESUMEN CONTABLE Y TRANSACCIONES
+                        </p>
+                    </div>
+                    <div>
+                        <ExportCsvButton data={csvData} filename={`pagos_${Date.now()}.csv`} />
+                    </div>
                 </div>
-                <div>
-                    <button className="flex items-center gap-2 border border-[#333333] px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:border-white hover:text-white transition-all uppercase">
-                        <Download className="w-3 h-3" />
-                        EXPORTAR CSV
-                    </button>
-                </div>
-            </div>
 
             {/* Stats */}
             <PaymentStats

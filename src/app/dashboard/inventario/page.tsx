@@ -8,6 +8,7 @@ import {
 } from "@/actions/products";
 import { ProductCard } from "@/components/dashboard/inventario/product-card";
 import { ProductRow } from "@/components/dashboard/inventario/product-row";
+import { InventoryFilters } from "@/components/dashboard/inventario/inventory-filters";
 import type { Product } from "@/types/products";
 import Link from "next/link";
 import { Plus, AlertTriangle, Package, DollarSign, Layers } from "lucide-react";
@@ -114,58 +115,7 @@ export default async function InventarioPage({
             </div>
 
             {/* Filter bar */}
-            <form className="flex flex-wrap items-center gap-3">
-                <input
-                    name="search"
-                    defaultValue={searchParams.search || ""}
-                    placeholder="Buscar productos..."
-                    className="bg-black border border-[#222222] text-white text-sm px-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
-                />
-                <select
-                    name="category"
-                    defaultValue={searchParams.category || ""}
-                    className="bg-black border border-[#222222] text-white text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
-                >
-                    <option value="">TODAS LAS CATEGORÍAS</option>
-                    {categories.map((c) => (
-                        <option key={c} value={c}>
-                            {c}
-                        </option>
-                    ))}
-                </select>
-                <label className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="lowStock"
-                        value="true"
-                        defaultChecked={searchParams.lowStock === "true"}
-                        className="accent-white"
-                    />
-                    BAJO STOCK
-                </label>
-                <button
-                    type="submit"
-                    className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
-                >
-                    FILTRAR
-                </button>
-
-                {/* View toggle */}
-                <div className="flex gap-[1px] ml-auto">
-                    <Link
-                        href={`?view=grid&search=${searchParams.search || ""}&category=${searchParams.category || ""}&lowStock=${searchParams.lowStock || ""}`}
-                        className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "grid" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
-                    >
-                        GRID
-                    </Link>
-                    <Link
-                        href={`?view=list&search=${searchParams.search || ""}&category=${searchParams.category || ""}&lowStock=${searchParams.lowStock || ""}`}
-                        className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
-                    >
-                        LISTA
-                    </Link>
-                </div>
-            </form>
+            <InventoryFilters categories={categories} />
 
             {/* Content */}
             {productsList.length === 0 ? (

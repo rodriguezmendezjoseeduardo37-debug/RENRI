@@ -1,7 +1,29 @@
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth-helpers";
+import { db } from "@/db";
+import { tenants } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { ApisForm } from "./apis-form";
 import Link from "next/link";
-import { ArrowLeft, KeyRound } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
-export default function ApisConfigPage() {
+export default async function ApisConfigPage() {
+    const user = await getCurrentUser();
+    if (!user) redirect("/login");
+
+    // Restrict access to API config
+    if (!["SUPER_ADMIN", "OWNER"].includes(user.role)) {
+        redirect("/dashboard/configuracion");
+    }
+
+    const [tenant] = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.id, user.tenantId))
+        .limit(1);
+
+    if (!tenant) redirect("/dashboard/configuracion");
+
     return (
         <div className="max-w-3xl mx-auto space-y-10">
             {/* Header */}
@@ -11,7 +33,7 @@ export default function ApisConfigPage() {
                         INTEGRACIONES & APIS
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
-                        WEbHOOKS Y EXTENSIONES DE TERCEROS
+                        WEBHOOKS Y EXTENSIONES DE TERCEROS
                     </p>
                 </div>
                 <Link
@@ -23,23 +45,7 @@ export default function ApisConfigPage() {
                 </Link>
             </div>
 
-            <div className="border border-[#222222] bg-[#111111] p-12 flex flex-col items-center justify-center text-center space-y-6">
-                <div className="w-16 h-16 rounded-full border border-[#333333] flex items-center justify-center bg-black">
-                    <KeyRound className="w-8 h-8 text-[#666666]" />
-                </div>
-                <div>
-                    <h3 className="text-xl font-bold tracking-[0.2em] text-white uppercase mb-2">
-                        API RESTRICTA
-                    </h3>
-                    <p className="text-[#888888] text-xs font-mono max-w-sm mx-auto leading-relaxed">
-                        La habilitación de credenciales para APIs GraphQL y Webhooks externos requiere una suscripción activa de nivel ENTERPRISE.
-                    </p>
-                </div>
-                
-                <button disabled className="mt-4 px-8 py-3 bg-[#222222] text-[#666666] text-[10px] font-bold tracking-[0.2em] uppercase cursor-not-allowed">
-                    BLOQUEADO
-                </button>
-            </div>
+            <ApisForm tenantId={tenant.id} settings={tenant.billingSettings} />
         </div>
     );
 }

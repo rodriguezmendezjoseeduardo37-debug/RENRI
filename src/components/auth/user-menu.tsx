@@ -65,21 +65,21 @@ export function UserMenu() {
                 <DropdownMenuSeparator className="bg-[hsl(0,0%,14.9%)]" />
 
                 <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
-                    <Link href="/dashboard/profile">
+                    <Link href="/dashboard/configuracion/perfil">
                         <User className="mr-2 h-4 w-4" />
                         Perfil
                     </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
-                    <Link href="/dashboard/settings">
+                    <Link href="/dashboard/configuracion">
                         <Settings className="mr-2 h-4 w-4" />
                         Configuración
                     </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
-                    <Link href="/dashboard/billing">
+                    <Link href="/dashboard/configuracion/planes">
                         <CreditCard className="mr-2 h-4 w-4" />
                         Facturación
                     </Link>

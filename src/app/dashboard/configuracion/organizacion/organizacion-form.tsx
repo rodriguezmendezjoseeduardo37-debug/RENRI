@@ -11,6 +11,7 @@ interface OrganizacionFormProps {
         id: string;
         name: string;
         slug: string;
+        logoUrl: string | null;
     };
     hostUrl: string;
 }
@@ -20,12 +21,13 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [name, setName] = useState(tenant.name);
     const [slug, setSlug] = useState(tenant.slug);
+    const [logoUrl, setLogoUrl] = useState(tenant.logoUrl || "");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            await updateTenantConfig(tenant.id, { name, slug });
+            await updateTenantConfig(tenant.id, { name, slug, logoUrl });
             toast.success("Configuración actualizada correctamente");
             router.refresh(); // Refresh to update the preview link
         } catch (error: any) {
@@ -76,6 +78,21 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                 </div>
                 <p className="text-[10px] text-[#666666] mt-2 tracking-wide font-mono">
                     Usa solo letras minúsculas, números y guiones. No uses espacios.
+                </p>
+            </div>
+
+            {/* Logo */}
+            <div>
+                <label className={labelClass}>URL DEL LOGOTIPO (PNG/SVG)</label>
+                <input
+                    type="url"
+                    value={logoUrl}
+                    onChange={(e) => setLogoUrl(e.target.value)}
+                    placeholder="https://ejemplo.com/logo.png"
+                    className={inputClass}
+                />
+                <p className="text-[10px] text-[#666666] mt-2 tracking-wide font-mono">
+                    Este logo se mostrará en el encabezado de tu portal público.
                 </p>
             </div>
 

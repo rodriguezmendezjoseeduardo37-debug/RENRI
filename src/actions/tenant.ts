@@ -3,25 +3,27 @@
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 
 export async function updateTenantConfig(
     tenantId: string,
-    data: { name: string; slug: string }
+    data: { name: string; slug: string; logoUrl?: string }
 ) {
-    // Basic validation to prevent empty slugs or names
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    // Basic validation
     if (!data.name.trim() || !data.slug.trim()) {
         throw new Error("El nombre y el enlace no pueden estar vacíos");
     }
 
-    // Slug formatting: lowercase, no spaces, URL safe
     const formattedSlug = data.slug
         .toLowerCase()
         .replace(/[^a-z0-9-]/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
 
-    // Check if slug is taken by another tenant
     const existing = await db.query.tenants.findFirst({
         where: eq(tenants.slug, formattedSlug),
     });
@@ -35,6 +37,7 @@ export async function updateTenantConfig(
         .set({
             name: data.name,
             slug: formattedSlug,
+            logoUrl: data.logoUrl,
             updatedAt: new Date(),
         })
         .where(eq(tenants.id, tenantId))
@@ -43,4 +46,25 @@ export async function updateTenantConfig(
     revalidatePath("/dashboard/configuracion/organizacion");
     revalidatePath(`/portal/${formattedSlug}`);
     return updated;
+}
+
+export async function updateTenantSettings(
+    tenantId: string,
+    type: "clinical" | "billing",
+    data: any
+) {
+    const user = await requireAuth();
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    const column = type === "clinical" ? "clinicalSettings" : "billingSettings";
+
+    await db.update(tenants)
+        .set({
+            [column]: data,
+            updatedAt: new Date(),
+        })
+        .where(eq(tenants.id, tenantId));
+
+    revalidatePath(`/dashboard/configuracion/${type === "clinical" ? "clinica" : "apis"}`);
+    return { success: true };
 }
