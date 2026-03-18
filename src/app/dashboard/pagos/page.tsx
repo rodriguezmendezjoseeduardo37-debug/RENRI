@@ -8,11 +8,7 @@ import { ExportCsvButton } from "@/components/dashboard/pagos/export-csv-button"
 import { Download } from "lucide-react";
 import { db } from "@/db";
 import { inArray } from "drizzle-orm";
-import { users } from "@/db/schema";
-// We query the related tables manually here, or use Drizzle relational queries.
-// To keep it clean, we'll map client names manually.
-// Because reference models could be orders or appointments:
-import { appointments } from "@/db/schema";
+import { users, appointments } from "@/db/schema";
 
 export default async function PagosPage() {
     const user = await getCurrentUser();
@@ -33,7 +29,7 @@ export default async function PagosPage() {
     // In a real optimized system, this would be a JOIN or a relational query.
     const appointmentIds = paymentsData.filter(p => p.referenceType === "appointment").map(p => p.referenceId);
 
-    const appointmentsMap: Record<string, { clientName: string, concept: string }> = {};
+    let appointmentsMap: Record<string, { clientName: string, concept: string }> = {};
     if (appointmentIds.length > 0) {
         const apts = await db.query.appointments.findMany({
             where: inArray(appointments.id, appointmentIds),

@@ -10,8 +10,6 @@ interface PaymentRowProps {
 }
 
 export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
-
-
     // Status mapping aesthetic rules
     const getStatusStyle = (status: Payment["status"]) => {
         switch (status) {

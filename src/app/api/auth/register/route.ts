@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { users, tenants } from "@/db/schema";
+import { NextResponse } from "next/server";
 import { z } from "zod";
+import { db } from "@/db";
+import { tenants, users } from "@/db/schema";
 
 const registerSchema = z.object({
     name: z.string().min(2),
@@ -11,7 +11,7 @@ const registerSchema = z.object({
     password: z.string().min(6),
     confirmPassword: z.string(),
     accountType: z.enum(["servicios", "pyme", "cliente"]),
-}).refine((d) => d.password === d.confirmPassword, {
+}).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
 });
@@ -23,14 +23,13 @@ export async function POST(req: Request) {
 
         if (!parsed.success) {
             return NextResponse.json(
-                { error: "Datos inválidos", details: parsed.error.flatten() },
+                { error: "Datos invalidos", details: parsed.error.flatten() },
                 { status: 400 }
             );
         }
 
         const { name, email, password, accountType } = parsed.data;
 
-        // Check if user already exists
         const [existing] = await db
             .select()
             .from(users)
@@ -39,48 +38,49 @@ export async function POST(req: Request) {
 
         if (existing) {
             return NextResponse.json(
-                { error: "Ya existe una cuenta con este correo electrónico" },
+                { error: "Ya existe una cuenta con este correo electronico" },
                 { status: 409 }
             );
         }
 
         const passwordHash = await bcrypt.hash(password, 12);
 
-        if (accountType === "cliente") {
-            // Client: create a default tenant and assign CLIENT role
-            const [tenant] = await db
-                .insert(tenants)
-                .values({
-                    name: `${name}'s Account`,
-                    slug: email.split("@")[0] + "-" + Date.now(),
-                    plan: "starter",
-                    accountType: "cliente",
-                })
-                .returning();
+        await db.transaction(async (tx) => {
+            if (accountType === "cliente") {
+                const [tenant] = await tx
+                    .insert(tenants)
+                    .values({
+                        name: `${name}'s Account`,
+                        slug: `${email.split("@")[0]}-${Date.now()}`,
+                        plan: "starter",
+                        accountType: "cliente",
+                    })
+                    .returning();
 
-            await db.insert(users).values({
-                tenantId: tenant.id,
-                email,
-                name,
-                passwordHash,
-                role: "CLIENT",
-                isVerified: false,
-            });
-        } else {
-            // Servicios / PYME: create tenant + user with OWNER role
+                await tx.insert(users).values({
+                    tenantId: tenant.id,
+                    email,
+                    name,
+                    passwordHash,
+                    role: "CLIENT",
+                    isVerified: false,
+                });
+                return;
+            }
+
             const planMap = { servicios: "starter", pyme: "pro" } as const;
 
-            const [tenant] = await db
+            const [tenant] = await tx
                 .insert(tenants)
                 .values({
                     name: `${name}'s Business`,
-                    slug: email.split("@")[0] + "-" + Date.now(),
+                    slug: `${email.split("@")[0]}-${Date.now()}`,
                     plan: planMap[accountType],
                     accountType,
                 })
                 .returning();
 
-            await db.insert(users).values({
+            await tx.insert(users).values({
                 tenantId: tenant.id,
                 email,
                 name,
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
                 role: "OWNER",
                 isVerified: false,
             });
-        }
+        });
 
         return NextResponse.json({ success: true }, { status: 201 });
     } catch (error) {

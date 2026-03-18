@@ -1,12 +1,12 @@
+import Stripe from "stripe";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
-
-export const dynamic = "force-dynamic";
+import { markPaymentAsPaidFromWebhook } from "@/actions/payments";
 import { db } from "@/db";
 import { payments } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import Stripe from "stripe";
 import { stripeServer } from "@/lib/stripe";
-import { markPaymentAsPaid } from "@/actions/payments";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
     const body = await req.text();
@@ -20,30 +20,25 @@ export async function POST(req: Request) {
             signature,
             process.env.STRIPE_WEBHOOK_SECRET!
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-        console.error(`Webhook Error: ${error?.message}`);
-        return new NextResponse(`Webhook Error: ${error?.message}`, { status: 400 });
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error(`Webhook Error: ${errorMessage}`);
+        return new NextResponse(`Webhook Error: ${errorMessage}`, { status: 400 });
     }
-
-
 
     switch (event.type) {
         case "payment_intent.succeeded": {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
-            // Check if metadata has our internal ID
             if (paymentIntent.metadata?.paymentId) {
-                const paymentId = paymentIntent.metadata.paymentId;
-                await markPaymentAsPaid(paymentId, paymentIntent.id);
+                await markPaymentAsPaidFromWebhook(paymentIntent.metadata.paymentId, paymentIntent.id);
             } else {
-                // Alternatively, find by stripePaymentIntentId
                 const dbPayment = await db.query.payments.findFirst({
-                    where: eq(payments.stripePaymentIntentId, paymentIntent.id)
+                    where: eq(payments.stripePaymentIntentId, paymentIntent.id),
                 });
 
                 if (dbPayment) {
-                    await markPaymentAsPaid(dbPayment.id, paymentIntent.id);
+                    await markPaymentAsPaidFromWebhook(dbPayment.id, paymentIntent.id);
                 }
             }
             break;
@@ -53,21 +48,20 @@ export async function POST(req: Request) {
             const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
             const dbPayment = await db.query.payments.findFirst({
-                where: eq(payments.stripePaymentIntentId, paymentIntent.id)
+                where: eq(payments.stripePaymentIntentId, paymentIntent.id),
             });
 
             if (dbPayment) {
-                await db.update(payments)
+                await db
+                    .update(payments)
                     .set({ status: "failed" })
                     .where(eq(payments.id, dbPayment.id));
             }
             break;
         }
 
-        // Handle tenant sub events if requested
         case "customer.subscription.created":
         case "customer.subscription.deleted":
-            // Not strictly defining tenant plans yet, but hooked up 
             break;
 
         default:

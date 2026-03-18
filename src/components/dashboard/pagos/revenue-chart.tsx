@@ -15,8 +15,16 @@ interface RevenueChartProps {
     data: RevenueStats["by_day"];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomTooltip = ({ active, payload, label }: any) => {
+// Custom tooltip with proper typing
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: Array<{
+        value: number;
+    }>;
+    label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-black border border-white p-3 shadow-2xl">

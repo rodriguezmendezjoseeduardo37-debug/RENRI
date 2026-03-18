@@ -1,27 +1,116 @@
 "use server";
 
-import { db } from "@/db";
-import { payments, appointments } from "@/db/schema";
-import { and, eq, gte, lte, desc } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth-helpers";
+import { endOfDay, format, startOfDay, subDays, subMonths, subYears } from "date-fns";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { createPaymentIntent as stripeCreatePaymentIntent, refundPayment as stripeRefundPayment } from "@/lib/stripe";
-import { format, subDays, subMonths, subYears, startOfDay, endOfDay } from "date-fns";
+import { db } from "@/db";
+import { appointments, payments } from "@/db/schema";
+import { requireAuth } from "@/lib/auth-helpers";
+import { ActionError } from "@/lib/action-helpers";
+import { logger } from "@/lib/logger";
+import {
+    MarkPaymentAsPaidSchema,
+    ProcessPaymentSchema,
+    RefundPaymentSchema,
+} from "@/lib/schemas";
+import {
+    createPaymentIntent as stripeCreatePaymentIntent,
+    refundPayment as stripeRefundPayment,
+} from "@/lib/stripe";
 
-export async function getPayments(tenantId: string, filters?: { status?: "pending" | "processing" | "completed" | "failed" | "refunded", dateRange?: { from: Date, to: Date }, type?: "appointment" | "order" }) {
+type PaymentFilters = {
+    status?: "pending" | "processing" | "completed" | "failed" | "refunded";
+    dateRange?: { from: Date; to: Date };
+    type?: "appointment" | "order";
+};
+
+type PaymentCompletionOptions = {
+    tenantId?: string;
+};
+
+async function completePayment(
+    paymentId: string,
+    stripePaymentIntentId?: string,
+    options: PaymentCompletionOptions = {}
+) {
+    const validated = MarkPaymentAsPaidSchema.parse({ paymentId, stripePaymentIntentId });
+
+    return db.transaction(async (tx) => {
+        const payment = await tx.query.payments.findFirst({
+            where: eq(payments.id, validated.paymentId),
+        });
+
+        if (!payment) {
+            throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
+        }
+
+        if (options.tenantId && payment.tenantId !== options.tenantId) {
+            throw new ActionError("Unauthorized", "UNAUTHORIZED");
+        }
+
+        if (payment.status === "completed") {
+            return payment;
+        }
+
+        if (!["pending", "processing", "failed"].includes(payment.status)) {
+            throw new ActionError(
+                "Payment cannot be completed from its current state",
+                "INVALID_STATUS"
+            );
+        }
+
+        const [updatedPayment] = await tx
+            .update(payments)
+            .set({
+                status: "completed",
+                paidAt: new Date(),
+                ...(validated.stripePaymentIntentId
+                    ? { stripePaymentIntentId: validated.stripePaymentIntentId }
+                    : {}),
+            })
+            .where(eq(payments.id, validated.paymentId))
+            .returning();
+
+        if (!updatedPayment) {
+            throw new ActionError("Payment update failed", "PAYMENT_UPDATE_FAILED");
+        }
+
+        if (payment.referenceType === "appointment") {
+            await tx
+                .update(appointments)
+                .set({ status: "confirmed" })
+                .where(
+                    and(
+                        eq(appointments.id, payment.referenceId),
+                        eq(appointments.tenantId, payment.tenantId)
+                    )
+                );
+        }
+
+        return updatedPayment;
+    });
+}
+
+export async function getPayments(tenantId: string, filters?: PaymentFilters) {
     const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
 
     const conditions = [eq(payments.tenantId, tenantId)];
 
-    if (filters?.status) conditions.push(eq(payments.status, filters.status));
-    if (filters?.type) conditions.push(eq(payments.referenceType, filters.type));
+    if (filters?.status) {
+        conditions.push(eq(payments.status, filters.status));
+    }
+    if (filters?.type) {
+        conditions.push(eq(payments.referenceType, filters.type));
+    }
     if (filters?.dateRange) {
         conditions.push(gte(payments.createdAt, startOfDay(filters.dateRange.from)));
         conditions.push(lte(payments.createdAt, endOfDay(filters.dateRange.to)));
     }
 
-    return await db.query.payments.findMany({
+    return db.query.payments.findMany({
         where: and(...conditions),
         orderBy: [desc(payments.createdAt)],
     });
@@ -29,25 +118,32 @@ export async function getPayments(tenantId: string, filters?: { status?: "pendin
 
 export async function getPaymentById(id: string, tenantId: string) {
     const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
 
-    return await db.query.payments.findFirst({
-        where: and(eq(payments.id, id), eq(payments.tenantId, tenantId))
+    return db.query.payments.findFirst({
+        where: and(eq(payments.id, id), eq(payments.tenantId, tenantId)),
     });
 }
 
 export async function createPaymentForAppointment(appointmentId: string, amount: number, tenantId: string) {
     const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
 
-    const [payment] = await db.insert(payments).values({
-        tenantId,
-        referenceId: appointmentId,
-        referenceType: "appointment",
-        amount: amount.toString(),
-        status: "pending",
-        currency: "MXN",
-    }).returning();
+    const [payment] = await db
+        .insert(payments)
+        .values({
+            tenantId,
+            referenceId: appointmentId,
+            referenceType: "appointment",
+            amount: amount.toString(),
+            status: "pending",
+            currency: "MXN",
+        })
+        .returning();
 
     revalidatePath("/dashboard/pagos");
     return payment;
@@ -55,103 +151,153 @@ export async function createPaymentForAppointment(appointmentId: string, amount:
 
 export async function createPaymentForOrder(orderId: string, amount: number, tenantId: string) {
     const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
 
-    const [payment] = await db.insert(payments).values({
-        tenantId,
-        referenceId: orderId,
-        referenceType: "order",
-        amount: amount.toString(),
-        status: "pending",
-        currency: "MXN",
-    }).returning();
+    const [payment] = await db
+        .insert(payments)
+        .values({
+            tenantId,
+            referenceId: orderId,
+            referenceType: "order",
+            amount: amount.toString(),
+            status: "pending",
+            currency: "MXN",
+        })
+        .returning();
 
     revalidatePath("/dashboard/pagos");
     return payment;
 }
 
 export async function processPayment(paymentId: string) {
-    const user = await requireAuth();
+    try {
+        logger.logAction("processPayment", "start", { paymentId });
 
-    // 1. Get payment record
-    const payment = await db.query.payments.findFirst({
-        where: eq(payments.id, paymentId)
-    });
+        const validated = ProcessPaymentSchema.parse({ paymentId });
+        const user = await requireAuth();
 
-    if (!payment) throw new Error("Payment not found");
-    if (user.tenantId !== payment.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
-    if (payment.status === "completed") throw new Error("Payment already completed");
+        const payment = await db.query.payments.findFirst({
+            where: eq(payments.id, validated.paymentId),
+        });
 
-    // 2. Create Stripe Intent 
-    const intent = await stripeCreatePaymentIntent(Number(payment.amount), payment.currency, {
-        paymentId: payment.id,
-        tenantId: payment.tenantId,
-        referenceId: payment.referenceId,
-        referenceType: payment.referenceType
-    });
+        if (!payment) {
+            throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
+        }
 
-    // 3. Update DB
-    const [updated] = await db.update(payments)
-        .set({
-            stripePaymentIntentId: intent.id,
-            status: "processing"
-        })
-        .where(eq(payments.id, paymentId))
-        .returning();
+        if (user.tenantId !== payment.tenantId && user.role !== "SUPER_ADMIN") {
+            throw new ActionError("Unauthorized", "UNAUTHORIZED");
+        }
 
-    return { payment: updated, clientSecret: intent.client_secret };
+        if (payment.status === "completed") {
+            throw new ActionError("Payment already completed", "ALREADY_COMPLETED");
+        }
+
+        const intent = await stripeCreatePaymentIntent(Number(payment.amount), payment.currency, {
+            paymentId: payment.id,
+            tenantId: payment.tenantId,
+            referenceId: payment.referenceId,
+            referenceType: payment.referenceType,
+        });
+
+        const [updated] = await db
+            .update(payments)
+            .set({
+                stripePaymentIntentId: intent.id,
+                status: "processing",
+            })
+            .where(eq(payments.id, validated.paymentId))
+            .returning();
+
+        logger.logAction("processPayment", "success", { paymentId: validated.paymentId });
+        return { payment: updated, clientSecret: intent.client_secret };
+    } catch (error) {
+        logger.logAction("processPayment", "error", { paymentId }, error as Error);
+        throw error;
+    }
 }
 
 export async function markPaymentAsPaid(paymentId: string, stripePaymentIntentId?: string) {
-    const [payment] = await db.update(payments)
-        .set({
-            status: "completed",
-            paidAt: new Date(),
-            ...(stripePaymentIntentId && { stripePaymentIntentId })
-        })
-        .where(eq(payments.id, paymentId))
-        .returning();
+    try {
+        logger.logAction("markPaymentAsPaid", "start", { paymentId, stripePaymentIntentId });
 
-    // If appointment, we might want to auto-confirm its status here
-    if (payment.referenceType === "appointment") {
-        await db.update(appointments)
-            .set({ status: "confirmed" })
-            .where(eq(appointments.id, payment.referenceId));
+        const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+        const payment = await completePayment(
+            paymentId,
+            stripePaymentIntentId,
+            user.role === "SUPER_ADMIN" ? {} : { tenantId: user.tenantId }
+        );
+
+        revalidatePath("/dashboard/pagos");
+        logger.logAction("markPaymentAsPaid", "success", { paymentId });
+        return payment;
+    } catch (error) {
+        logger.logAction("markPaymentAsPaid", "error", { paymentId }, error as Error);
+        throw error;
     }
+}
 
-    revalidatePath("/dashboard/pagos");
-    return payment;
+export async function markPaymentAsPaidFromWebhook(paymentId: string, stripePaymentIntentId?: string) {
+    try {
+        logger.logAction("markPaymentAsPaidFromWebhook", "start", { paymentId, stripePaymentIntentId });
+        const payment = await completePayment(paymentId, stripePaymentIntentId);
+        revalidatePath("/dashboard/pagos");
+        logger.logAction("markPaymentAsPaidFromWebhook", "success", { paymentId });
+        return payment;
+    } catch (error) {
+        logger.logAction("markPaymentAsPaidFromWebhook", "error", { paymentId }, error as Error);
+        throw error;
+    }
 }
 
 export async function refundPaymentAction(paymentId: string, tenantId: string) {
-    const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    try {
+        logger.logAction("refundPaymentAction", "start", { paymentId, tenantId });
 
-    const payment = await db.query.payments.findFirst({
-        where: and(eq(payments.id, paymentId), eq(payments.tenantId, tenantId))
-    });
+        const validated = RefundPaymentSchema.parse({ paymentId });
+        const user = await requireAuth();
 
-    if (!payment) throw new Error("Payment not found");
-    if (payment.status !== "completed") throw new Error("Only completed payments can be refunded");
+        if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+            throw new ActionError("Unauthorized", "UNAUTHORIZED");
+        }
 
-    if (payment.stripePaymentIntentId) {
-        await stripeRefundPayment(payment.stripePaymentIntentId);
+        const payment = await db.query.payments.findFirst({
+            where: and(eq(payments.id, validated.paymentId), eq(payments.tenantId, tenantId)),
+        });
+
+        if (!payment) {
+            throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
+        }
+
+        if (payment.status !== "completed") {
+            throw new ActionError("Only completed payments can be refunded", "INVALID_STATUS");
+        }
+
+        if (payment.stripePaymentIntentId) {
+            await stripeRefundPayment(payment.stripePaymentIntentId);
+        }
+
+        const [refunded] = await db
+            .update(payments)
+            .set({ status: "refunded" })
+            .where(eq(payments.id, validated.paymentId))
+            .returning();
+
+        revalidatePath("/dashboard/pagos");
+        logger.logAction("refundPaymentAction", "success", { paymentId });
+        return refunded;
+    } catch (error) {
+        logger.logAction("refundPaymentAction", "error", { paymentId, tenantId }, error as Error);
+        throw error;
     }
-
-    const [refunded] = await db.update(payments)
-        .set({ status: "refunded" })
-        .where(eq(payments.id, paymentId))
-        .returning();
-
-    // Reverse appointment status? Not necessarily, but could be logged.
-
-    revalidatePath("/dashboard/pagos");
-    return refunded;
 }
 
 export async function getRevenueStats(tenantId: string, period: "day" | "week" | "month" | "year") {
     const user = await requireAuth();
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
 
     const now = new Date();
     let startDate = startOfDay(now);
@@ -168,20 +314,20 @@ export async function getRevenueStats(tenantId: string, period: "day" | "week" |
         ),
         columns: {
             amount: true,
-            paidAt: true
-        }
+            paidAt: true,
+        },
     });
 
     let total = 0;
     const byDayMap = new Map<string, number>();
 
-    completedPayments.forEach(p => {
-        const amt = Number(p.amount);
-        total += amt;
+    completedPayments.forEach((payment) => {
+        const amount = Number(payment.amount);
+        total += amount;
 
-        if (p.paidAt) {
-            const dayKey = format(p.paidAt, "MMM dd");
-            byDayMap.set(dayKey, (byDayMap.get(dayKey) || 0) + amt);
+        if (payment.paidAt) {
+            const dayKey = format(payment.paidAt, "MMM dd");
+            byDayMap.set(dayKey, (byDayMap.get(dayKey) || 0) + amount);
         }
     });
 
@@ -189,7 +335,6 @@ export async function getRevenueStats(tenantId: string, period: "day" | "week" |
         total,
         count: completedPayments.length,
         average: completedPayments.length > 0 ? total / completedPayments.length : 0,
-        by_day: Array.from(byDayMap.entries()).map(([date, amount]) => ({ date, amount }))
-        // Recharts requires [{ date: 'Nov 1', amount: 400 }, ...]
+        by_day: Array.from(byDayMap.entries()).map(([date, amount]) => ({ date, amount })),
     };
 }
