@@ -59,6 +59,8 @@ function LoginForm() {
 
     function handleGoogleSignIn() {
         setIsGoogleLoading(true);
+        document.cookie =
+            "renri_register_account_type=; path=/; max-age=0; samesite=lax";
         signIn("google", { callbackUrl });
     }
 

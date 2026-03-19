@@ -9,6 +9,7 @@ export default auth((req) => {
     const { pathname } = nextUrl;
     const isLoggedIn = !!req.auth;
     const userRole = (req.auth?.user as { role?: string } | undefined)?.role;
+    const isClient = userRole === "CLIENT";
 
     // ─── Tenant resolver: read subdomain from Host header ───
     let requestHeaders: Headers | undefined;
@@ -20,31 +21,66 @@ export default auth((req) => {
     }
 
     const AUTH_ROUTES = ["/login", "/register"];
-    const PUBLIC_ROUTES = ["/login", "/register", "/auth/error", "/"];
+    const PUBLIC_ROUTES = ["/login", "/register", "/auth/error", "/", "/portal"];
 
     // ─── Redirect logged-in users away from auth pages ───
     if (AUTH_ROUTES.some((r) => pathname.startsWith(r)) && isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl));
+        return Response.redirect(
+            new URL(isClient ? "/dashboard/mis-citas" : "/dashboard", nextUrl)
+        );
     }
 
     // ─── Protect role-based routes ───
-    const ROLE_ROUTES: Record<string, string[]> = {
-        "/dashboard": ["OWNER", "ADMIN", "STAFF"],
-        "/portal": ["CLIENT"],
-        "/superadmin": ["SUPER_ADMIN"],
-    };
+    if (pathname.startsWith("/dashboard")) {
+        if (!isLoggedIn) {
+            const loginUrl = new URL("/login", nextUrl);
+            loginUrl.searchParams.set("callbackUrl", pathname);
+            return Response.redirect(loginUrl);
+        }
 
-    for (const [route, roles] of Object.entries(ROLE_ROUTES)) {
-        if (pathname.startsWith(route)) {
-            if (!isLoggedIn) {
-                const loginUrl = new URL("/login", nextUrl);
-                loginUrl.searchParams.set("callbackUrl", pathname);
-                return Response.redirect(loginUrl);
-            }
+        const businessOnlyPrefixes = [
+            "/dashboard/citas",
+            "/dashboard/horarios",
+            "/dashboard/pagos",
+            "/dashboard/inventario",
+            "/dashboard/pedidos",
+            "/dashboard/turnos",
+            "/dashboard/clientes",
+            "/dashboard/configuracion/clinica",
+            "/dashboard/configuracion/organizacion",
+            "/dashboard/configuracion/apis",
+            "/dashboard/configuracion/planes",
+        ];
+        const clientOnlyPrefixes = [
+            "/dashboard/disponibilidad",
+            "/dashboard/mis-citas",
+            "/dashboard/mis-pagos",
+        ];
 
-            if (userRole && !roles.includes(userRole)) {
-                return Response.redirect(new URL("/unauthorized", nextUrl));
-            }
+        if (
+            isClient &&
+            businessOnlyPrefixes.some((route) => pathname.startsWith(route))
+        ) {
+            return Response.redirect(new URL("/dashboard/mis-citas", nextUrl));
+        }
+
+        if (
+            !isClient &&
+            clientOnlyPrefixes.some((route) => pathname.startsWith(route))
+        ) {
+            return Response.redirect(new URL("/dashboard", nextUrl));
+        }
+    }
+
+    if (pathname.startsWith("/superadmin")) {
+        if (!isLoggedIn) {
+            const loginUrl = new URL("/login", nextUrl);
+            loginUrl.searchParams.set("callbackUrl", pathname);
+            return Response.redirect(loginUrl);
+        }
+
+        if (userRole !== "SUPER_ADMIN") {
+            return Response.redirect(new URL("/unauthorized", nextUrl));
         }
     }
 

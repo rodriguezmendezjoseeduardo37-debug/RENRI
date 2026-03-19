@@ -1,11 +1,55 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
-import { Building2, UserCircle, KeyRound, MonitorSmartphone, CreditCard } from "lucide-react";
+import { Building2, UserCircle, MonitorSmartphone, CreditCard } from "lucide-react";
 import Link from "next/link";
 
 export default async function ConfiguracionPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
+
+    if (user.role === "CLIENT") {
+        const clientSections = [
+            {
+                title: "PERFIL PERSONAL",
+                desc: "Actualiza tu nombre, avatar y los datos basicos con los que reservas y recibes notificaciones.",
+                icon: UserCircle,
+                href: "/dashboard/configuracion/perfil",
+            },
+        ];
+
+        return (
+            <div className="max-w-4xl mx-auto space-y-10">
+                <div className="border-b border-[#222222] pb-6">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                        MI CUENTA
+                    </h1>
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                        AJUSTES PERSONALES Y DATOS DE CONTACTO
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6">
+                    {clientSections.map((section) => (
+                        <Link
+                            href={section.href}
+                            key={section.href}
+                            className="border border-[#222222] bg-[#111111] p-6 flex flex-col justify-between h-48 group hover:border-white transition-all cursor-pointer"
+                        >
+                            <section.icon className="w-6 h-6 text-white mb-4 group-hover:scale-110 transition-transform origin-left" />
+                            <div>
+                                <h3 className="text-sm font-bold tracking-[0.2em] text-white uppercase mb-2">
+                                    {section.title}
+                                </h3>
+                                <p className="text-[11px] font-mono tracking-wide text-[#888888] leading-relaxed">
+                                    {section.desc}
+                                </p>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        );
+    }
 
     const SETTINGS_SECTIONS = [
         {
@@ -25,13 +69,6 @@ export default async function ConfiguracionPage() {
             desc: "Ajustes de infraestructura, logotipo global, políticas de horarios y alta de sucursales.",
             icon: Building2,
             href: "/dashboard/configuracion/organizacion",
-            restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role)
-        },
-        {
-            title: "INTEGRACIONES & APIS",
-            desc: "Conexiones de pasarelas de pago, Webhooks externos y llaves de acceso para desarrolladores.",
-            icon: KeyRound,
-            href: "/dashboard/configuracion/apis",
             restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role)
         },
         {

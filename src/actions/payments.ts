@@ -28,6 +28,34 @@ type PaymentCompletionOptions = {
     tenantId?: string;
 };
 
+async function assertClientCanAccessPayment(userId: string, paymentId: string) {
+    const payment = await db.query.payments.findFirst({
+        where: eq(payments.id, paymentId),
+    });
+
+    if (!payment) {
+        throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
+    }
+
+    if (payment.referenceType !== "appointment") {
+        throw new ActionError("Unauthorized", "UNAUTHORIZED");
+    }
+
+    const appointment = await db.query.appointments.findFirst({
+        where: and(
+            eq(appointments.id, payment.referenceId),
+            eq(appointments.tenantId, payment.tenantId),
+            eq(appointments.clientId, userId)
+        ),
+    });
+
+    if (!appointment) {
+        throw new ActionError("Unauthorized", "UNAUTHORIZED");
+    }
+
+    return payment;
+}
+
 async function completePayment(
     paymentId: string,
     stripePaymentIntentId?: string,
@@ -97,6 +125,30 @@ export async function getPayments(tenantId: string, filters?: PaymentFilters) {
         throw new Error("Unauthorized");
     }
 
+    if (user.role === "CLIENT") {
+        const appointmentPayments = await db
+            .select({
+                payment: payments,
+            })
+            .from(payments)
+            .innerJoin(
+                appointments,
+                and(
+                    eq(payments.referenceId, appointments.id),
+                    eq(payments.referenceType, "appointment")
+                )
+            )
+            .where(
+                and(
+                    eq(payments.tenantId, tenantId),
+                    eq(appointments.clientId, user.id)
+                )
+            )
+            .orderBy(desc(payments.createdAt));
+
+        return appointmentPayments.map((row) => row.payment);
+    }
+
     const conditions = [eq(payments.tenantId, tenantId)];
 
     if (filters?.status) {
@@ -120,6 +172,10 @@ export async function getPaymentById(id: string, tenantId: string) {
     const user = await requireAuth();
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
+    }
+
+    if (user.role === "CLIENT") {
+        return assertClientCanAccessPayment(user.id, id);
     }
 
     return db.query.payments.findFirst({
@@ -177,10 +233,12 @@ export async function processPayment(paymentId: string) {
 
         const validated = ProcessPaymentSchema.parse({ paymentId });
         const user = await requireAuth();
-
-        const payment = await db.query.payments.findFirst({
-            where: eq(payments.id, validated.paymentId),
-        });
+        const payment =
+            user.role === "CLIENT"
+                ? await assertClientCanAccessPayment(user.id, validated.paymentId)
+                : await db.query.payments.findFirst({
+                    where: eq(payments.id, validated.paymentId),
+                });
 
         if (!payment) {
             throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");

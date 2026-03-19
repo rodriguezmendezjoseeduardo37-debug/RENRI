@@ -3,9 +3,19 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 import { db } from "@/db";
 import { tenants, users } from "@/db/schema";
+import { normalizeEnabledModules, type BusinessModule } from "@/lib/business";
 import authConfig from "./auth.config";
+
+const GOOGLE_REGISTER_COOKIE = "renri_register_account_type";
+
+function isAccountType(
+    value: string | undefined
+): value is "servicios" | "pyme" | "cliente" {
+    return value === "servicios" || value === "pyme" || value === "cliente";
+}
 
 declare module "next-auth" {
     interface Session {
@@ -15,17 +25,21 @@ declare module "next-auth" {
             name: string;
             image?: string | null;
             tenantId: string;
+            businessId: string;
             role: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
             isVerified: boolean;
             accountType: "servicios" | "pyme" | "cliente";
+            enabledModules: BusinessModule[];
         };
     }
 
     interface User {
         tenantId?: string;
+        businessId?: string;
         role?: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
         isVerified?: boolean;
         accountType?: "servicios" | "pyme" | "cliente";
+        enabledModules?: BusinessModule[];
     }
 }
 
@@ -33,9 +47,11 @@ declare module "@auth/core/jwt" {
     interface JWT {
         id: string;
         tenantId: string;
+        businessId: string;
         role: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
         isVerified: boolean;
         accountType: "servicios" | "pyme" | "cliente";
+        enabledModules: BusinessModule[];
     }
 }
 
@@ -81,9 +97,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     name: user.name,
                     image: user.image,
                     tenantId: user.tenantId,
+                    businessId: user.tenantId,
                     role: user.role,
                     isVerified: user.isVerified,
-                    accountType: tenant?.accountType ?? "servicios",
+                    accountType:
+                        user.role === "CLIENT"
+                            ? "cliente"
+                            : tenant?.accountType ?? "servicios",
+                    enabledModules: normalizeEnabledModules(
+                        undefined,
+                        tenant?.accountType ?? "servicios",
+                        user.role
+                    ),
                 };
             },
         }),
@@ -97,6 +122,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         async signIn({ user, account }) {
             if (account?.provider === "google" && user.email) {
                 const userEmail = user.email;
+                const cookieStore = await cookies();
+                const cookieValue = cookieStore.get(GOOGLE_REGISTER_COOKIE)?.value;
+                const requestedAccountType = isAccountType(cookieValue)
+                    ? cookieValue
+                    : null;
+                cookieStore.delete(GOOGLE_REGISTER_COOKIE);
                 const [existingUser] = await db
                     .select()
                     .from(users)
@@ -105,13 +136,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (!existingUser) {
                     const created = await db.transaction(async (tx) => {
+                        const accountType = requestedAccountType ?? "servicios";
                         const [tenant] = await tx
                             .insert(tenants)
                             .values({
                                 name: `${user.name}'s Workspace`,
                                 slug: `${userEmail.split("@")[0]}-${Date.now()}`,
-                                plan: "starter",
-                                accountType: "servicios",
+                                plan:
+                                    accountType === "pyme"
+                                        ? "pro"
+                                        : "starter",
+                                accountType,
                             })
                             .returning();
 
@@ -123,7 +158,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                                 name: user.name ?? "User",
                                 image: user.image,
                                 googleId: account.providerAccountId,
-                                role: "OWNER",
+                                role:
+                                    accountType === "cliente"
+                                        ? "CLIENT"
+                                        : "OWNER",
                                 isVerified: true,
                             })
                             .returning();
@@ -133,10 +171,49 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                     user.id = created.user.id;
                     user.tenantId = created.user.tenantId;
+                    user.businessId = created.user.tenantId;
                     user.role = created.user.role;
                     user.isVerified = created.user.isVerified;
-                    user.accountType = created.tenant.accountType;
+                    user.accountType =
+                        created.user.role === "CLIENT"
+                            ? "cliente"
+                            : created.tenant.accountType;
+                    user.enabledModules = normalizeEnabledModules(
+                        undefined,
+                        created.tenant.accountType,
+                        created.user.role
+                    );
                 } else {
+                    const [existingTenant] = await db
+                        .select()
+                        .from(tenants)
+                        .where(eq(tenants.id, existingUser.tenantId))
+                        .limit(1);
+
+                    if (
+                        requestedAccountType &&
+                        requestedAccountType !== "cliente" &&
+                        existingUser.role === "CLIENT"
+                    ) {
+                        return "/auth/error?error=GoogleBusinessConflict";
+                    }
+
+                    if (
+                        requestedAccountType &&
+                        requestedAccountType !== "cliente" &&
+                        existingUser.role !== "CLIENT" &&
+                        existingTenant &&
+                        existingTenant.accountType !== requestedAccountType
+                    ) {
+                        await db
+                            .update(tenants)
+                            .set({
+                                accountType: requestedAccountType,
+                                updatedAt: new Date(),
+                            })
+                            .where(eq(tenants.id, existingTenant.id));
+                    }
+
                     if (!existingUser.googleId) {
                         await db
                             .update(users)
@@ -150,15 +227,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                     user.id = existingUser.id;
                     user.tenantId = existingUser.tenantId;
+                    user.businessId = existingUser.tenantId;
                     user.role = existingUser.role;
                     user.isVerified = existingUser.isVerified;
-
-                    const [existingTenant] = await db
-                        .select()
-                        .from(tenants)
-                        .where(eq(tenants.id, existingUser.tenantId))
-                        .limit(1);
-                    user.accountType = existingTenant?.accountType ?? "servicios";
+                    const resolvedBusinessAccountType =
+                        requestedAccountType && requestedAccountType !== "cliente"
+                            ? requestedAccountType
+                            : existingTenant?.accountType ?? "servicios";
+                    user.accountType =
+                        existingUser.role === "CLIENT"
+                            ? "cliente"
+                            : resolvedBusinessAccountType;
+                    user.enabledModules = normalizeEnabledModules(
+                        undefined,
+                        resolvedBusinessAccountType,
+                        existingUser.role
+                    );
                 }
             }
             return true;

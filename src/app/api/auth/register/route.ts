@@ -36,14 +36,44 @@ export async function POST(req: Request) {
             .where(eq(users.email, email))
             .limit(1);
 
+        const passwordHash = await bcrypt.hash(password, 12);
+
         if (existing) {
+            if (accountType !== "cliente") {
+                return NextResponse.json(
+                    { error: "Ya existe una cuenta con este correo electronico" },
+                    { status: 409 }
+                );
+            }
+
+            if (existing.role !== "CLIENT") {
+                return NextResponse.json(
+                    { error: "Ese correo ya esta en uso por una cuenta administrativa" },
+                    { status: 409 }
+                );
+            }
+
+            if (existing.passwordHash) {
+                return NextResponse.json(
+                    { error: "Ya existe una cuenta con este correo electronico" },
+                    { status: 409 }
+                );
+            }
+
+            await db
+                .update(users)
+                .set({
+                    name,
+                    passwordHash,
+                    updatedAt: new Date(),
+                })
+                .where(eq(users.id, existing.id));
+
             return NextResponse.json(
-                { error: "Ya existe una cuenta con este correo electronico" },
-                { status: 409 }
+                { success: true, activatedExistingClient: true },
+                { status: 201 }
             );
         }
-
-        const passwordHash = await bcrypt.hash(password, 12);
 
         await db.transaction(async (tx) => {
             if (accountType === "cliente") {

@@ -1,6 +1,8 @@
 import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import type { BusinessModule } from "@/lib/business";
+import { normalizeEnabledModules } from "@/lib/business";
 
 /**
  * Edge-compatible NextAuth config.
@@ -32,9 +34,17 @@ export default {
             if (user) {
                 token.id = user.id as string;
                 token.tenantId = user.tenantId ?? "";
+                token.businessId =
+                    ((user as Record<string, unknown>).businessId as string | undefined) ??
+                    user.tenantId ??
+                    "";
                 token.role = user.role ?? "CLIENT";
                 token.isVerified = user.isVerified ?? false;
                 token.accountType = ((user as Record<string, unknown>).accountType as "servicios" | "pyme" | "cliente" | undefined) ?? "servicios";
+                token.enabledModules =
+                    ((user as Record<string, unknown>).enabledModules as
+                        | BusinessModule[]
+                        | undefined) ?? [];
             }
             if (trigger === "update" && session) {
                 token = { ...token, ...session };
@@ -44,9 +54,15 @@ export default {
         async session({ session, token }) {
             session.user.id = token.id as string;
             session.user.tenantId = token.tenantId as string;
+            session.user.businessId = token.businessId as string;
             session.user.role = token.role as "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
             session.user.isVerified = token.isVerified as boolean;
             session.user.accountType = token.accountType as "servicios" | "pyme" | "cliente";
+            session.user.enabledModules = normalizeEnabledModules(
+                token.enabledModules as BusinessModule[] | undefined,
+                token.accountType as "servicios" | "pyme" | "cliente" | undefined,
+                token.role as "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT" | undefined
+            );
             return session;
         },
     },

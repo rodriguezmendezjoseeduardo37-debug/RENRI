@@ -3,7 +3,14 @@
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { appointments, profiles, schedules, tenants, users } from "@/db/schema";
+import {
+    appointments,
+    payments,
+    profiles,
+    schedules,
+    tenants,
+    users,
+} from "@/db/schema";
 
 export async function getTenantBySlug(slug: string) {
     const tenant = await db.query.tenants.findFirst({
@@ -160,18 +167,55 @@ export async function bookAppointment(data: {
         });
 
         if (!client) {
-            const [newClient] = await tx
-                .insert(users)
-                .values({
-                    tenantId: data.tenantId,
-                    email: data.clientEmail,
-                    name: data.clientName,
-                    role: "CLIENT",
-                })
-                .returning();
-            client = newClient;
+            const [standaloneClient] = await tx
+                .select({ user: users })
+                .from(users)
+                .innerJoin(tenants, eq(users.tenantId, tenants.id))
+                .where(
+                    and(
+                        eq(users.email, data.clientEmail),
+                        eq(users.role, "CLIENT"),
+                        eq(tenants.accountType, "cliente")
+                    )
+                )
+                .limit(1);
 
-            if (data.clientPhone) {
+            if (standaloneClient?.user) {
+                const [updatedClient] = await tx
+                    .update(users)
+                    .set({
+                        tenantId: data.tenantId,
+                        name: data.clientName,
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(users.id, standaloneClient.user.id))
+                    .returning();
+                client = updatedClient;
+            } else {
+                const [newClient] = await tx
+                    .insert(users)
+                    .values({
+                        tenantId: data.tenantId,
+                        email: data.clientEmail,
+                        name: data.clientName,
+                        role: "CLIENT",
+                    })
+                    .returning();
+                client = newClient;
+            }
+        }
+
+        if (data.clientPhone && client) {
+            const existingProfile = await tx.query.profiles.findFirst({
+                where: eq(profiles.userId, client.id),
+            });
+
+            if (existingProfile) {
+                await tx
+                    .update(profiles)
+                    .set({ phone: data.clientPhone })
+                    .where(eq(profiles.userId, client.id));
+            } else {
                 await tx.insert(profiles).values({
                     userId: client.id,
                     phone: data.clientPhone,
@@ -194,6 +238,17 @@ export async function bookAppointment(data: {
                 status: "pending",
             })
             .returning();
+
+        if (data.amount && Number(data.amount) > 0) {
+            await tx.insert(payments).values({
+                tenantId: data.tenantId,
+                referenceId: newAppointment.id,
+                referenceType: "appointment",
+                amount: data.amount,
+                status: "pending",
+                currency: "MXN",
+            });
+        }
 
         return newAppointment;
     });

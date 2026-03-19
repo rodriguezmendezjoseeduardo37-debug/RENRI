@@ -1,16 +1,25 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth-helpers";
-import { StatCard } from "@/components/dashboard/stat-card";
 import Link from "next/link";
-import { db } from "@/db";
-import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
+import {
+    getClientAppointments,
+    getClientPayments,
+    getClientWorkspace,
+} from "@/actions/client-portal";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { db } from "@/db";
+import { tenants } from "@/db/schema";
+import {
+    normalizeEnabledModules,
+    type BusinessModule,
+} from "@/lib/business";
+import { getCurrentUser } from "@/lib/auth-helpers";
 
 function getGreeting(): string {
     const hour = new Date().getHours();
-    if (hour < 12) return "BUENOS DÍAS";
+    if (hour < 12) return "BUENOS DIAS";
     if (hour < 18) return "BUENAS TARDES";
     return "BUENAS NOCHES";
 }
@@ -32,44 +41,76 @@ export default async function DashboardPage() {
 
     const firstName = user.name?.split(" ")[0]?.toUpperCase() ?? "USUARIO";
 
-    // Get account type
     const [tenant] = await db
         .select()
         .from(tenants)
         .where(eq(tenants.id, user.tenantId))
         .limit(1);
 
-    const accountType = tenant?.accountType ?? "servicios";
-
     return (
         <div className="space-y-10">
-            {/* Greeting */}
             <div>
                 <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)]">
                     {getGreeting()}, {firstName}
                 </h1>
                 <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
-                    RESUMEN DEL DÍA — {formatDate()}
+                    RESUMEN DEL DIA · {formatDate()}
                 </p>
             </div>
 
-            {accountType === "servicios" ? (
-                <ServiciosDashboard tenantId={user.tenantId} />
-            ) : accountType === "pyme" ? (
-                <PymeDashboard tenantId={user.tenantId} />
+            {user.role === "CLIENT" ? (
+                <UsuarioDashboard />
             ) : (
-                <UsuarioDashboard tenantSlug={tenant?.slug ?? ""} />
+                <BusinessDashboard
+                    businessId={user.businessId ?? user.tenantId}
+                    accountType={tenant?.accountType ?? "servicios"}
+                    enabledModules={normalizeEnabledModules(
+                        user.enabledModules,
+                        user.accountType,
+                        user.role
+                    )}
+                />
             )}
         </div>
     );
 }
 
-// ─── Servicios Dashboard ─────────────────────────────────
-async function ServiciosDashboard({ tenantId }: { tenantId: string }) {
-    void tenantId;
+async function BusinessDashboard({
+    businessId,
+    accountType,
+    enabledModules,
+}: {
+    businessId: string;
+    accountType: "servicios" | "pyme" | "cliente";
+    enabledModules: BusinessModule[];
+}) {
+    const activeAccountType =
+        accountType === "pyme" && enabledModules.includes("pyme")
+            ? "pyme"
+            : "servicios";
+
+    return (
+        <div className="space-y-10">
+            <div className="border-b border-[#222222] pb-6">
+                <p className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · MODULO {activeAccountType.toUpperCase()}
+                </p>
+            </div>
+
+            {activeAccountType === "pyme" ? (
+                <PymeDashboard businessId={businessId} />
+            ) : (
+                <ServiciosDashboard businessId={businessId} />
+            )}
+        </div>
+    );
+}
+
+async function ServiciosDashboard({ businessId }: { businessId: string }) {
+    void businessId;
+
     return (
         <>
-            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-[#222222]">
                 <StatCard label="CITAS HOY" value={0} sublabel="agendadas" />
                 <StatCard label="EN ESPERA" value={0} sublabel="turnos activos" />
@@ -77,7 +118,6 @@ async function ServiciosDashboard({ tenantId }: { tenantId: string }) {
                 <StatCard label="CLIENTES" value={0} sublabel="registrados" />
             </div>
 
-            {/* Quick Actions */}
             <div className="flex flex-wrap gap-3">
                 <Link
                     href="/dashboard/citas"
@@ -102,16 +142,14 @@ async function ServiciosDashboard({ tenantId }: { tenantId: string }) {
     );
 }
 
-// ─── PYME Dashboard ──────────────────────────────────────
-async function PymeDashboard({ tenantId }: { tenantId: string }) {
+async function PymeDashboard({ businessId }: { businessId: string }) {
     const [orderStats, inventoryStats] = await Promise.all([
-        getOrderStats(tenantId),
-        getInventoryStats(tenantId),
+        getOrderStats(businessId),
+        getInventoryStats(businessId),
     ]);
 
     return (
         <>
-            {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-[#222222]">
                 <StatCard
                     label="PEDIDOS HOY"
@@ -135,22 +173,20 @@ async function PymeDashboard({ tenantId }: { tenantId: string }) {
                 />
             </div>
 
-            {/* Low stock alert */}
             {inventoryStats.lowStockCount > 0 && (
                 <div className="border-l-2 border-white bg-[#111111] p-4 flex items-center justify-between">
                     <span className="text-[11px] font-bold tracking-[0.2em] text-white uppercase">
-                        ⚠ {inventoryStats.lowStockCount} PRODUCTOS CON STOCK BAJO
+                        {inventoryStats.lowStockCount} PRODUCTOS CON STOCK BAJO
                     </span>
                     <Link
                         href="/dashboard/inventario?lowStock=true"
                         className="text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white transition-colors uppercase"
                     >
-                        VER →
+                        VER
                     </Link>
                 </div>
             )}
 
-            {/* Quick Actions */}
             <div className="flex flex-wrap gap-3">
                 <Link
                     href="/dashboard/pedidos/nuevo"
@@ -175,31 +211,114 @@ async function PymeDashboard({ tenantId }: { tenantId: string }) {
     );
 }
 
-// ─── Usuario Dashboard ───────────────────────────────────
-function UsuarioDashboard({ tenantSlug }: { tenantSlug: string }) {
+async function UsuarioDashboard() {
+    const [{ tenant, businessId }, appointments, payments] = await Promise.all([
+        getClientWorkspace(),
+        getClientAppointments(),
+        getClientPayments(),
+    ]);
+
+    const orderedAppointments = [...appointments].sort((a, b) =>
+        `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`)
+    );
+    const upcomingAppointment =
+        orderedAppointments.find((appointment) =>
+            ["pending", "confirmed"].includes(appointment.status)
+        ) ?? orderedAppointments.at(-1);
+    const pendingPayments = payments.filter((payment) =>
+        ["pending", "processing", "failed"].includes(payment.status)
+    );
+
     return (
-        <div className="space-y-6">
-            <div className="bg-[#111111] border border-[#222222] p-8 text-center space-y-4">
-                <h3 className="text-xl font-bold uppercase tracking-[0.1em]">
-                    Bienvenido al Portal de Usuario
-                </h3>
-                <p className="text-[#888888] text-sm max-w-md mx-auto">
-                    Has cambiado al modo Usuario. Desde aquí puedes simular la vista y el historial que verían tus clientes.
-                </p>
-                <div className="pt-4 flex justify-center gap-4">
-                    <Link
-                        href={`/portal/${tenantSlug}`}
-                        target="_blank"
-                        className="inline-flex items-center gap-2 bg-white text-black px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-gray-200 transition-colors"
-                    >
-                        Ver Portal Público
-                    </Link>
-                    <Link
-                        href="/dashboard/pagos"
-                        className="inline-flex items-center gap-2 border border-[#333333] text-white px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#222222] transition-colors"
-                    >
-                        Mis Pagos
-                    </Link>
+        <div className="space-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-[1px] bg-[#222222]">
+                <StatCard
+                    label="MIS CITAS"
+                    value={appointments.length}
+                    sublabel="registradas"
+                />
+                <StatCard
+                    label="PAGOS PENDIENTES"
+                    value={pendingPayments.length}
+                    sublabel="por cubrir"
+                />
+                <StatCard
+                    label="BUSINESS ID"
+                    value={businessId.slice(0, 8).toUpperCase()}
+                    sublabel={tenant?.name ?? "SIN ENLACE"}
+                />
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-6">
+                <div className="border border-[#222222] bg-[#111111] p-8 space-y-5">
+                    <h3 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                        SIGUIENTE PASO
+                    </h3>
+                    {upcomingAppointment ? (
+                        <>
+                            <div>
+                                <p className="text-2xl font-bold text-white uppercase tracking-[0.05em]">
+                                    {upcomingAppointment.serviceName}
+                                </p>
+                                <p className="mt-2 text-sm text-[#aaaaaa]">
+                                    {upcomingAppointment.date} · {upcomingAppointment.startTime} · {upcomingAppointment.staffName}
+                                </p>
+                            </div>
+                            <p className="text-sm text-[#777777] max-w-xl">
+                                Consulta el detalle de tu cita, prepara el pago si sigue pendiente o agenda una nueva fecha desde tu portal.
+                            </p>
+                        </>
+                    ) : (
+                        <p className="text-sm text-[#777777] max-w-xl">
+                            Aun no tienes citas visibles en esta cuenta. Cuando agendes desde el portal del negocio con este mismo correo, aqui apareceran tus horarios, citas y pagos.
+                        </p>
+                    )}
+                    <div className="flex flex-wrap gap-3 pt-2">
+                        <Link
+                            href="/dashboard/mis-citas"
+                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
+                        >
+                            VER MIS CITAS
+                        </Link>
+                        <Link
+                            href="/dashboard/disponibilidad"
+                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                        >
+                            VER HORARIOS
+                        </Link>
+                        <Link
+                            href="/dashboard/mis-pagos"
+                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-white hover:bg-[#222222] transition-colors"
+                        >
+                            VER PAGOS
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="border border-[#222222] bg-black p-8 space-y-5">
+                    <h3 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                        PORTAL DEL NEGOCIO
+                    </h3>
+                    <p className="text-sm text-[#777777]">
+                        Reserva nuevas citas desde el portal del negocio y centraliza aqui tu historial y tus cobros.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                        {tenant?.slug ? (
+                            <Link
+                                href={`/portal/${tenant.slug}`}
+                                target="_blank"
+                                className="inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#d6d6d6] transition-colors"
+                            >
+                                ABRIR PORTAL
+                            </Link>
+                        ) : null}
+                        <Link
+                            href="/dashboard/configuracion"
+                            className="inline-flex items-center justify-center gap-2 border border-[#333333] text-white px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#222222] transition-colors"
+                        >
+                            AJUSTES DE CUENTA
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

@@ -16,7 +16,7 @@ export default async function SchedulesPage({
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const tenantId = user.tenantId;
+    const businessId = user.businessId ?? user.tenantId;
     let targetStaffId = user.id;
 
     // Allow high-level roles to view other staff schedules
@@ -26,14 +26,14 @@ export default async function SchedulesPage({
         targetStaffId = searchParams.staffId;
     }
 
-    const schedules = await getSchedules(tenantId, targetStaffId);
+    const schedules = await getSchedules(businessId, targetStaffId);
 
     let allStaff: { id: string; name: string }[] = [];
     let staffName = user.name || "Usuario";
 
     if (canViewOthers) {
         allStaff = await db.query.users.findMany({
-            where: eq(users.tenantId, tenantId),
+            where: eq(users.tenantId, businessId),
             columns: { id: true, name: true },
         });
 
@@ -49,7 +49,7 @@ export default async function SchedulesPage({
                         HORARIOS
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
-                        VISTA SEMANAL: {staffName}
+                        BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · {staffName}
                     </p>
                 </div>
 
@@ -70,7 +70,7 @@ export default async function SchedulesPage({
             <div className="flex-1 overflow-hidden">
                 <ScheduleClientView
                     initialSchedules={schedules}
-                    tenantId={tenantId}
+                    tenantId={businessId}
                     staffId={targetStaffId}
                     staffName={staffName}
                 />

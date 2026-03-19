@@ -36,13 +36,21 @@ export default async function DashboardLayout({
         .where(eq(tenants.id, user.tenantId))
         .limit(1);
 
-    const accountType = tenant?.accountType ?? "servicios";
+    const accountType =
+        user.role === "CLIENT"
+            ? "cliente"
+            : tenant?.accountType ?? "servicios";
 
     return (
         <div
             className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-black text-white`}
         >
-            <Sidebar accountType={accountType} tenantId={tenant?.id} />
+            <Sidebar
+                accountType={accountType}
+                businessId={user.businessId ?? tenant?.id}
+                enabledModules={user.enabledModules}
+                userRole={user.role}
+            />
 
             {/* Main content area — offset by sidebar width */}
             <div className="ml-16 min-h-screen flex flex-col">

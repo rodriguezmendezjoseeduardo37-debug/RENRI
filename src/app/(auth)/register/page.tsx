@@ -21,8 +21,8 @@ import { Separator } from "@/components/ui/separator";
 import { Chrome, Loader2 } from "lucide-react";
 
 const ACCOUNT_TYPES = [
-    { value: "servicios", label: "Servicios", description: "Citas, turnos, horarios" },
-    { value: "pyme", label: "PYME", description: "Inventario, pedidos, ventas" },
+    { value: "servicios", label: "Servicios", description: "Inicio en citas y horarios" },
+    { value: "pyme", label: "PYME", description: "Inicio en inventario y ventas" },
     { value: "cliente", label: "Cliente", description: "Agendar citas y comprar" },
 ] as const;
 
@@ -48,6 +48,10 @@ export default function RegisterPage() {
     const [error, setError] = useState<string | null>(null);
     const [selectedType, setSelectedType] = useState<AccountType>("servicios");
     const router = useRouter();
+    const isClientRegistration = selectedType === "cliente";
+    const postRegisterPath = isClientRegistration
+        ? "/dashboard/mis-citas"
+        : "/dashboard";
 
     const {
         register,
@@ -85,7 +89,7 @@ export default function RegisterPage() {
                 setError("Cuenta creada, pero no se pudo iniciar sesión automáticamente.");
                 router.push("/login");
             } else {
-                router.push("/dashboard");
+                router.push(postRegisterPath);
             }
         } catch {
             setError("Error de conexión. Intenta de nuevo.");
@@ -93,8 +97,14 @@ export default function RegisterPage() {
     }
 
     function handleGoogleSignIn() {
+        setError(null);
         setIsGoogleLoading(true);
-        signIn("google", { callbackUrl: "/dashboard" });
+        document.cookie = `renri_register_account_type=${selectedType}; path=/; max-age=600; samesite=lax`;
+        signIn(
+            "google",
+            { callbackUrl: postRegisterPath },
+            { prompt: "select_account" }
+        );
     }
 
     return (
@@ -108,12 +118,25 @@ export default function RegisterPage() {
                     </div>
                     <CardTitle className="text-xl text-white">Crear Cuenta</CardTitle>
                     <CardDescription className="text-[hsl(0,0%,63.9%)]">
-                        Empieza a gestionar tu negocio hoy
+                        {isClientRegistration
+                            ? "Activa tu portal para consultar citas y pagos"
+                            : "Empieza con un solo negocio vinculado para servicios y pyme"}
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
-                    {/* Google OAuth */}
+                    {isClientRegistration && (
+                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-[hsl(0,0%,63.9%)]">
+                            Si ya reservaste con este mismo correo, tu cuenta cliente se activara y veras tus citas y pagos en el dashboard. Tambien puedes validarte con Google.
+                        </div>
+                    )}
+
+                    {!isClientRegistration && (
+                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-[hsl(0,0%,63.9%)]">
+                            Servicios y pyme quedan vinculados al mismo negocio. La opcion elegida solo define tu enfoque inicial dentro del dashboard.
+                        </div>
+                    )}
+
                     <Button
                         variant="outline"
                         className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
@@ -125,7 +148,9 @@ export default function RegisterPage() {
                         ) : (
                             <Chrome className="mr-2 h-4 w-4" />
                         )}
-                        Registrarse con Google
+                        {isClientRegistration
+                            ? "Validar cliente con Google"
+                            : "Registrarse con Google"}
                     </Button>
 
                     <div className="relative">

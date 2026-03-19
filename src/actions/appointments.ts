@@ -55,6 +55,10 @@ export async function getAppointments(
 
     const conditions = [eq(appointments.tenantId, tenantId)];
 
+    if (user.role === "CLIENT") {
+        conditions.push(eq(appointments.clientId, user.id));
+    }
+
     if (date) conditions.push(eq(appointments.date, date));
     if (staffId) conditions.push(eq(appointments.staffId, staffId));
     if (status) conditions.push(eq(appointments.status, status));
@@ -105,6 +109,12 @@ export async function getAppointmentById(id: string, tenantId: string) {
     const user = await requireAuth();
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
+    const conditions = [eq(appointments.id, id), eq(appointments.tenantId, tenantId)];
+
+    if (user.role === "CLIENT") {
+        conditions.push(eq(appointments.clientId, user.id));
+    }
+
     const rows = await db
         .select({
             appointment: appointments,
@@ -114,7 +124,7 @@ export async function getAppointmentById(id: string, tenantId: string) {
         .from(appointments)
         .leftJoin(clientUser, eq(appointments.clientId, clientUser.id))
         .leftJoin(staffUser, eq(appointments.staffId, staffUser.id))
-        .where(and(eq(appointments.id, id), eq(appointments.tenantId, tenantId)))
+        .where(and(...conditions))
         .limit(1);
 
     if (rows.length === 0) return null;
@@ -123,7 +133,7 @@ export async function getAppointmentById(id: string, tenantId: string) {
 
 // ─── Create Appointment ────────────────────────────────────
 export async function createAppointment(data: CreateAppointmentInput) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -151,7 +161,7 @@ export async function updateAppointment(
     tenantId: string,
     data: UpdateAppointmentInput
 ) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -173,6 +183,12 @@ export async function cancelAppointment(
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const notes = reason ? `Cancelado: ${reason}` : undefined;
+    const conditions = [eq(appointments.id, id), eq(appointments.tenantId, tenantId)];
+
+    if (user.role === "CLIENT") {
+        conditions.push(eq(appointments.clientId, user.id));
+    }
+
     const [row] = await db
         .update(appointments)
         .set({
@@ -180,7 +196,7 @@ export async function cancelAppointment(
             ...(notes ? { notes } : {}),
             updatedAt: new Date(),
         })
-        .where(and(eq(appointments.id, id), eq(appointments.tenantId, tenantId)))
+        .where(and(...conditions))
         .returning();
 
     return row;
@@ -188,7 +204,7 @@ export async function cancelAppointment(
 
 // ─── Confirm Appointment ───────────────────────────────────
 export async function confirmAppointment(id: string, tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -202,7 +218,7 @@ export async function confirmAppointment(id: string, tenantId: string) {
 
 // ─── Complete Appointment ──────────────────────────────────
 export async function completeAppointment(id: string, tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
