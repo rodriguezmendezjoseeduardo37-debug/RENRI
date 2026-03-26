@@ -1,10 +1,12 @@
 import { Resend } from "resend";
 
-if (!process.env.RESEND_API_KEY) {
-    throw new Error("Missing RESEND_API_KEY environment variable");
+function getResendClient() {
+    if (!process.env.RESEND_API_KEY) {
+        console.warn("RESEND_API_KEY no configurado. El correo no se enviará.");
+        return null;
+    }
+    return new Resend(process.env.RESEND_API_KEY);
 }
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendAppointmentConfirmation(data: {
     to: string;
@@ -17,6 +19,9 @@ export async function sendAppointmentConfirmation(data: {
     appointmentId: string;
 }) {
     const cancelUrl = `${process.env.NEXTAUTH_URL}/portal/cancel/${data.appointmentId}`;
+
+    const resend = getResendClient();
+    if (!resend) return;
 
     await resend.emails.send({
         from: `${data.businessName} <noreply@${process.env.RESEND_DOMAIN || "resend.dev"}>`,
@@ -50,6 +55,9 @@ export async function sendAppointmentReminder(data: {
     time: string;
     businessName: string;
 }) {
+    const resend = getResendClient();
+    if (!resend) return;
+
     await resend.emails.send({
         from: `${data.businessName} <noreply@${process.env.RESEND_DOMAIN || "resend.dev"}>`,
         to: data.to,
@@ -79,6 +87,9 @@ export async function sendAppointmentCancelled(data: {
     time: string;
     businessName: string;
 }) {
+    const resend = getResendClient();
+    if (!resend) return;
+
     await resend.emails.send({
         from: `${data.businessName} <noreply@${process.env.RESEND_DOMAIN || "resend.dev"}>`,
         to: data.to,
