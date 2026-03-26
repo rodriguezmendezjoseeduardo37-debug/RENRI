@@ -13,8 +13,9 @@ import type { BlockedDate } from "@/types/schedules";
 export default async function SchedulesConfigPage({
     searchParams,
 }: {
-    searchParams: { staffId?: string };
+    searchParams: Promise<{ staffId?: string }>;
 }) {
+    const { staffId } = await searchParams;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
@@ -23,8 +24,8 @@ export default async function SchedulesConfigPage({
 
     // Ownership logic
     const canViewOthers = ["SUPER_ADMIN", "OWNER", "ADMIN"].includes(user.role);
-    if (canViewOthers && searchParams.staffId) {
-        targetStaffId = searchParams.staffId;
+    if (canViewOthers && staffId) {
+        targetStaffId = staffId;
     }
 
     let allStaff: { id: string; name: string }[] = [];

@@ -13,6 +13,7 @@ export interface Product {
     lowStockAlert: number;
     category: string | null;
     imageUrl: string | null;
+    isPublic: boolean;
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
@@ -42,6 +43,7 @@ export const createProductSchema = z.object({
     lowStockAlert: z.number().int().min(0).default(5),
     category: z.string().optional(),
     imageUrl: z.string().optional(),
+    isPublic: z.boolean().default(false),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema> & {

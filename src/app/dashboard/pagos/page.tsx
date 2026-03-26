@@ -5,7 +5,6 @@ import { PaymentStats } from "@/components/dashboard/pagos/payment-stats";
 import { RevenueChart } from "@/components/dashboard/pagos/revenue-chart";
 import { PaymentRow } from "@/components/dashboard/pagos/payment-row";
 import { ExportCsvButton } from "@/components/dashboard/pagos/export-csv-button";
-import { Download } from "lucide-react";
 import { db } from "@/db";
 import { inArray } from "drizzle-orm";
 import { users, appointments } from "@/db/schema";
@@ -29,24 +28,34 @@ export default async function PagosPage() {
     // In a real optimized system, this would be a JOIN or a relational query.
     const appointmentIds = paymentsData.filter(p => p.referenceType === "appointment").map(p => p.referenceId);
 
-    let appointmentsMap: Record<string, { clientName: string, concept: string }> = {};
+    const appointmentsMap: Record<string, { clientName: string, concept: string }> = {};
     if (appointmentIds.length > 0) {
-        const apts = await db.query.appointments.findMany({
-            where: inArray(appointments.id, appointmentIds),
-            with: {
-                client: true, // Requires relation setup in schema, assuming it exists or we fetch separately
-            }
-        });
+        const apts = await db
+            .select({
+                id: appointments.id,
+                clientId: appointments.clientId,
+                serviceName: appointments.serviceName,
+                notes: appointments.notes,
+            })
+            .from(appointments)
+            .where(inArray(appointments.id, appointmentIds));
 
-        // If relations are not fully set on db.query, we resolve manually:
-        const clientIds = apts.map(a => a.clientId).filter((val, i, arr) => arr.indexOf(val) === i);
-        const clients = clientIds.length > 0 ? await db.query.users.findMany({
-            where: inArray(users.id, clientIds)
-        }) : [];
+        const clientIds = [...new Set(apts.map((a) => a.clientId))];
+        const clients =
+            clientIds.length > 0
+                ? await db
+                    .select({ id: users.id, name: users.name })
+                    .from(users)
+                    .where(inArray(users.id, clientIds))
+                : [];
 
-        apts.forEach(apt => {
-            const c = clients.find(cl => cl.id === apt.clientId);
-            appointmentsMap[apt.id] = { clientName: c?.name || "Desconocido", concept: apt.notes || "Servicio" };
+        const clientsMap = new Map(clients.map((client) => [client.id, client.name]));
+
+        apts.forEach((apt) => {
+            appointmentsMap[apt.id] = {
+                clientName: clientsMap.get(apt.clientId) || "Desconocido",
+                concept: apt.notes || apt.serviceName || "Servicio",
+            };
         });
     }
 

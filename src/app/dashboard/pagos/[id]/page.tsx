@@ -7,12 +7,14 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 import { ArrowLeft, FileText, CheckCircle2, XCircle, Clock, RotateCcw } from "lucide-react";
+import { ReceiptButton } from "./receipt-button";
 
-export default async function PaymentDetailPage({ params }: { params: { id: string } }) {
+export default async function PaymentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const payment = await getPaymentById(params.id, user.tenantId);
+    const payment = await getPaymentById(id, user.tenantId);
 
     if (!payment) {
         return (
@@ -97,9 +99,7 @@ export default async function PaymentDetailPage({ params }: { params: { id: stri
 
                     {isCompleted && (
                         <div className="flex gap-4">
-                            <button className="flex-1 py-4 border border-[#333333] hover:border-white text-white text-[11px] font-bold tracking-[0.2em] uppercase transition-colors">
-                                DESCARGAR RECIBO
-                            </button>
+                            <ReceiptButton />
                             {payment.stripePaymentIntentId && !payment.stripePaymentIntentId.startsWith("MANUAL_") && (
                                 <button className="px-6 py-4 border border-red-900/50 hover:bg-red-950/20 text-red-500 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2">
                                     <RotateCcw className="w-3 h-3" />

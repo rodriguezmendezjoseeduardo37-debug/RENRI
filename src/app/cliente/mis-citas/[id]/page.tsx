@@ -12,14 +12,15 @@ import { getCurrentUser } from "@/lib/auth-helpers";
 export default async function MiCitaDetallePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const [{ tenant }, detail] = await Promise.all([
         getClientWorkspace(),
-        getClientAppointmentDetail(params.id),
+        getClientAppointmentDetail(id),
     ]);
 
     if (!detail) {

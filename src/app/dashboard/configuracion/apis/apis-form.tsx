@@ -7,7 +7,7 @@ import { Loader2, Save, Key, Globe, ShieldCheck } from "lucide-react";
 
 interface ApisFormProps {
     tenantId: string;
-    settings: any;
+    settings: Record<string, unknown>;
 }
 
 export function ApisForm({ tenantId, settings }: ApisFormProps) {
@@ -29,7 +29,7 @@ export function ApisForm({ tenantId, settings }: ApisFormProps) {
             setIsLoading(true);
             await updateTenantSettings(tenantId, "billing", config);
             toast.success("Configuración de API guardada");
-        } catch (error: any) {
+        } catch {
             toast.error("Error al guardar");
         } finally {
             setIsLoading(false);

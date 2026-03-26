@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION get_user_tenant_id()
 RETURNS UUID AS $$
 BEGIN
   RETURN COALESCE(
-    (auth.jwt() ->> 'tenantId')::uuid,
+    (NULLIF(auth.jwt() ->> 'tenantId', ''))::uuid,
     NULL::uuid
   );
 END;

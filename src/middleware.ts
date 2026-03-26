@@ -26,49 +26,24 @@ export default auth((req) => {
     // ─── Redirect logged-in users away from auth pages ───
     if (AUTH_ROUTES.some((r) => pathname.startsWith(r)) && isLoggedIn) {
         return Response.redirect(
-            new URL(isClient ? "/dashboard/mis-citas" : "/dashboard", nextUrl)
+            new URL(isClient ? "/cliente/mis-citas" : "/dashboard", nextUrl)
         );
     }
 
-    // ─── Protect role-based routes ───
+    // ─── Protect authenticated routes ───
     if (pathname.startsWith("/dashboard")) {
         if (!isLoggedIn) {
             const loginUrl = new URL("/login", nextUrl);
             loginUrl.searchParams.set("callbackUrl", pathname);
             return Response.redirect(loginUrl);
         }
+    }
 
-        const businessOnlyPrefixes = [
-            "/dashboard/citas",
-            "/dashboard/horarios",
-            "/dashboard/pagos",
-            "/dashboard/inventario",
-            "/dashboard/pedidos",
-            "/dashboard/turnos",
-            "/dashboard/clientes",
-            "/dashboard/configuracion/clinica",
-            "/dashboard/configuracion/organizacion",
-            "/dashboard/configuracion/apis",
-            "/dashboard/configuracion/planes",
-        ];
-        const clientOnlyPrefixes = [
-            "/dashboard/disponibilidad",
-            "/dashboard/mis-citas",
-            "/dashboard/mis-pagos",
-        ];
-
-        if (
-            isClient &&
-            businessOnlyPrefixes.some((route) => pathname.startsWith(route))
-        ) {
-            return Response.redirect(new URL("/dashboard/mis-citas", nextUrl));
-        }
-
-        if (
-            !isClient &&
-            clientOnlyPrefixes.some((route) => pathname.startsWith(route))
-        ) {
-            return Response.redirect(new URL("/dashboard", nextUrl));
+    if (pathname.startsWith("/cliente")) {
+        if (!isLoggedIn) {
+            const loginUrl = new URL("/login", nextUrl);
+            loginUrl.searchParams.set("callbackUrl", pathname);
+            return Response.redirect(loginUrl);
         }
     }
 

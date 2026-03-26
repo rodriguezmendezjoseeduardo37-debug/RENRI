@@ -40,7 +40,10 @@ export default async function ClinicaConfigPage() {
                 </Link>
             </div>
 
-            <ClinicaForm tenantId={tenant.id} settings={tenant.clinicalSettings} />
+            <ClinicaForm 
+                tenantId={tenant.id} 
+                settings={(tenant.clinicalSettings as Record<string, unknown>) || {}} 
+            />
         </div>
     );
 }

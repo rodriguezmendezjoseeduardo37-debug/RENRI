@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { PlansActions } from "./plans-actions";
 
 const PLANS = [
     {
@@ -15,7 +16,6 @@ const PLANS = [
             "Soporte por correo electrónico",
         ],
         buttonText: "COMENZAR GRATIS",
-        buttonHref: "#",
     },
     {
         name: "PRO",
@@ -30,9 +30,8 @@ const PLANS = [
             "Soporte prioritario 24/7",
         ],
         buttonText: "ACTUALIZAR A PRO",
-        buttonHref: "#",
         recommended: true,
-    }
+    },
 ];
 
 export default async function PlanesPage() {
@@ -41,7 +40,6 @@ export default async function PlanesPage() {
 
     return (
         <div className="max-w-5xl mx-auto space-y-10">
-            {/* Header */}
             <div className="border-b border-[#222222] pb-6">
                 <Link
                     href="/dashboard/configuracion"
@@ -60,9 +58,9 @@ export default async function PlanesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
                 {PLANS.map((plan) => (
-                    <div 
-                        key={plan.name} 
-                        className={`border ${plan.recommended ? 'border-white' : 'border-[#222222]'} bg-[#111111] p-10 flex flex-col relative`}
+                    <div
+                        key={plan.name}
+                        className={`border ${plan.recommended ? "border-white" : "border-[#222222]"} bg-[#111111] p-10 flex flex-col relative`}
                     >
                         {plan.recommended && (
                             <div className="absolute top-0 right-0 bg-white text-black text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
@@ -75,7 +73,7 @@ export default async function PlanesPage() {
                         <p className="text-[10px] font-medium tracking-[0.1em] text-[#888888] uppercase mb-8">
                             {plan.desc}
                         </p>
-                        
+
                         <div className="flex items-end gap-2 mb-10">
                             <span className="text-3xl font-bold font-mono text-white tracking-tighter">
                                 {plan.price}
@@ -83,23 +81,19 @@ export default async function PlanesPage() {
                         </div>
 
                         <ul className="space-y-4 mb-12 flex-grow">
-                            {plan.features.map(f => (
-                                <li key={f} className="flex items-start gap-3">
+                            {plan.features.map((feature) => (
+                                <li key={feature} className="flex items-start gap-3">
                                     <Check className="w-4 h-4 text-white shrink-0 mt-0.5" />
-                                    <span className="text-xs text-[#cccccc] leading-relaxed uppercase tracking-wide">{f}</span>
+                                    <span className="text-xs text-[#cccccc] leading-relaxed uppercase tracking-wide">{feature}</span>
                                 </li>
                             ))}
                         </ul>
 
-                        <button 
-                            className={`w-full text-center font-bold tracking-[0.2em] uppercase px-4 py-4 text-[11px] transition-colors ${
-                                plan.recommended 
-                                    ? 'bg-white text-black hover:bg-[#cccccc]' 
-                                    : 'border border-[#333333] text-white hover:border-white'
-                            }`}
-                        >
-                            {plan.buttonText}
-                        </button>
+                        <PlansActions
+                            planName={plan.name}
+                            buttonText={plan.buttonText}
+                            recommended={!!plan.recommended}
+                        />
                     </div>
                 ))}
             </div>

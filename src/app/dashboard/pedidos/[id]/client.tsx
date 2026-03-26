@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { updateOrderStatus, cancelOrder } from "@/actions/orders";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -18,6 +19,7 @@ export function OrderDetailClient({
     tenantId,
     currentStatus,
 }: OrderDetailClientProps) {
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
     const nextStatus: Partial<Record<OrderStatus, OrderStatus>> = {
@@ -35,7 +37,7 @@ export function OrderDetailClient({
             setIsLoading(true);
             await updateOrderStatus(orderId, next, tenantId);
             toast.success(`Estado actualizado a ${ORDER_STATUS_LABELS[next]}`);
-            window.location.reload();
+            router.refresh();
         } catch {
             toast.error("Error al actualizar el estado");
         } finally {
@@ -49,7 +51,7 @@ export function OrderDetailClient({
             setIsLoading(true);
             await cancelOrder(orderId, tenantId);
             toast.success("Pedido cancelado. Stock restaurado.");
-            window.location.reload();
+            router.refresh();
         } catch {
             toast.error("Error al cancelar el pedido");
         } finally {

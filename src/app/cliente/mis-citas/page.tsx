@@ -77,7 +77,7 @@ export default async function MisCitasPage() {
 
                             <div className="flex flex-wrap gap-3">
                                 <Link
-                                    href={`/dashboard/mis-citas/${appointment.id}`}
+                                    href={`/cliente/mis-citas/${appointment.id}`}
                                     className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
                                 >
                                     VER DETALLE

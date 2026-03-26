@@ -20,9 +20,18 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Chrome, Loader2 } from "lucide-react";
 
+const ACCOUNT_TYPES = [
+    { value: "servicios", label: "Servicios", description: "Inicio en citas y horarios" },
+    { value: "pyme", label: "PYME", description: "Inicio en inventario y ventas" },
+    { value: "cliente", label: "Cliente", description: "Agendar citas y comprar" },
+] as const;
+
+type AccountType = (typeof ACCOUNT_TYPES)[number]["value"];
+
 const loginSchema = z.object({
     email: z.string().email("Correo electrónico inválido"),
     password: z.string().min(6, "Mínimo 6 caracteres"),
+    accountType: z.enum(["servicios", "pyme", "cliente"]).optional(),
 });
 
 type LoginValues = z.infer<typeof loginSchema>;
@@ -30,19 +39,26 @@ type LoginValues = z.infer<typeof loginSchema>;
 function LoginForm() {
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [selectedType, setSelectedType] = useState<AccountType>("cliente");
     const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get("callbackUrl") ?? "/dashboard";
+    
+    const isClientLogin = selectedType === "cliente";
+    const defaultPath = isClientLogin ? "/cliente/mis-citas" : "/dashboard";
+    const callbackUrl = searchParams.get("callbackUrl") ?? defaultPath;
 
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors, isSubmitting },
     } = useForm<LoginValues>({
         resolver: zodResolver(loginSchema),
+        defaultValues: { accountType: "cliente" },
     });
 
     async function onSubmit(data: LoginValues) {
         setError(null);
+        document.cookie = `renri_active_module=${selectedType}; path=/; max-age=2592000; samesite=lax`;
         const result = await signIn("credentials", {
             email: data.email,
             password: data.password,
@@ -59,9 +75,9 @@ function LoginForm() {
 
     function handleGoogleSignIn() {
         setIsGoogleLoading(true);
-        document.cookie =
-            "renri_register_account_type=; path=/; max-age=0; samesite=lax";
-        signIn("google", { callbackUrl });
+        document.cookie = `renri_register_account_type=${selectedType}; path=/; max-age=600; samesite=lax`;
+        document.cookie = `renri_active_module=${selectedType}; path=/; max-age=2592000; samesite=lax`;
+        signIn("google", { callbackUrl }, { prompt: "select_account" });
     }
 
     return (
@@ -79,6 +95,31 @@ function LoginForm() {
             </CardHeader>
 
             <CardContent className="space-y-6">
+                <div className="space-y-2">
+                    <Label className="text-[hsl(0,0%,63.9%)]">Módulo</Label>
+                    <div className="grid grid-cols-3 gap-2">
+                        {ACCOUNT_TYPES.map((type) => (
+                            <button
+                                key={type.value}
+                                type="button"
+                                onClick={() => {
+                                    setSelectedType(type.value);
+                                    setValue("accountType", type.value);
+                                }}
+                                className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
+                                    ? "border-white bg-white/5 text-white"
+                                    : "border-[hsl(0,0%,14.9%)] text-[hsl(0,0%,45.1%)] hover:border-[hsl(0,0%,25%)]"
+                                    }`}
+                            >
+                                <div className="text-xs font-medium">{type.label}</div>
+                                <div className="text-[10px] mt-0.5 opacity-70">
+                                    {type.description}
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <Button
                     variant="outline"
                     className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"

@@ -6,15 +6,17 @@ export default async function HistorialPage({
     params,
     searchParams,
 }: {
-    params: { tenantSlug: string };
-    searchParams: { email?: string };
+    params: Promise<{ tenantSlug: string }>;
+    searchParams: Promise<{ email?: string }>;
 }) {
-    const tenant = await getTenantBySlug(params.tenantSlug);
+    const { tenantSlug } = await params;
+    const { email } = await searchParams;
+    const tenant = await getTenantBySlug(tenantSlug);
     if (!tenant) notFound();
 
     let historyData = null;
-    if (searchParams.email) {
-        historyData = await getClientHistory(searchParams.email, tenant.id);
+    if (email) {
+        historyData = await getClientHistory(email, tenant.id);
     }
 
     return (
@@ -27,8 +29,8 @@ export default async function HistorialPage({
             </p>
 
             <HistorialClient
-                tenantSlug={params.tenantSlug}
-                initialEmail={searchParams.email || ""}
+                tenantSlug={tenantSlug}
+                initialEmail={email || ""}
                 historyData={historyData}
             />
         </div>

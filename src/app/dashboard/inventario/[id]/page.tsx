@@ -17,16 +17,17 @@ import { ProductDetailClient } from "./client";
 export default async function ProductDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const product = await getProductById(params.id, user.tenantId);
+    const product = await getProductById(id, user.tenantId);
     if (!product) notFound();
 
     const movements = (await getStockMovements(
-        params.id,
+        id,
         user.tenantId
     )) as StockMovement[];
 

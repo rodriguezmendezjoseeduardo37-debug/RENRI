@@ -27,6 +27,10 @@ export const users = pgTable(
         tenantId: uuid("tenant_id")
             .notNull()
             .references(() => tenants.id, { onDelete: "cascade" }),
+        linkedBusinessId: uuid("linked_business_id").references(
+            () => tenants.id,
+            { onDelete: "set null" }
+        ),
         email: varchar("email", { length: 320 }).notNull().unique(),
         name: varchar("name", { length: 255 }).notNull(),
         image: varchar("image", { length: 2048 }),
@@ -43,6 +47,9 @@ export const users = pgTable(
     },
     (table) => ({
         tenantIdIdx: index("users_tenant_id_idx").on(table.tenantId),
+        linkedBusinessIdIdx: index("users_linked_business_id_idx").on(
+            table.linkedBusinessId
+        ),
         emailIdx: uniqueIndex("users_email_idx").on(table.email),
         roleIdx: index("users_role_idx").on(table.role),
         createdAtIdx: index("users_created_at_idx").on(table.createdAt),
@@ -59,7 +66,6 @@ export const profiles = pgTable(
             .references(() => users.id, { onDelete: "cascade" })
             .unique(),
         specialty: varchar("specialty", { length: 255 }),
-        cedulaProfesional: varchar("cedula_profesional", { length: 50 }),
         bio: varchar("bio", { length: 2000 }),
         phone: varchar("phone", { length: 20 }),
         avatarUrl: varchar("avatar_url", { length: 2048 }),

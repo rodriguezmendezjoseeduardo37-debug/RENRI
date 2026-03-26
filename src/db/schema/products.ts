@@ -30,6 +30,7 @@ export const products = pgTable(
         lowStockAlert: integer("low_stock_alert").default(5).notNull(),
         category: varchar("category", { length: 255 }),
         imageUrl: varchar("image_url", { length: 2048 }),
+        isPublic: boolean("is_public").default(false).notNull(),
         isActive: boolean("is_active").default(true).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()

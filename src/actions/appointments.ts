@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { appointments, schedules, users } from "@/db/schema";
 import { and, eq, sql, asc } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
+import { CreateAppointmentSchema } from "@/lib/schemas";
 import type {
     AppointmentFilters,
     CreateAppointmentInput,
@@ -11,6 +12,7 @@ import type {
     TimeSlot,
     Appointment,
 } from "@/types/appointments";
+import { timeToMinutes, minutesToTime } from "@/lib/time-utils";
 
 // ─── Helpers ───────────────────────────────────────────────
 function mapRow(row: {
@@ -49,6 +51,7 @@ export async function getAppointments(
     filters: AppointmentFilters = {}
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const { date, staffId, status, search, page = 1, limit = 20 } = filters;
@@ -107,6 +110,7 @@ export async function getAppointments(
 // ─── Get Appointment By ID ─────────────────────────────────
 export async function getAppointmentById(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const conditions = [eq(appointments.id, id), eq(appointments.tenantId, tenantId)];
@@ -134,7 +138,20 @@ export async function getAppointmentById(id: string, tenantId: string) {
 // ─── Create Appointment ────────────────────────────────────
 export async function createAppointment(data: CreateAppointmentInput) {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    // Runtime validation
+    CreateAppointmentSchema.parse({
+        clientId: data.clientId,
+        staffId: data.staffId,
+        serviceName: data.serviceName,
+        date: data.date,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        notes: data.notes,
+        amount: data.amount,
+    });
 
     const [row] = await db
         .insert(appointments)
@@ -162,6 +179,7 @@ export async function updateAppointment(
     data: UpdateAppointmentInput
 ) {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -180,6 +198,7 @@ export async function cancelAppointment(
     reason?: string
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const notes = reason ? `Cancelado: ${reason}` : undefined;
@@ -205,6 +224,7 @@ export async function cancelAppointment(
 // ─── Confirm Appointment ───────────────────────────────────
 export async function confirmAppointment(id: string, tenantId: string) {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -219,6 +239,7 @@ export async function confirmAppointment(id: string, tenantId: string) {
 // ─── Complete Appointment ──────────────────────────────────
 export async function completeAppointment(id: string, tenantId: string) {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [row] = await db
@@ -237,6 +258,7 @@ export async function getAvailableSlots(
     tenantId: string
 ): Promise<TimeSlot[]> {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     // 1. Get day of week (0=Sunday ... 6=Saturday)
@@ -299,15 +321,3 @@ export async function getAvailableSlots(
     return slots;
 }
 
-function timeToMinutes(time: string): number {
-    const [h, m] = time.split(":").map(Number);
-    return h * 60 + m;
-}
-
-function minutesToTime(minutes: number): string {
-    const h = Math.floor(minutes / 60)
-        .toString()
-        .padStart(2, "0");
-    const m = (minutes % 60).toString().padStart(2, "0");
-    return `${h}:${m}`;
-}

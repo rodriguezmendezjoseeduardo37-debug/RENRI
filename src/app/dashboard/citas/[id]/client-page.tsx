@@ -32,14 +32,16 @@ export function AppointmentDetailClient({ initialAppointment, tenantId }: Appoin
         { label: "NOTAS", value: appointment.notes ?? "Sin notas" },
     ];
 
-    const handleAction = async (actionFn: () => Promise<any>, successMsg: string) => {
+    const handleAction = async (actionFn: () => Promise<unknown>, successMsg: string) => {
         try {
             setIsLoading(true);
             const updated = await actionFn();
-            setAppointment((prev) => ({ ...prev, ...updated }));
+            if (updated && typeof updated === "object") {
+                setAppointment((prev) => ({ ...prev, ...(updated as Partial<Appointment>) }));
+            }
             toast.success(successMsg);
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Hubo un error al actualizar la cita.");
         } finally {
             setIsLoading(false);

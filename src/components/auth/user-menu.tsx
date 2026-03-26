@@ -22,6 +22,7 @@ import Link from "next/link";
 export function UserMenu() {
     const { data: session } = useSession();
     const user = session?.user;
+    const isClient = (user as Record<string, unknown>)?.role === "CLIENT";
 
     if (!user) return null;
 
@@ -71,19 +72,23 @@ export function UserMenu() {
                     </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
-                    <Link href="/dashboard/configuracion">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Configuración
-                    </Link>
-                </DropdownMenuItem>
+                {!isClient && (
+                    <>
+                        <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
+                            <Link href="/dashboard/configuracion">
+                                <Settings className="mr-2 h-4 w-4" />
+                                Configuración
+                            </Link>
+                        </DropdownMenuItem>
 
-                <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
-                    <Link href="/dashboard/configuracion/planes">
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Facturación
-                    </Link>
-                </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer hover:bg-[hsl(0,0%,14.9%)]">
+                            <Link href="/dashboard/configuracion/planes">
+                                <CreditCard className="mr-2 h-4 w-4" />
+                                Facturación
+                            </Link>
+                        </DropdownMenuItem>
+                    </>
+                )}
 
                 <DropdownMenuSeparator className="bg-[hsl(0,0%,14.9%)]" />
 

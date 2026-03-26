@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { OrganizacionForm } from "./organizacion-form";
+import { PublicSalesToggle } from "./public-sales-toggle";
 
 export default async function OrganizacionConfigPage() {
     const user = await getCurrentUser();
@@ -53,10 +54,28 @@ export default async function OrganizacionConfigPage() {
             </div>
 
             {/* Form */}
-            <OrganizacionForm tenant={tenant} hostUrl={hostUrl} />
+            <OrganizacionForm 
+                tenant={{
+                    id: tenant.id,
+                    name: tenant.name,
+                    slug: tenant.slug,
+                    logoUrl: tenant.logoUrl,
+                    description: tenant.description,
+                    address: tenant.address,
+                    phone: tenant.phone,
+                    socialMedia: tenant.socialMedia,
+                }} 
+                hostUrl={hostUrl} 
+            />
+
+            {/* Public Sales Toggle */}
+            <PublicSalesToggle
+                tenantId={tenantId}
+                initialEnabled={tenant.publicProductSalesEnabled}
+            />
 
             {/* Public Link */}
-            <div className="mt-10 p-6 border border-[#222222] bg-[#050505] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-6 border border-[#222222] bg-[#050505] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-[11px] font-bold tracking-[0.2em] text-[#888888] uppercase">
                         PORTAL PÚBLICO DE PACIENTES

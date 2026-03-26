@@ -8,9 +8,10 @@ import { Clock, Hash } from "lucide-react";
 export default async function TurnoPage({
     params,
 }: {
-    params: { tenantSlug: string };
+    params: Promise<{ tenantSlug: string }>;
 }) {
-    const tenant = await getTenantBySlug(params.tenantSlug);
+    const { tenantSlug } = await params;
+    const tenant = await getTenantBySlug(tenantSlug);
     if (!tenant) notFound();
 
     // Get today's turns for this tenant (by createdAt date)

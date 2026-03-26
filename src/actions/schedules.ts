@@ -5,6 +5,10 @@ import { schedules, blockedDates, appointments } from "@/db/schema";
 import { and, eq, gte, lte } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
+import {
+    createScheduleSchema,
+    createBlockedDateSchema,
+} from "@/types/schedules";
 import type {
     CreateScheduleInput,
     UpdateScheduleInput,
@@ -16,6 +20,7 @@ import { addMinutes, format, parse, isAfter, isBefore, isEqual, startOfDay, endO
 
 export async function getSchedules(tenantId: string, staffId?: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const conditions = [eq(schedules.tenantId, tenantId)];
@@ -31,11 +36,15 @@ export async function getSchedules(tenantId: string, staffId?: string) {
 
 export async function createSchedule(data: CreateScheduleInput) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    // Runtime validation
+    const validated = createScheduleSchema.parse(data);
 
     const [schedule] = await db
         .insert(schedules)
-        .values(data)
+        .values(validated)
         .returning();
 
     revalidatePath("/dashboard/horarios");
@@ -44,6 +53,7 @@ export async function createSchedule(data: CreateScheduleInput) {
 
 export async function updateSchedule(id: string, tenantId: string, data: UpdateScheduleInput) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [schedule] = await db
@@ -58,6 +68,7 @@ export async function updateSchedule(id: string, tenantId: string, data: UpdateS
 
 export async function deleteSchedule(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     await db
@@ -69,6 +80,7 @@ export async function deleteSchedule(id: string, tenantId: string) {
 
 export async function toggleScheduleActive(id: string, tenantId: string, isActive: boolean) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [schedule] = await db
@@ -84,6 +96,7 @@ export async function toggleScheduleActive(id: string, tenantId: string, isActiv
 // ─── Blocked Dates Actions ──────────────────────────────────
 export async function getBlockedDates(tenantId: string, staffId?: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const conditions = [eq(blockedDates.tenantId, tenantId)];
@@ -99,12 +112,14 @@ export async function getBlockedDates(tenantId: string, staffId?: string) {
 
 export async function addBlockedDate(data: CreateBlockedDateInput) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const dateStr = data.date instanceof Date ? data.date.toISOString() : data.date;
+    // Runtime validation
+    const validated = createBlockedDateSchema.parse(data);
     const [blocked] = await db
         .insert(blockedDates)
-        .values({ ...data, date: dateStr })
+        .values({ ...validated, date: (validated.date instanceof Date ? validated.date.toISOString() : String(validated.date)), reason: validated.reason ?? null })
         .returning();
 
     revalidatePath("/dashboard/horarios");
@@ -113,6 +128,7 @@ export async function addBlockedDate(data: CreateBlockedDateInput) {
 
 export async function deleteBlockedDate(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     await db
@@ -125,6 +141,7 @@ export async function deleteBlockedDate(id: string, tenantId: string) {
 // ─── Availability Computation ───────────────────────────────
 export async function getStaffAvailability(staffId: string, tenantId: string, from: Date, to: Date): Promise<DayAvailability[]> {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     // 1. Fetch staff's schedules

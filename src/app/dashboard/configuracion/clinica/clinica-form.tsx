@@ -7,7 +7,7 @@ import { Loader2, Save, FileText, ClipboardList } from "lucide-react";
 
 interface ClinicaFormProps {
     tenantId: string;
-    settings: any;
+    settings: Record<string, unknown>;
 }
 
 export function ClinicaForm({ tenantId, settings }: ClinicaFormProps) {
@@ -29,7 +29,7 @@ export function ClinicaForm({ tenantId, settings }: ClinicaFormProps) {
             setIsLoading(true);
             await updateTenantSettings(tenantId, "clinical", config);
             toast.success("Preferencias clínicas guardadas");
-        } catch (error: any) {
+        } catch {
             toast.error("Error al guardar");
         } finally {
             setIsLoading(false);

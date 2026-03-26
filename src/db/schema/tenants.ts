@@ -2,6 +2,7 @@ import {
     pgTable,
     uuid,
     varchar,
+    text,
     boolean,
     timestamp,
     index,
@@ -36,7 +37,12 @@ export const tenants = pgTable(
         stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
         stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
         logoUrl: varchar("logo_url", { length: 2048 }),
+        description: text("description"),
+        address: varchar("address", { length: 500 }),
+        phone: varchar("phone", { length: 50 }),
+        socialMedia: jsonb("social_media").default({}),
         isActive: boolean("is_active").default(true).notNull(),
+        publicProductSalesEnabled: boolean("public_product_sales_enabled").default(false).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()
             .notNull(),

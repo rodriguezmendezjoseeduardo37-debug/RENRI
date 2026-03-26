@@ -6,9 +6,10 @@ import { Calendar, User, Briefcase } from "lucide-react";
 export default async function PortalPage({
     params,
 }: {
-    params: { tenantSlug: string };
+    params: Promise<{ tenantSlug: string }>;
 }) {
-    const tenant = await getTenantBySlug(params.tenantSlug);
+    const { tenantSlug } = await params;
+    const tenant = await getTenantBySlug(tenantSlug);
     if (!tenant) notFound();
 
     const [staff, services] = await Promise.all([
@@ -27,7 +28,7 @@ export default async function PortalPage({
                     AGENDA TU CITA EN LÍNEA
                 </p>
                 <Link
-                    href={`/portal/${params.tenantSlug}/agendar`}
+                    href={`/portal/${tenantSlug}/agendar`}
                     className="inline-flex items-center gap-2 mt-10 px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
                 >
                     <Calendar className="w-4 h-4" />
@@ -106,7 +107,7 @@ export default async function PortalPage({
                 {/* CTA */}
                 <div className="text-center border-t border-[#222222] pt-12">
                     <Link
-                        href={`/portal/${params.tenantSlug}/agendar`}
+                        href={`/portal/${tenantSlug}/agendar`}
                         className="inline-flex items-center gap-2 px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
                     >
                         <Calendar className="w-4 h-4" />
@@ -117,14 +118,14 @@ export default async function PortalPage({
                 {/* Footer links */}
                 <div className="flex items-center justify-center gap-6 text-[9px] tracking-[0.3em] text-[#666666] uppercase">
                     <Link
-                        href={`/portal/${params.tenantSlug}/turno`}
+                        href={`/portal/${tenantSlug}/turno`}
                         className="hover:text-white transition-colors"
                     >
                         VER TURNO
                     </Link>
                     <span className="text-[#333333]">|</span>
                     <Link
-                        href={`/portal/${params.tenantSlug}/historial`}
+                        href={`/portal/${tenantSlug}/historial`}
                         className="hover:text-white transition-colors"
                     >
                         MI HISTORIAL

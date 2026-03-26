@@ -4,7 +4,7 @@ import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 interface ExportCsvButtonProps {
-    data: any[];
+    data: Record<string, unknown>[];
     filename?: string;
 }
 
@@ -45,7 +45,7 @@ export function ExportCsvButton({ data, filename = "pagos_export.csv" }: ExportC
             URL.revokeObjectURL(url);
             
             toast.success("Archivo CSV descargado");
-        } catch (error) {
+        } catch {
             toast.error("Error al exportar a CSV");
         }
     };

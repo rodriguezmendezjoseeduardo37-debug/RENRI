@@ -13,12 +13,13 @@ import { OrderDetailClient } from "./client";
 export default async function OrderDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const order = await getOrderById(params.id, user.tenantId);
+    const order = await getOrderById(id, user.tenantId);
     if (!order) notFound();
 
     // Status stepper

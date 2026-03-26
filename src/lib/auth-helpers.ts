@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
 
 /**
  * Get the current authenticated user from the session (server-side).
@@ -14,7 +13,7 @@ export async function getCurrentUser() {
 
 /**
  * Require authentication with specific role(s).
- * Redirects to /login if not authenticated, or /unauthorized if wrong role.
+ * Returns null when unauthenticated or unauthorized.
  */
 export async function requireAuth(
     allowedRoles?: (
@@ -25,14 +24,13 @@ export async function requireAuth(
         | "CLIENT"
     )[]
 ) {
-    const user = await getCurrentUser();
+    const session = await auth();
+    const user = session?.user ?? null;
 
-    if (!user) {
-        redirect("/login");
-    }
+    if (!user) return null;
 
     if (allowedRoles && !allowedRoles.includes(user.role)) {
-        redirect("/unauthorized");
+        return null;
     }
 
     return user;

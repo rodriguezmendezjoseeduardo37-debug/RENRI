@@ -8,12 +8,13 @@ import { getCurrentUser } from "@/lib/auth-helpers";
 export default async function MiPagoDetallePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const payment = await getClientPaymentDetail(params.id);
+    const payment = await getClientPaymentDetail(id);
 
     if (!payment) {
         notFound();

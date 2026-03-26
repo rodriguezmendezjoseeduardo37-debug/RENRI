@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { AppointmentFilters } from "@/components/dashboard/citas/appointment-filters";
 import { AppointmentCard } from "@/components/dashboard/citas/appointment-card";
 import { AppointmentCalendar } from "@/components/dashboard/citas/appointment-calendar";
 import { AppointmentForm } from "@/components/dashboard/citas/appointment-form";
-import { createAppointment, updateAppointment, cancelAppointment, confirmAppointment } from "@/actions/appointments";
+import { createAppointment, cancelAppointment, confirmAppointment, getAvailableSlots } from "@/actions/appointments";
 
 import type {
     AppointmentFilters as Filters,
     Appointment,
+    CreateAppointmentInput,
+    TimeSlot,
 } from "@/types/appointments";
 import { List, Calendar as CalendarIcon, Plus, Loader2 } from "lucide-react";
 
@@ -35,6 +37,8 @@ export function CitasClient({
     const [filters, setFilters] = useState<Filters>({});
     const [formOpen, setFormOpen] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
+    const [loadingSlots, setLoadingSlots] = useState(false);
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -71,7 +75,31 @@ export function CitasClient({
     const weekStart = new Date();
     weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
 
-    const handleCreateAppointment = async (data: any) => {
+    const fetchSlots = useCallback(async (staffId: string, date: string) => {
+        if (!staffId || !date) {
+            setAvailableSlots([]);
+            return;
+        }
+
+        setLoadingSlots(true);
+        try {
+            const slots = await getAvailableSlots(staffId, date, tenantId);
+            setAvailableSlots(slots);
+        } catch {
+            setAvailableSlots([]);
+            toast.error("Error al cargar horarios disponibles");
+        } finally {
+            setLoadingSlots(false);
+        }
+    }, [tenantId]);
+
+    const handleCloseForm = () => {
+        setFormOpen(false);
+        setAvailableSlots([]);
+        setLoadingSlots(false);
+    };
+
+    const handleCreateAppointment = async (data: Omit<CreateAppointmentInput, "tenantId">) => {
         try {
             await createAppointment({
                 tenantId,
@@ -87,7 +115,7 @@ export function CitasClient({
             toast.success("Cita agendada exitosamente");
             setFormOpen(false);
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Error al agendar la cita");
         }
     };
@@ -98,7 +126,7 @@ export function CitasClient({
             await confirmAppointment(id, tenantId);
             toast.success("Cita confirmada");
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Error al confirmar cita");
         } finally {
             setIsPending(false);
@@ -112,7 +140,7 @@ export function CitasClient({
             await cancelAppointment(id, tenantId);
             toast.success("Cita cancelada");
             router.refresh();
-        } catch (error) {
+        } catch {
             toast.error("Error al cancelar cita");
         } finally {
             setIsPending(false);
@@ -215,8 +243,7 @@ export function CitasClient({
                 <AppointmentCalendar
                     appointments={filtered}
                     weekStart={weekStart}
-                    onSlotClick={(date, time) => {
-                        // We could pass date default to modal here if supported
+                    onSlotClick={() => {
                         setFormOpen(true);
                     }}
                 />
@@ -225,11 +252,13 @@ export function CitasClient({
             {/* New appointment modal */}
             <AppointmentForm
                 open={formOpen}
-                onClose={() => setFormOpen(false)}
+                onClose={handleCloseForm}
                 onSubmit={handleCreateAppointment}
                 clients={clients}
                 staff={staff}
-                slots={[]} // We could add dynamic fetch for slots in form if needed, or leave to generic time input
+                slots={availableSlots}
+                onStaffDateChange={fetchSlots}
+                loadingSlots={loadingSlots}
             />
         </div>
     );

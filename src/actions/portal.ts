@@ -11,6 +11,8 @@ import {
     tenants,
     users,
 } from "@/db/schema";
+import { requireAuth } from "@/lib/auth-helpers";
+import { timeToMinutes, minutesToTime } from "@/lib/time-utils";
 
 export async function getTenantBySlug(slug: string) {
     const tenant = await db.query.tenants.findFirst({
@@ -49,24 +51,20 @@ export async function getPortalStaff(tenantId: string) {
 }
 
 export async function getPortalServices(tenantId: string) {
-    const rows = await db
-        .selectDistinct({
-            serviceName: appointments.serviceName,
-            amount: appointments.amount,
-        })
-        .from(appointments)
-        .where(eq(appointments.tenantId, tenantId));
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, tenantId),
+        columns: { clinicalSettings: true },
+    });
 
-    const servicesMap = new Map<string, string | null>();
-    for (const row of rows) {
-        if (!servicesMap.has(row.serviceName)) {
-            servicesMap.set(row.serviceName, row.amount);
-        }
-    }
+    if (!tenant) return [];
 
-    return Array.from(servicesMap.entries()).map(([name, amount]) => ({
-        name,
-        price: amount,
+    const settings = tenant.clinicalSettings as Record<string, unknown>;
+    const services = Array.isArray(settings.services) ? settings.services : [];
+
+    return services.map(s => ({
+        name: s.name,
+        price: s.price || null,
+        duration: s.duration,
     }));
 }
 
@@ -181,16 +179,21 @@ export async function bookAppointment(data: {
                 .limit(1);
 
             if (standaloneClient?.user) {
-                const [updatedClient] = await tx
+                // Link the client to this business without moving their tenant
+                await tx
                     .update(users)
                     .set({
-                        tenantId: data.tenantId,
+                        linkedBusinessId: data.tenantId,
                         name: data.clientName,
                         updatedAt: new Date(),
                     })
-                    .where(eq(users.id, standaloneClient.user.id))
-                    .returning();
-                client = updatedClient;
+                    .where(eq(users.id, standaloneClient.user.id));
+
+                client = {
+                    ...standaloneClient.user,
+                    linkedBusinessId: data.tenantId,
+                    name: data.clientName,
+                };
             } else {
                 const [newClient] = await tx
                     .insert(users)
@@ -258,6 +261,10 @@ export async function bookAppointment(data: {
 }
 
 export async function getClientHistory(clientEmail: string, tenantId: string) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const client = await db.query.users.findFirst({
         where: and(eq(users.email, clientEmail), eq(users.tenantId, tenantId)),
     });
@@ -288,6 +295,9 @@ export async function getClientHistory(clientEmail: string, tenantId: string) {
 }
 
 export async function getUpcomingAppointments(hoursAhead: number = 24) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+
     const now = new Date();
     const target = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
     const targetDate = target.toISOString().split("T")[0];
@@ -310,13 +320,3 @@ export async function getUpcomingAppointments(hoursAhead: number = 24) {
     return rows;
 }
 
-function timeToMinutes(time: string): number {
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-}
-
-function minutesToTime(minutes: number): string {
-    const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
-    const mins = (minutes % 60).toString().padStart(2, "0");
-    return `${hours}:${mins}`;
-}

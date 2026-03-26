@@ -4,7 +4,6 @@ import { getOrders, getOrderStats } from "@/actions/orders";
 import { OrderKanban } from "@/components/dashboard/pedidos/order-kanban";
 import { OrderCard } from "@/components/dashboard/pedidos/order-card";
 import { OrderFilters } from "@/components/dashboard/pedidos/order-filters";
-import { ORDER_STATUS_LABELS } from "@/types/orders";
 import type { Order } from "@/types/orders";
 import Link from "next/link";
 import {
@@ -18,18 +17,19 @@ import {
 export default async function PedidosPage({
     searchParams,
 }: {
-    searchParams: { view?: string; status?: string; search?: string };
+    searchParams: Promise<{ view?: string; status?: string; search?: string }>;
 }) {
+    const { view, status, search } = await searchParams;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const tenantId = user.tenantId;
-    const viewMode = searchParams.view || "kanban";
+    const viewMode = view || "kanban";
 
     const [ordersData, stats] = await Promise.all([
         getOrders(tenantId, {
-            status: searchParams.status,
-            search: searchParams.search,
+            status,
+            search,
         }),
         getOrderStats(tenantId),
     ]);

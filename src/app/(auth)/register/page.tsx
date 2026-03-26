@@ -46,11 +46,11 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [selectedType, setSelectedType] = useState<AccountType>("servicios");
+    const [selectedType, setSelectedType] = useState<AccountType>("cliente");
     const router = useRouter();
     const isClientRegistration = selectedType === "cliente";
     const postRegisterPath = isClientRegistration
-        ? "/dashboard/mis-citas"
+        ? "/cliente/mis-citas"
         : "/dashboard";
 
     const {
@@ -60,7 +60,7 @@ export default function RegisterPage() {
         formState: { errors, isSubmitting },
     } = useForm<RegisterValues>({
         resolver: zodResolver(registerSchema),
-        defaultValues: { accountType: "servicios" },
+        defaultValues: { accountType: "cliente" },
     });
 
     async function onSubmit(data: RegisterValues) {
@@ -79,6 +79,7 @@ export default function RegisterPage() {
             }
 
             // Auto sign-in after registration
+            document.cookie = `renri_active_module=${data.accountType}; path=/; max-age=2592000; samesite=lax`;
             const result = await signIn("credentials", {
                 email: data.email,
                 password: data.password,
@@ -100,6 +101,7 @@ export default function RegisterPage() {
         setError(null);
         setIsGoogleLoading(true);
         document.cookie = `renri_register_account_type=${selectedType}; path=/; max-age=600; samesite=lax`;
+        document.cookie = `renri_active_module=${selectedType}; path=/; max-age=2592000; samesite=lax`;
         signIn(
             "google",
             { callbackUrl: postRegisterPath },

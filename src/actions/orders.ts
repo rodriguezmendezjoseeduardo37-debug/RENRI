@@ -5,13 +5,17 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { orderItems, orders, products } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
+import { escapeLikePattern } from "@/lib/time-utils";
 import type { CreateOrderInput, OrderStatus } from "@/types/orders";
+import { z } from "zod";
+import { TAX_RATE } from "@/lib/constants";
 
 export async function getOrders(
     tenantId: string,
     filters?: { status?: string; search?: string; dateFrom?: string; dateTo?: string }
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -22,7 +26,7 @@ export async function getOrders(
         conditions.push(eq(orders.status, filters.status as OrderStatus));
     }
     if (filters?.search) {
-        conditions.push(ilike(orders.clientName, `%${filters.search}%`));
+        conditions.push(ilike(orders.clientName, `%${escapeLikePattern(filters.search)}%`));
     }
     if (filters?.dateFrom) {
         conditions.push(gte(orders.createdAt, new Date(filters.dateFrom)));
@@ -46,6 +50,7 @@ export async function getOrders(
 
 export async function getOrderById(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -79,12 +84,20 @@ export async function getOrderById(id: string, tenantId: string) {
 
 export async function createOrder(data: CreateOrderInput) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
 
     const order = await db.transaction(async (tx) => {
-        const productIds = data.items.map((item) => item.productId);
+        // Validate items
+        const itemsSchema = z.array(z.object({
+            productId: z.string().uuid(),
+            quantity: z.number().int().positive("Cantidad debe ser positiva"),
+        })).min(1, "Mínimo 1 producto");
+        const validatedItems = itemsSchema.parse(data.items);
+
+        const productIds = validatedItems.map((item) => item.productId);
         const productRows = await tx
             .select()
             .from(products)
@@ -129,7 +142,7 @@ export async function createOrder(data: CreateOrderInput) {
             });
         }
 
-        const tax = subtotal * 0.16;
+        const tax = subtotal * TAX_RATE;
         const total = subtotal + tax;
 
         const [newOrder] = await tx
@@ -189,6 +202,7 @@ export async function updateOrderStatus(
     tenantId: string
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -206,6 +220,7 @@ export async function updateOrderStatus(
 
 export async function cancelOrder(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -258,6 +273,7 @@ export async function cancelOrder(id: string, tenantId: string) {
 
 export async function getOrderStats(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }

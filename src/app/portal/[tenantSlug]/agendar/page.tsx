@@ -5,9 +5,10 @@ import { BookingStepper } from "./booking-client";
 export default async function AgendarPage({
     params,
 }: {
-    params: { tenantSlug: string };
+    params: Promise<{ tenantSlug: string }>;
 }) {
-    const tenant = await getTenantBySlug(params.tenantSlug);
+    const { tenantSlug } = await params;
+    const tenant = await getTenantBySlug(tenantSlug);
     if (!tenant) notFound();
 
     const [staff, services] = await Promise.all([
@@ -26,7 +27,7 @@ export default async function AgendarPage({
 
             <BookingStepper
                 tenantId={tenant.id}
-                tenantSlug={params.tenantSlug}
+                tenantSlug={tenantSlug}
                 tenantName={tenant.name}
                 staff={staff}
                 services={services}

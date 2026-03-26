@@ -1,7 +1,7 @@
 "use client";
 
 import { useTurnsRealtime } from "@/hooks/use-turns-realtime";
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import { createTurn } from "@/actions/turns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +14,8 @@ const turnSchema = z.object({
 });
 type FormValues = z.infer<typeof turnSchema>;
 
-export default function PublicTurnoPage({ params }: { params: { tenantSlug: string } }) {
+export default function PublicTurnoPage({ params }: { params: Promise<{ tenantSlug: string }> }) {
+    const { tenantSlug } = use(params);
     const [tenantId, setTenantId] = useState<string | null>(null);
     const [tenantName, setTenantName] = useState<string | null>(null);
     const [myTurnNumber, setMyTurnNumber] = useState<number | null>(null);
@@ -22,7 +23,7 @@ export default function PublicTurnoPage({ params }: { params: { tenantSlug: stri
     // Load tenant
     useEffect(() => {
         async function init() {
-            const res = await fetch(`/api/tenants/${params.tenantSlug}`);
+            const res = await fetch(`/api/tenants/${tenantSlug}`);
             if (res.ok) {
                 const data = await res.json();
                 setTenantId(data.id);
@@ -30,7 +31,7 @@ export default function PublicTurnoPage({ params }: { params: { tenantSlug: stri
             }
         }
         init();
-    }, [params.tenantSlug]);
+    }, [tenantSlug]);
 
     // Hook relies on tenantId to subscribe
     const { currentTurn, waitingCount, isConnected } = useTurnsRealtime(tenantId || "");

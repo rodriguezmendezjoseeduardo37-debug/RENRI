@@ -11,8 +11,9 @@ import { StaffSelector } from "@/components/dashboard/horarios/staff-selector";
 export default async function SchedulesPage({
     searchParams,
 }: {
-    searchParams: { staffId?: string };
+    searchParams: Promise<{ staffId?: string }>;
 }) {
+    const { staffId } = await searchParams;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
@@ -22,8 +23,8 @@ export default async function SchedulesPage({
     // Allow high-level roles to view other staff schedules
     const canViewOthers = ["SUPER_ADMIN", "OWNER", "ADMIN"].includes(user.role);
 
-    if (canViewOthers && searchParams.staffId) {
-        targetStaffId = searchParams.staffId;
+    if (canViewOthers && staffId) {
+        targetStaffId = staffId;
     }
 
     const schedules = await getSchedules(businessId, targetStaffId);

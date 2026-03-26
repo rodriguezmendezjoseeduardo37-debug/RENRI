@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { DemoRequestForm } from "./request-form";
 
 export default function DemoPage() {
     return (
@@ -10,17 +11,8 @@ export default function DemoPage() {
             <p className="text-[#888888] max-w-lg mb-10 text-sm leading-relaxed">
                 Nuestros especialistas están listos para mostrarte cómo la plataforma RENRI puede ayudar a automatizar y escalar tu negocio. Contáctanos y recibe acceso anticipado a la plataforma.
             </p>
-            
-            <form className="w-full max-w-sm flex flex-col gap-4 mb-10">
-                <input 
-                    type="email" 
-                    placeholder="CORREO ELECTRÓNICO" 
-                    className="bg-black border border-[#222222] text-white px-4 py-3 text-sm focus:outline-none focus:border-white transition-colors"
-                />
-                <button type="button" className="bg-white text-black font-bold tracking-[0.2em] uppercase px-4 py-3 text-[11px] hover:bg-[#cccccc] transition-colors">
-                    SOLICITAR ACCESO
-                </button>
-            </form>
+
+            <DemoRequestForm />
 
             <Link href="/" className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white uppercase transition-colors">
                 <ArrowLeft className="w-3.5 h-3.5" />

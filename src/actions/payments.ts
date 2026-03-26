@@ -121,6 +121,7 @@ async function completePayment(
 
 export async function getPayments(tenantId: string, filters?: PaymentFilters) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -170,6 +171,7 @@ export async function getPayments(tenantId: string, filters?: PaymentFilters) {
 
 export async function getPaymentById(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -185,6 +187,7 @@ export async function getPaymentById(id: string, tenantId: string) {
 
 export async function createPaymentForAppointment(appointmentId: string, amount: number, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -207,6 +210,7 @@ export async function createPaymentForAppointment(appointmentId: string, amount:
 
 export async function createPaymentForOrder(orderId: string, amount: number, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }
@@ -233,6 +237,7 @@ export async function processPayment(paymentId: string) {
 
         const validated = ProcessPaymentSchema.parse({ paymentId });
         const user = await requireAuth();
+        if (!user) throw new Error("Unauthorized");
         const payment =
             user.role === "CLIENT"
                 ? await assertClientCanAccessPayment(user.id, validated.paymentId)
@@ -281,6 +286,7 @@ export async function markPaymentAsPaid(paymentId: string, stripePaymentIntentId
         logger.logAction("markPaymentAsPaid", "start", { paymentId, stripePaymentIntentId });
 
         const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+        if (!user) throw new Error("Unauthorized");
         const payment = await completePayment(
             paymentId,
             stripePaymentIntentId,
@@ -315,6 +321,7 @@ export async function refundPaymentAction(paymentId: string, tenantId: string) {
 
         const validated = RefundPaymentSchema.parse({ paymentId });
         const user = await requireAuth();
+        if (!user) throw new Error("Unauthorized");
 
         if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
             throw new ActionError("Unauthorized", "UNAUTHORIZED");
@@ -353,6 +360,7 @@ export async function refundPaymentAction(paymentId: string, tenantId: string) {
 
 export async function getRevenueStats(tenantId: string, period: "day" | "week" | "month" | "year") {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
         throw new Error("Unauthorized");
     }

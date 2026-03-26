@@ -104,46 +104,13 @@ export const UpdateUserSchema = z.object({
 
 export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
-// PRODUCTOS
-
-export const CreateProductSchema = z.object({
-    name: z.string().min(1, "Nombre requerido").max(255),
-    description: z.string().max(1000).optional(),
-    price: z.string().regex(/^\d+(\.\d{2})?$/, "Precio invalido"),
-    stock: z.number().int().nonnegative("Stock no puede ser negativo"),
-    sku: z.string().min(1).max(100).optional(),
-});
-
-export type CreateProductInput = z.infer<typeof CreateProductSchema>;
-
-export const UpdateProductSchema = z.object({
-    productId: z.string().uuid("ID de producto invalido"),
-    name: z.string().min(1).max(255).optional(),
-    description: z.string().max(1000).optional(),
-    price: z.string().regex(/^\d+(\.\d{2})?$/).optional(),
-    stock: z.number().int().nonnegative().optional(),
-});
-
-export type UpdateProductInput = z.infer<typeof UpdateProductSchema>;
-
-// HORARIOS
-
-export const CreateScheduleSchema = z.object({
-    staffId: z.string().uuid("Profesional invalido"),
-    dayOfWeek: z.number().int().min(0).max(6),
-    startTime: z.string().time("Hora de inicio invalida"),
-    endTime: z.string().time("Hora de fin invalida"),
-});
-
-export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
-
 // TENANT
 
 export const UpdateTenantSchema = z.object({
     name: z.string().min(1).max(255).optional(),
     logoUrl: z.string().url().optional(),
-    clinicalSettings: z.record(z.string(), z.any()).optional(),
-    billingSettings: z.record(z.string(), z.any()).optional(),
+    clinicalSettings: z.record(z.string(), z.unknown()).optional(),
+    billingSettings: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type UpdateTenantInput = z.infer<typeof UpdateTenantSchema>;

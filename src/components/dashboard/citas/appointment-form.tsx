@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,6 +35,8 @@ interface AppointmentFormProps {
     clients?: { id: string; name: string }[];
     staff?: { id: string; name: string }[];
     isEdit?: boolean;
+    onStaffDateChange?: (staffId: string, date: string) => void;
+    loadingSlots?: boolean;
 }
 
 export function AppointmentForm({
@@ -45,16 +48,29 @@ export function AppointmentForm({
     clients = [],
     staff = [],
     isEdit = false,
+    onStaffDateChange,
+    loadingSlots = false,
 }: AppointmentFormProps) {
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
         reset,
+        watch,
+        setValue,
     } = useForm<FormValues>({
         resolver: zodResolver(appointmentSchema),
         defaultValues,
     });
+
+    const selectedStaffId = watch("staffId");
+    const selectedDate = watch("date");
+
+    useEffect(() => {
+        if (onStaffDateChange) {
+            onStaffDateChange(selectedStaffId || "", selectedDate || "");
+        }
+    }, [onStaffDateChange, selectedDate, selectedStaffId]);
 
     async function handleFormSubmit(data: FormValues) {
         await onSubmit(data);
@@ -144,8 +160,24 @@ export function AppointmentForm({
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className={labelClass}>INICIO</label>
-                            {slots.length > 0 ? (
-                                <select {...register("startTime")} className={selectClass}>
+                            {loadingSlots ? (
+                                <div className="flex h-[42px] items-center justify-center border border-[#222222] bg-black">
+                                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                                </div>
+                            ) : slots.length > 0 ? (
+                                <select
+                                    {...register("startTime", {
+                                        onChange: (event) => {
+                                            const selectedSlot = slots.find(
+                                                (slot) => slot.startTime === event.target.value
+                                            );
+                                            if (selectedSlot) {
+                                                setValue("endTime", selectedSlot.endTime);
+                                            }
+                                        },
+                                    })}
+                                    className={selectClass}
+                                >
                                     <option value="">Horario...</option>
                                     {slots
                                         .filter((s) => s.available)

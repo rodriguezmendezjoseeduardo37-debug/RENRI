@@ -21,7 +21,7 @@ export default function TerminosPage() {
 
                 <section className="space-y-4 text-sm text-[#888888] leading-relaxed">
                     <h2 className="text-white text-lg font-bold tracking-widest uppercase">2. Licencia de uso</h2>
-                    <p>Se concede autorización de acceso al software "As A Service" según las normativas de tu plan facturado, sin fines de desensamblaje, transferencia comercial del código o uso en la nube para cometer acciones fraudulentas o ilegales.</p>
+                    <p>Se concede autorización de acceso al software &quot;As A Service&quot; según las normativas de tu plan facturado, sin fines de desensamblaje, transferencia comercial del código o uso en la nube para cometer acciones fraudulentas o ilegales.</p>
                 </section>
 
                 <p className="text-xs font-mono text-[#444444] pt-12 border-t border-[#222222]">Última actualización: 17 de Marzo de 2026</p>

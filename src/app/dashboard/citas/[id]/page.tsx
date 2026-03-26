@@ -6,12 +6,13 @@ import { AppointmentDetailClient } from "./client-page";
 export default async function AppointmentDetailPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = await params;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const appointment = await getAppointmentById(params.id, user.tenantId);
+    const appointment = await getAppointmentById(id, user.tenantId);
 
     if (!appointment) {
         notFound();

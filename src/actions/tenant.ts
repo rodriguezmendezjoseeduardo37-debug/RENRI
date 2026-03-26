@@ -5,12 +5,44 @@ import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const clinicalSettingsSchema = z.object({
+    defaultDuration: z.number().int().min(5).max(480).optional(),
+    reminderHours: z.number().int().min(0).max(72).optional(),
+    allowOnlineBooking: z.boolean().optional(),
+    requireDeposit: z.boolean().optional(),
+    services: z.array(
+        z.object({
+            id: z.string().uuid(),
+            name: z.string().min(1).max(255),
+            price: z.string().optional(),
+            duration: z.number().int().min(5).max(480).optional(), // in minutes
+        })
+    ).optional(),
+}).passthrough();
+
+const billingSettingsSchema = z.object({
+    stripeSecretKey: z.string().max(500).optional(),
+    stripeWebhookSecret: z.string().max(500).optional(),
+    taxRate: z.number().min(0).max(1).optional(),
+    currency: z.string().length(3).optional(),
+}).passthrough();
 
 export async function updateTenantConfig(
     tenantId: string,
-    data: { name: string; slug: string; logoUrl?: string }
+    data: { 
+        name: string; 
+        slug: string; 
+        logoUrl?: string;
+        description?: string;
+        address?: string;
+        phone?: string;
+        socialMedia?: Record<string, string>;
+    }
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     // Basic validation
@@ -38,6 +70,10 @@ export async function updateTenantConfig(
             name: data.name,
             slug: formattedSlug,
             logoUrl: data.logoUrl,
+            description: data.description,
+            address: data.address,
+            phone: data.phone,
+            socialMedia: data.socialMedia || {},
             updatedAt: new Date(),
         })
         .where(eq(tenants.id, tenantId))
@@ -51,20 +87,45 @@ export async function updateTenantConfig(
 export async function updateTenantSettings(
     tenantId: string,
     type: "clinical" | "billing",
-    data: any
+    data: Record<string, unknown>
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const column = type === "clinical" ? "clinicalSettings" : "billingSettings";
 
+    // Validate settings structure
+    const schema = type === "clinical" ? clinicalSettingsSchema : billingSettingsSchema;
+    const validated = schema.parse(data);
+
     await db.update(tenants)
         .set({
-            [column]: data,
+            [column]: validated,
             updatedAt: new Date(),
         })
         .where(eq(tenants.id, tenantId));
 
     revalidatePath(`/dashboard/configuracion/${type === "clinical" ? "clinica" : "apis"}`);
+    return { success: true };
+}
+
+export async function updatePublicSalesEnabled(
+    tenantId: string,
+    enabled: boolean
+) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    await db
+        .update(tenants)
+        .set({
+            publicProductSalesEnabled: enabled,
+            updatedAt: new Date(),
+        })
+        .where(eq(tenants.id, tenantId));
+
+    revalidatePath("/dashboard/configuracion");
     return { success: true };
 }

@@ -32,6 +32,7 @@ function mapTurn(row: typeof turns.$inferSelect): Turn {
 
 export async function getTurns(tenantId: string, dateStr?: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const { start, end } = getTodayRange(dateStr);
@@ -54,6 +55,10 @@ export async function getTurns(tenantId: string, dateStr?: string) {
 // ─── Create a new turn ─────────────────────────────────────
 
 export async function createTurn(data: CreateTurnInput) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange();
 
     // Find the highest number today
@@ -87,6 +92,10 @@ export async function createTurn(data: CreateTurnInput) {
 // ─── Get Current Turn ──────────────────────────────────────
 
 export async function getCurrentTurn(tenantId: string) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange();
 
     const [active] = await db
@@ -108,6 +117,10 @@ export async function getCurrentTurn(tenantId: string) {
 // ─── Get Queue Position ────────────────────────────────────
 
 export async function getQueuePosition(tenantId: string) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
     const { start, end } = getTodayRange();
 
     const [countRes] = await db
@@ -129,6 +142,7 @@ export async function getQueuePosition(tenantId: string) {
 
 export async function callNextTurn(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const { start, end } = getTodayRange();
@@ -177,6 +191,7 @@ export async function callNextTurn(tenantId: string) {
 
 export async function completeTurn(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [updated] = await db
@@ -192,6 +207,7 @@ export async function completeTurn(id: string, tenantId: string) {
 
 export async function skipTurn(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [updated] = await db
@@ -207,6 +223,7 @@ export async function skipTurn(id: string, tenantId: string) {
 
 export async function resetDailyTurns(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const { start, end } = getTodayRange();

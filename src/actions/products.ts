@@ -5,7 +5,9 @@ import { products, stockMovements } from "@/db/schema";
 import { and, eq, lte, desc, ilike, sql } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
+import { createProductSchema } from "@/types/products";
 import type { CreateProductInput, UpdateProductInput } from "@/types/products";
+import { escapeLikePattern } from "@/lib/time-utils";
 
 // ─── Get Products ────────────────────────────────────────
 export async function getProducts(
@@ -13,12 +15,13 @@ export async function getProducts(
     filters?: { search?: string; category?: string; lowStock?: boolean }
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const conditions = [eq(products.tenantId, tenantId)];
 
     if (filters?.search) {
-        conditions.push(ilike(products.name, `%${filters.search}%`));
+        conditions.push(ilike(products.name, `%${escapeLikePattern(filters.search)}%`));
     }
     if (filters?.category) {
         conditions.push(eq(products.category, filters.category));
@@ -45,6 +48,7 @@ export async function getProducts(
 // ─── Get Product By Id ───────────────────────────────────
 export async function getProductById(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const product = await db.query.products.findFirst({
@@ -61,31 +65,35 @@ export async function getProductById(id: string, tenantId: string) {
 // ─── Create Product ──────────────────────────────────────
 export async function createProduct(data: CreateProductInput) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
+    // Runtime validation
+    const validated = createProductSchema.parse(data);
     const [product] = await db
         .insert(products)
         .values({
             tenantId: data.tenantId,
-            name: data.name,
-            description: data.description || null,
-            sku: data.sku || null,
-            price: data.price,
-            cost: data.cost || null,
-            stock: data.stock ?? 0,
-            lowStockAlert: data.lowStockAlert ?? 5,
-            category: data.category || null,
-            imageUrl: data.imageUrl || null,
+            name: validated.name,
+            description: validated.description || null,
+            sku: validated.sku || null,
+            price: validated.price,
+            cost: validated.cost || null,
+            stock: validated.stock ?? 0,
+            lowStockAlert: validated.lowStockAlert ?? 5,
+            category: validated.category || null,
+            imageUrl: validated.imageUrl || null,
+            isPublic: validated.isPublic ?? false,
         })
         .returning();
 
     // Record initial stock movement if stock > 0
-    if ((data.stock ?? 0) > 0) {
+    if ((validated.stock ?? 0) > 0) {
         await db.insert(stockMovements).values({
             productId: product.id,
             tenantId: data.tenantId,
             type: "add",
-            quantity: data.stock ?? 0,
+            quantity: validated.stock ?? 0,
             reason: "Stock inicial",
         });
     }
@@ -101,6 +109,7 @@ export async function updateProduct(
     tenantId: string
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [updated] = await db
@@ -125,6 +134,7 @@ export async function updateProduct(
 // ─── Delete Product ──────────────────────────────────────
 export async function deleteProduct(id: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     await db
@@ -144,6 +154,7 @@ export async function adjustStock(
     userId?: string
 ) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const product = await db.query.products.findFirst({
@@ -179,6 +190,7 @@ export async function adjustStock(
 // ─── Get Low Stock Products ──────────────────────────────
 export async function getLowStockProducts(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     return db
@@ -197,6 +209,7 @@ export async function getLowStockProducts(tenantId: string) {
 // ─── Get Categories ──────────────────────────────────────
 export async function getCategories(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const rows = await db
@@ -212,6 +225,7 @@ export async function getCategories(tenantId: string) {
 // ─── Get Stock Movements ─────────────────────────────────
 export async function getStockMovements(productId: string, tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const rows = await db
@@ -234,6 +248,7 @@ export async function getStockMovements(productId: string, tenantId: string) {
 // ─── Get Inventory Stats ─────────────────────────────────
 export async function getInventoryStats(tenantId: string) {
     const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [stats] = await db

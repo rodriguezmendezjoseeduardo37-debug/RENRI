@@ -38,6 +38,9 @@ export default {
                     ((user as Record<string, unknown>).businessId as string | undefined) ??
                     user.tenantId ??
                     "";
+                token.linkedBusinessId =
+                    ((user as Record<string, unknown>).linkedBusinessId as string | null | undefined) ??
+                    null;
                 token.role = user.role ?? "CLIENT";
                 token.isVerified = user.isVerified ?? false;
                 token.accountType = ((user as Record<string, unknown>).accountType as "servicios" | "pyme" | "cliente" | undefined) ?? "servicios";
@@ -55,6 +58,7 @@ export default {
             session.user.id = token.id as string;
             session.user.tenantId = token.tenantId as string;
             session.user.businessId = token.businessId as string;
+            session.user.linkedBusinessId = (token.linkedBusinessId as string | null) ?? null;
             session.user.role = token.role as "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
             session.user.isVerified = token.isVerified as boolean;
             session.user.accountType = token.accountType as "servicios" | "pyme" | "cliente";

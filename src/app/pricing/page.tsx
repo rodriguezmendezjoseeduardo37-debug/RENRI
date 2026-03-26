@@ -1,18 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, Check } from "lucide-react";
 
-const PLAN = {
-    name: "STARTER",
-    price: "0",
-    features: [
-        "Dashboard interactivo",
-        "Gestor de turnos en tiempo real",
-        "Calendario y citas",
-        "Cobros integrados con Stripe",
-        "Inventario básico",
-    ]
-};
-
 const PLANS = [
     {
         name: "STARTER",
@@ -42,7 +30,7 @@ const PLANS = [
         buttonText: "ACTUALIZAR A PRO",
         buttonHref: "/register",
         recommended: true,
-    }
+    },
 ];
 
 export default function PricingPage() {
@@ -62,12 +50,12 @@ export default function PricingPage() {
                         PLANES TRANSPARENTES DISEÑADOS PARA ESCALAR JUNTO CON TU CRECIMIENTO PROFESIONAL.
                     </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto">
                     {PLANS.map((plan) => (
-                        <div 
-                            key={plan.name} 
-                            className={`border ${plan.recommended ? 'border-white' : 'border-[#222222]'} bg-[#0a0a0a] p-10 md:p-12 flex flex-col relative group transition-all duration-500`}
+                        <div
+                            key={plan.name}
+                            className={`border ${plan.recommended ? "border-white" : "border-[#222222]"} bg-[#0a0a0a] p-10 md:p-12 flex flex-col relative group transition-all duration-500`}
                         >
                             {plan.recommended && (
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 bg-white text-black text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 -mt-4 md:mr-10">
@@ -89,8 +77,8 @@ export default function PricingPage() {
                                     <div className="flex items-end gap-3">
                                         <span className="text-4xl md:text-5xl font-bold font-mono tracking-tighter">{plan.price[0]}</span>
                                         <div className="flex flex-col mb-1">
-                                            <span className="text-[12px] font-bold font-mono text-white leading-none mb-1">{plan.price[1].split(' / ')[0]}</span>
-                                            <span className="text-[9px] font-bold tracking-[0.2em] text-[#444444] uppercase leading-none">{plan.price[1].split(' / ')[1]}</span>
+                                            <span className="text-[12px] font-bold font-mono text-white leading-none mb-1">{plan.price[1].split(" / ")[0]}</span>
+                                            <span className="text-[9px] font-bold tracking-[0.2em] text-[#444444] uppercase leading-none">{plan.price[1].split(" / ")[1]}</span>
                                         </div>
                                     </div>
                                 ) : (
@@ -99,20 +87,20 @@ export default function PricingPage() {
                             </div>
 
                             <div className="space-y-5 mb-16 flex-grow">
-                                {plan.features.map((f, i) => (
-                                    <div key={i} className="flex items-start gap-4">
+                                {plan.features.map((feature, index) => (
+                                    <div key={index} className="flex items-start gap-4">
                                         <Check className="w-4 h-4 text-white shrink-0 mt-0.5 opacity-80" />
-                                        <span className="text-[11px] text-[#888888] font-medium tracking-wide leading-relaxed uppercase">{f}</span>
+                                        <span className="text-[11px] text-[#888888] font-medium tracking-wide leading-relaxed uppercase">{feature}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <Link 
+                            <Link
                                 href={plan.buttonHref}
                                 className={`w-full text-center font-bold tracking-[0.3em] uppercase py-5 text-[10px] transition-all duration-300 ${
-                                    plan.recommended 
-                                        ? 'bg-white text-black hover:bg-[#dddddd]' 
-                                        : 'border border-[#222222] text-[#888888] hover:border-white hover:text-white'
+                                    plan.recommended
+                                        ? "bg-white text-black hover:bg-[#dddddd]"
+                                        : "border border-[#222222] text-[#888888] hover:border-white hover:text-white"
                                 }`}
                             >
                                 {plan.buttonText}

@@ -16,20 +16,21 @@ import { Plus, AlertTriangle, Package, DollarSign, Layers } from "lucide-react";
 export default async function InventarioPage({
     searchParams,
 }: {
-    searchParams: { search?: string; category?: string; lowStock?: string; view?: string };
+    searchParams: Promise<{ search?: string; category?: string; lowStock?: string; view?: string }>;
 }) {
+    const { search, category, lowStock, view } = await searchParams;
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const tenantId = user.tenantId;
-    const viewMode = searchParams.view || "grid";
+    const viewMode = view || "grid";
 
     const [productsData, stats, lowStockProducts, categories] =
         await Promise.all([
             getProducts(tenantId, {
-                search: searchParams.search,
-                category: searchParams.category,
-                lowStock: searchParams.lowStock === "true",
+                search,
+                category,
+                lowStock: lowStock === "true",
             }),
             getInventoryStats(tenantId),
             getLowStockProducts(tenantId),

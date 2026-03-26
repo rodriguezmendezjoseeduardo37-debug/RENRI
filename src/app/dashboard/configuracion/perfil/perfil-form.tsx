@@ -11,7 +11,7 @@ import { Loader2, Camera } from "lucide-react";
 const profileSchema = z.object({
     name: z.string().min(2, "El nombre es muy corto"),
     specialty: z.string().optional(),
-    cedulaProfesional: z.string().optional(),
+
     phone: z.string().optional(),
     bio: z.string().max(1000, "La biografía es muy larga").optional(),
 });
@@ -23,7 +23,7 @@ interface PerfilFormProps {
         name: string;
         email: string;
     };
-    profile: any;
+    profile: Record<string, any> | null;
 }
 
 export function PerfilForm({ user, profile }: PerfilFormProps) {
@@ -34,7 +34,7 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
         defaultValues: {
             name: user.name,
             specialty: profile?.specialty || "",
-            cedulaProfesional: profile?.cedulaProfesional || "",
+
             phone: profile?.phone || "",
             bio: profile?.bio || "",
         },
@@ -45,8 +45,8 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
             setIsLoading(true);
             await updateUserProfile(data);
             toast.success("Perfil actualizado correctamente");
-        } catch (error: any) {
-            toast.error(error.message || "Error al actualizar perfil");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Error al actualizar perfil");
         } finally {
             setIsLoading(false);
         }
@@ -83,10 +83,7 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
                     <label className={labelClass}>Especialidad / Título</label>
                     <input {...form.register("specialty")} placeholder="Ej. Odontólogo, Abogado" className={inputClass} />
                 </div>
-                <div className="space-y-2">
-                    <label className={labelClass}>Cédula Profesional</label>
-                    <input {...form.register("cedulaProfesional")} className={inputClass} />
-                </div>
+
             </div>
 
             <div className="space-y-2">

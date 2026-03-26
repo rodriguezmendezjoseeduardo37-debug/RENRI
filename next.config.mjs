@@ -1,4 +1,16 @@
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com', // Google OAuth avatars
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co', // Supabase Storage
+      },
+    ],
+  },
   async headers() {
     return [{
       source: '/(.*)',

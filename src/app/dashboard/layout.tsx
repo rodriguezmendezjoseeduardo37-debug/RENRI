@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { Sidebar } from "@/components/dashboard/sidebar";
@@ -36,10 +37,20 @@ export default async function DashboardLayout({
         .where(eq(tenants.id, user.tenantId))
         .limit(1);
 
-    const accountType =
+    let accountType = (
         user.role === "CLIENT"
             ? "cliente"
-            : tenant?.accountType ?? "servicios";
+            : tenant?.accountType ?? "servicios"
+    ) as "servicios" | "pyme" | "cliente";
+
+    const cookieStore = await cookies();
+    const activeModule = cookieStore.get("renri_active_module")?.value;
+
+    if (activeModule && ["servicios", "pyme", "cliente"].includes(activeModule)) {
+        if (user.role !== "CLIENT") {
+            accountType = activeModule as "servicios" | "pyme" | "cliente";
+        }
+    }
 
     return (
         <div

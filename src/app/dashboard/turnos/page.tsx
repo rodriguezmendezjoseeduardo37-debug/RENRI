@@ -70,7 +70,6 @@ export default function TurnosDashboardPage() {
         try {
             await createTurn({ tenantId, ...data });
             toast.success("Turno agregado a la cola");
-            window.location.reload(); // Aggressive refetch to jumpstart slow Supabase real-time
         } catch {
             toast.error("Error al agregar el turno");
         }

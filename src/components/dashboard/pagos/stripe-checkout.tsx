@@ -92,9 +92,9 @@ export function StripeCheckoutWrapper({ paymentId, onSuccess }: { paymentId: str
             } else {
                 toast.error("No se pudo obtener la sesión de pago");
             }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            toast.error(error.message || "Fallo técnico al iniciar Stripe");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Fallo técnico al iniciar Stripe";
+            toast.error(message);
         } finally {
             setIsInitializing(false);
         }

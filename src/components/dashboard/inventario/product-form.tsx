@@ -223,6 +223,26 @@ export function ProductForm({
                 />
             </div>
 
+            {/* Public visibility toggle */}
+            <div className="border border-[#222222] bg-[#111111] p-4 flex items-center justify-between">
+                <div>
+                    <span className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block">
+                        VISIBLE AL PÚBLICO
+                    </span>
+                    <span className="text-[10px] text-[#555555] mt-1 block">
+                        Si está activo, el producto aparecerá en la tienda pública del negocio (requiere que la venta pública esté habilitada en la configuración del negocio).
+                    </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
+                    <input
+                        type="checkbox"
+                        {...register("isPublic")}
+                        className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-[#222222] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#555555] after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white peer-checked:after:bg-black"></div>
+                </label>
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3 pt-4 border-t border-[#222222]">
                 <button

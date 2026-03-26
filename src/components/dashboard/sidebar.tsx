@@ -19,7 +19,6 @@ import {
     Repeat,
     Briefcase,
     Store,
-    User,
 } from "lucide-react";
 import { switchAccountType } from "@/actions/account";
 import type { BusinessModule } from "@/lib/business";
@@ -56,14 +55,6 @@ const NAV_PYME: NavItem[] = [
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
 ];
 
-const NAV_USUARIO: NavItem[] = [
-    { href: "/dashboard", icon: Home, label: "INICIO" },
-    { href: "/dashboard/disponibilidad", icon: Clock, label: "DISPONIBILIDAD" },
-    { href: "/dashboard/mis-citas", icon: Calendar, label: "MIS CITAS" },
-    { href: "/dashboard/mis-pagos", icon: CreditCard, label: "MIS PAGOS" },
-    { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
-];
-
 const MODE_OPTIONS = [
     {
         value: "servicios",
@@ -76,12 +67,6 @@ const MODE_OPTIONS = [
         label: "PYME",
         icon: Store,
         description: "Inventario · Pedidos · Ventas",
-    },
-    {
-        value: "cliente",
-        label: "CLIENTE",
-        icon: User,
-        description: "Horarios · Citas · Pagos",
     },
 ] as const;
 
@@ -98,18 +83,14 @@ export function Sidebar({
     const router = useRouter();
 
     const isClient = userRole === "CLIENT";
-    const navItems = isClient
-        ? NAV_USUARIO
-        : accountType === "pyme"
-            ? NAV_PYME
-            : NAV_SERVICIOS;
+    const navItems = accountType === "pyme" ? NAV_PYME : NAV_SERVICIOS;
     const canSwitchModes =
         !isClient &&
         !!businessId &&
         enabledModules.includes("servicios") &&
         enabledModules.includes("pyme");
     const currentMode =
-        MODE_OPTIONS.find((mode) => mode.value === (isClient ? "cliente" : accountType)) ??
+        MODE_OPTIONS.find((mode) => mode.value === accountType) ??
         MODE_OPTIONS[0];
 
     const handleModeSwitch = (mode: "servicios" | "pyme") => {
@@ -149,6 +130,7 @@ export function Sidebar({
                 )}
             </div>
 
+
             {canSwitchModes && (
                 <div className="relative">
                     <button
@@ -175,7 +157,7 @@ export function Sidebar({
 
                     {showModeSwitcher && expanded && (
                         <div className="absolute left-0 right-0 bg-[#0a0a0a] border-b border-[#222222] z-50">
-                            {MODE_OPTIONS.filter((mode) => mode.value !== "cliente").map((mode) => {
+                            {MODE_OPTIONS.map((mode) => {
                                 const isActive = mode.value === accountType;
                                 const ModeIcon = mode.icon;
 
@@ -247,6 +229,8 @@ export function Sidebar({
 
             <button
                 onClick={() => setExpanded(!expanded)}
+                aria-label={expanded ? "Colapsar menú" : "Expandir menú"}
+                aria-expanded={expanded}
                 className="flex items-center justify-center h-12 border-t border-[#222222] text-[#888888] hover:text-white transition-colors"
             >
                 {expanded ? (

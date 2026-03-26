@@ -8,6 +8,7 @@ import { createOrder } from "@/actions/orders";
 import { toast } from "sonner";
 import type { Product } from "@/types/products";
 import { Loader2, Minus, Plus, Trash2 } from "lucide-react";
+import { TAX_RATE } from "@/lib/constants";
 
 interface CartItem {
     productId: string;
@@ -81,7 +82,7 @@ export function OrderForm({ products }: OrderFormProps) {
     };
 
     const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const tax = subtotal * 0.16;
+    const tax = subtotal * TAX_RATE;
     const total = subtotal + tax;
 
     const handleSubmit = async () => {
@@ -181,6 +182,7 @@ export function OrderForm({ products }: OrderFormProps) {
                                     <div className="flex items-center gap-2 ml-3">
                                         <button
                                             onClick={() => updateQuantity(item.productId, -1)}
+                                            aria-label="Disminuir cantidad"
                                             className="w-6 h-6 flex items-center justify-center border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
                                         >
                                             <Minus className="w-3 h-3" />
@@ -190,12 +192,14 @@ export function OrderForm({ products }: OrderFormProps) {
                                         </span>
                                         <button
                                             onClick={() => updateQuantity(item.productId, 1)}
+                                            aria-label="Aumentar cantidad"
                                             className="w-6 h-6 flex items-center justify-center border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
                                         >
                                             <Plus className="w-3 h-3" />
                                         </button>
                                         <button
                                             onClick={() => removeItem(item.productId)}
+                                            aria-label="Eliminar producto"
                                             className="w-6 h-6 flex items-center justify-center text-red-500 hover:text-red-400 transition-colors ml-1"
                                         >
                                             <Trash2 className="w-3 h-3" />

@@ -26,6 +26,7 @@ declare module "next-auth" {
             image?: string | null;
             tenantId: string;
             businessId: string;
+            linkedBusinessId: string | null;
             role: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
             isVerified: boolean;
             accountType: "servicios" | "pyme" | "cliente";
@@ -36,6 +37,7 @@ declare module "next-auth" {
     interface User {
         tenantId?: string;
         businessId?: string;
+        linkedBusinessId?: string | null;
         role?: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
         isVerified?: boolean;
         accountType?: "servicios" | "pyme" | "cliente";
@@ -48,6 +50,7 @@ declare module "@auth/core/jwt" {
         id: string;
         tenantId: string;
         businessId: string;
+        linkedBusinessId: string | null;
         role: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
         isVerified: boolean;
         accountType: "servicios" | "pyme" | "cliente";
@@ -98,6 +101,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     image: user.image,
                     tenantId: user.tenantId,
                     businessId: user.tenantId,
+                    linkedBusinessId: user.linkedBusinessId ?? null,
                     role: user.role,
                     isVerified: user.isVerified,
                     accountType:
@@ -136,7 +140,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (!existingUser) {
                     const created = await db.transaction(async (tx) => {
-                        const accountType = requestedAccountType ?? "servicios";
+                        const accountType = requestedAccountType ?? "cliente";
                         const [tenant] = await tx
                             .insert(tenants)
                             .values({
@@ -172,6 +176,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     user.id = created.user.id;
                     user.tenantId = created.user.tenantId;
                     user.businessId = created.user.tenantId;
+                    user.linkedBusinessId = created.user.linkedBusinessId ?? null;
                     user.role = created.user.role;
                     user.isVerified = created.user.isVerified;
                     user.accountType =
@@ -190,13 +195,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         .where(eq(tenants.id, existingUser.tenantId))
                         .limit(1);
 
-                    if (
-                        requestedAccountType &&
-                        requestedAccountType !== "cliente" &&
-                        existingUser.role === "CLIENT"
-                    ) {
-                        return "/auth/error?error=GoogleBusinessConflict";
-                    }
+                    // Allow dual access: no conflict guards needed.
+                    // A business user can also use the client portal and vice versa.
 
                     if (
                         requestedAccountType &&
@@ -228,6 +228,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     user.id = existingUser.id;
                     user.tenantId = existingUser.tenantId;
                     user.businessId = existingUser.tenantId;
+                    user.linkedBusinessId = existingUser.linkedBusinessId ?? null;
                     user.role = existingUser.role;
                     user.isVerified = existingUser.isVerified;
                     const resolvedBusinessAccountType =
