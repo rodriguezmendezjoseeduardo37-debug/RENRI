@@ -42,7 +42,7 @@ export default async function MisPagosPage() {
                     </p>
                 </div>
             ) : (
-                <div className="border border-[#222222] overflow-hidden">
+                <div className="border border-[#222222] overflow-x-auto bg-black">
                     <table className="w-full text-left">
                         <thead className="bg-[#111111] border-b border-[#222222]">
                             <tr>

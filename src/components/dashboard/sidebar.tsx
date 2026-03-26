@@ -23,7 +23,7 @@ import {
 import { switchAccountType } from "@/actions/account";
 import type { BusinessModule } from "@/lib/business";
 
-interface NavItem {
+export interface NavItem {
     href: string;
     icon: LucideIcon;
     label: string;
@@ -36,7 +36,7 @@ interface SidebarProps {
     userRole: "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT";
 }
 
-const NAV_SERVICIOS: NavItem[] = [
+export const NAV_SERVICIOS: NavItem[] = [
     { href: "/dashboard", icon: Home, label: "INICIO" },
     { href: "/dashboard/citas", icon: Calendar, label: "CITAS" },
     { href: "/dashboard/turnos", icon: ListOrdered, label: "TURNOS" },
@@ -46,7 +46,7 @@ const NAV_SERVICIOS: NavItem[] = [
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
 ];
 
-const NAV_PYME: NavItem[] = [
+export const NAV_PYME: NavItem[] = [
     { href: "/dashboard", icon: Home, label: "INICIO" },
     { href: "/dashboard/inventario", icon: Package, label: "INVENTARIO" },
     { href: "/dashboard/pedidos", icon: ShoppingCart, label: "PEDIDOS" },
@@ -55,7 +55,7 @@ const NAV_PYME: NavItem[] = [
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
 ];
 
-const MODE_OPTIONS = [
+export const MODE_OPTIONS = [
     {
         value: "servicios",
         label: "SERVICIOS",
@@ -107,7 +107,7 @@ export function Sidebar({
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out flex flex-col"
+            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out hidden md:flex flex-col"
             style={{ width: expanded ? 240 : 64 }}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => {

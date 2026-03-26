@@ -80,7 +80,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                 </button>
             </form>
 
-            <div className="border border-[#222222]">
+            <div className="border border-[#222222] overflow-x-auto bg-black">
                 <table className="w-full text-left">
                     <thead className="border-b border-[#222222] bg-[#111111]">
                         <tr>

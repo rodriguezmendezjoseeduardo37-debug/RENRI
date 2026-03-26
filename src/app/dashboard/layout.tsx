@@ -63,13 +63,17 @@ export default async function DashboardLayout({
                 userRole={user.role}
             />
 
-            {/* Main content area — offset by sidebar width */}
-            <div className="ml-16 min-h-screen flex flex-col">
+            {/* Main content area — offset by sidebar width on desktop */}
+            <div className="md:ml-16 min-h-screen flex flex-col">
                 <Topbar
                     tenantName={tenant?.name ?? "RENRI"}
                     userName={user.name ?? "User"}
+                    accountType={accountType}
+                    businessId={user.businessId ?? tenant?.id}
+                    enabledModules={user.enabledModules}
+                    userRole={user.role}
                 />
-                <main className="flex-1 p-8">{children}</main>
+                <main className="flex-1 p-4 md:p-8">{children}</main>
             </div>
         </div>
     );

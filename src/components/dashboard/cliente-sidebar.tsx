@@ -13,7 +13,7 @@ import {
     Link2
 } from "lucide-react";
 
-const NAV_USUARIO = [
+export const NAV_USUARIO = [
     { href: "/cliente", icon: Home, label: "INICIO" },
     { href: "/cliente/disponibilidad", icon: Clock, label: "DISPONIBILIDAD" },
     { href: "/cliente/mis-citas", icon: Calendar, label: "MIS CITAS" },
@@ -27,7 +27,7 @@ export function ClienteSidebar() {
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out flex flex-col"
+            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out hidden md:flex flex-col"
             style={{ width: expanded ? 240 : 64 }}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => setExpanded(false)}

@@ -164,7 +164,7 @@ export function CitasClient({
             </div>
 
             {/* Stats bar */}
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm">
                 <span className="text-[#888888]">
                     HOY:{" "}
                     <span className="text-white font-bold">{stats.total}</span>
@@ -188,8 +188,8 @@ export function CitasClient({
             <AppointmentFilters filters={filters} onChange={setFilters} />
 
             {/* View toggle */}
-            <div className="flex items-center justify-between border-b border-[#222222]">
-                <div className="flex gap-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] gap-4 sm:gap-0 pb-4 sm:pb-0">
+                <div className="flex gap-6 sm:gap-8">
                     <button
                         onClick={() => setViewMode("list")}
                         className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "list" ? "text-white" : "text-[#888888] hover:text-white"

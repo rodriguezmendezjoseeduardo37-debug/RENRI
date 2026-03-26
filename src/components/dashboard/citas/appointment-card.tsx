@@ -24,16 +24,21 @@ export function AppointmentCard({
 
     return (
         <div
-            className={`bg-[#111111] border-l-2 ${borderColor} px-6 py-5 flex items-center justify-between`}
+            className={`bg-[#111111] border-l-2 ${borderColor} p-4 md:px-6 md:py-5 flex flex-col md:flex-row md:items-center justify-between gap-4`}
         >
             {/* Left: client + service */}
             <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white truncate">
                     {appointment.clientName}
                 </p>
-                <p className="text-[11px] text-[#888888] mt-0.5 truncate">
-                    {appointment.serviceName}
-                </p>
+                <div className="flex flex-col gap-0.5 mt-0.5">
+                    <p className="text-[11px] text-[#888888] truncate">
+                        {appointment.serviceName}
+                    </p>
+                    <p className="text-[10px] text-white font-mono md:hidden block mt-1">
+                        {appointment.date} · {appointment.startTime}–{appointment.endTime}
+                    </p>
+                </div>
             </div>
 
             {/* Center: date + time + staff */}
@@ -47,7 +52,7 @@ export function AppointmentCard({
             </div>
 
             {/* Right: status + actions */}
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="flex flex-wrap items-center gap-3 flex-shrink-0">
                 <TurnBadge status={appointment.status} />
 
                 <div className="flex gap-2">

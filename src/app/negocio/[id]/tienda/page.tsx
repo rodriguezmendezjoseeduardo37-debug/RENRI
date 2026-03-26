@@ -23,7 +23,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                     <div className="flex items-center gap-3">
                         <Link
                             href={`/negocio/${business.id}`}
-                            className="w-10 h-10 border border-[#222222] flex items-center justify-center hover:bg-white hover:text-black transition-colors rounded-full mr-2"
+                            className="w-11 h-11 border border-[#222222] flex items-center justify-center hover:bg-white hover:text-black transition-colors rounded-full mr-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
