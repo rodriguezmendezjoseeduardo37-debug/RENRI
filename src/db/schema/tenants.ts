@@ -43,6 +43,7 @@ export const tenants = pgTable(
         socialMedia: jsonb("social_media").default({}),
         isActive: boolean("is_active").default(true).notNull(),
         publicProductSalesEnabled: boolean("public_product_sales_enabled").default(false).notNull(),
+        isQueueOpen: boolean("is_queue_open").default(false).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()
             .notNull(),

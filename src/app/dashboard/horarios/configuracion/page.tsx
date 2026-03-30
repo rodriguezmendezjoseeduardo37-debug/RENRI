@@ -9,6 +9,7 @@ import { StaffAvailability } from "@/components/dashboard/horarios/staff-availab
 import { BlockedDatesManager } from "@/components/dashboard/horarios/blocked-dates";
 import { addDays } from "date-fns";
 import type { BlockedDate } from "@/types/schedules";
+import { ConfigStaffSelector } from "./config-staff-selector";
 
 export default async function SchedulesConfigPage({
     searchParams,
@@ -64,22 +65,9 @@ export default async function SchedulesConfigPage({
 
                 <div className="flex gap-4">
                     {canViewOthers && (
-                        <form className="flex">
-                            <select
-                                name="staffId"
-                                defaultValue={targetStaffId}
-                                onChange={(e) => {
-                                    e.target.form?.submit();
-                                }}
-                                className="bg-black border border-[#222222] text-white text-[10px] font-bold tracking-[0.2em] p-3 uppercase focus:outline-none focus:border-white transition-colors"
-                            >
-                                {allStaff.map(staff => (
-                                    <option key={staff.id} value={staff.id}>
-                                        {staff.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </form>
+                        <div className="flex">
+                            <ConfigStaffSelector allStaff={allStaff} targetStaffId={targetStaffId} />
+                        </div>
                     )}
                     <Link
                         href="/dashboard/horarios"

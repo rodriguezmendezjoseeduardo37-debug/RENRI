@@ -74,3 +74,33 @@ export async function updateUserProfile(data: {
     revalidatePath("/dashboard/configuracion/perfil");
     return { success: true };
 }
+
+export async function createQuickClient(data: {
+    name: string;
+    email?: string;
+    phone?: string;
+    tenantId: string;
+}) {
+    const session = await requireAuth();
+    if (!session) throw new Error("Unauthorized");
+
+    const newUserId = crypto.randomUUID();
+
+    const [newUser] = await db.insert(users).values({
+        id: newUserId,
+        tenantId: data.tenantId,
+        name: data.name,
+        email: data.email || `client_${newUserId}@placeholder.com`,
+        role: "CLIENT",
+        isVerified: true,
+    }).returning();
+
+    await db.insert(profiles).values({
+        userId: newUser.id,
+        phone: data.phone || null,
+    });
+
+    revalidatePath("/dashboard/citas");
+
+    return { id: newUser.id, name: newUser.name };
+}

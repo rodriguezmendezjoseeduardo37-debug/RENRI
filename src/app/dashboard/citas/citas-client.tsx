@@ -259,6 +259,7 @@ export function CitasClient({
                 slots={availableSlots}
                 onStaffDateChange={fetchSlots}
                 loadingSlots={loadingSlots}
+                tenantId={tenantId}
             />
         </div>
     );

@@ -36,7 +36,7 @@ export default async function ServiciosConfigPage() {
                     </p>
                 </div>
                 <Link
-                    href="/dashboard/configuracion"
+                    href="/dashboard"
                     className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase border border-[#222222] hover:text-white hover:border-white transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />

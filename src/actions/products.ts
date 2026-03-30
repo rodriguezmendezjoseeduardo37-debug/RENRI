@@ -269,3 +269,24 @@ export async function getInventoryStats(tenantId: string) {
         categoriesCount: categories.length,
     };
 }
+
+// ─── Toggle Product Visibility ───────────────────────────
+export async function toggleProductVisibility(id: string, tenantId: string, isPublic: boolean) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    const [updated] = await db
+        .update(products)
+        .set({
+            isPublic,
+            updatedAt: new Date(),
+        })
+        .where(and(eq(products.id, id), eq(products.tenantId, tenantId)))
+        .returning();
+
+    revalidatePath("/dashboard/inventario");
+    revalidatePath(`/dashboard/inventario/${id}`);
+    
+    return updated.isPublic;
+}

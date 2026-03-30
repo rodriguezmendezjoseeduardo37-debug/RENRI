@@ -86,7 +86,7 @@ export async function getClientWorkspace() {
         businessId: effectiveBusinessId,
         tenant: tenant ?? null,
         ownerName,
-        isLinked: !!user.linkedBusinessId,
+        isLinked: !!user.linkedBusinessId || (tenant && tenant.accountType !== "cliente"),
     };
 }
 
@@ -94,6 +94,28 @@ export async function getClientWorkspace() {
 
 export async function getClientAppointments() {
     const user = await requireBusinessLinkedUser();
+
+    // ───────────────────────────────────────────────────────────
+    // AUTO-SYNC: Reclamo de citas huérfanas con el mismo correo
+    // Esto asegura que si ya habían citas, se peguen a su cuenta.
+    // ───────────────────────────────────────────────────────────
+    try {
+        await db
+            .update(appointments)
+            .set({ clientId: user.id })
+            .where(
+                and(
+                    sql`EXISTS (
+                        SELECT 1 FROM ${users} u 
+                        WHERE u.id = ${appointments.clientId} 
+                        AND u.email = ${user.email}
+                        AND u.id != ${user.id}
+                    )`
+                )
+            );
+    } catch (e) {
+        console.error("Error in appointment auto-sync:", e);
+    }
 
     const rows = await db
         .select({
@@ -268,6 +290,7 @@ export async function ensureClientPaymentForAppointment(appointmentId: string) {
             amount: appointment.amount,
             status: "pending",
             currency: "MXN",
+            paymentMethod: "card", // Default to card for now
         })
         .returning();
 
@@ -485,6 +508,28 @@ export async function linkClientToBusiness(businessId: string) {
             updatedAt: new Date(),
         })
         .where(eq(users.id, user.id));
+
+    // ─── AUTO-CLAIM Logic ────────────────────────────────────
+    // Find appointments in this business with the same email 
+    // that ARE NOT currently assigned to the client ID.
+    await db
+        .update(appointments)
+        .set({
+            clientId: user.id,
+            updatedAt: new Date(),
+        })
+        .where(
+            and(
+                eq(appointments.tenantId, business.id),
+                eq(appointments.status, "pending"), // Opcional: solo pendientes/confirmadas
+                sql`EXISTS (
+                    SELECT 1 FROM ${users} u 
+                    WHERE u.id = ${appointments.clientId} 
+                    AND u.email = ${user.email}
+                    AND u.id != ${user.id}
+                )`
+            )
+        );
 
     revalidatePath("/cliente");
     revalidatePath("/cliente/mis-citas");

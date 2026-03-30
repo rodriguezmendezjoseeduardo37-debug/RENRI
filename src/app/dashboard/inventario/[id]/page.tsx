@@ -159,6 +159,7 @@ export default async function ProductDetailPage({
                             tenantId={user.tenantId}
                             currentStock={product.stock}
                             productName={product.name}
+                            initialIsPublic={product.isPublic ?? false}
                         />
                     </div>
                 </div>

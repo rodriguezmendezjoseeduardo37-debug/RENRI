@@ -8,10 +8,20 @@ import {
     UserCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
 export default async function ConfiguracionPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
+
+    const cookieStore = await cookies();
+    const activeModuleStr = cookieStore.get("renri_active_module")?.value;
+    let currentModule = user.accountType;
+    if (activeModuleStr && ["servicios", "pyme", "cliente"].includes(activeModuleStr)) {
+        if (user.role !== "CLIENT") {
+            currentModule = activeModuleStr as "servicios" | "pyme" | "cliente";
+        }
+    }
 
     if (user.role === "CLIENT") {
         const clientSections = [
@@ -105,7 +115,12 @@ export default async function ConfiguracionPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {SETTINGS_SECTIONS.map((section, idx) => {
+                {SETTINGS_SECTIONS.filter((section) => {
+                    if (currentModule === "pyme" && (section.title === "DATOS CLINICOS" || section.title === "APIS Y WEBHOOKS")) {
+                        return false;
+                    }
+                    return true;
+                }).map((section, idx) => {
                     if (section.restricted) {
                         return (
                             <div

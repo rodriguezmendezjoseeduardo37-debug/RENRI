@@ -185,7 +185,27 @@ export async function getPaymentById(id: string, tenantId: string) {
     });
 }
 
-export async function createPaymentForAppointment(appointmentId: string, amount: number, tenantId: string) {
+export async function updatePaymentMethod(paymentId: string, method: "cash" | "card") {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+
+    const payment = await assertClientCanAccessPayment(user.id, paymentId);
+    if (payment.status === "completed") {
+        throw new Error("Cannot change method of a completed payment");
+    }
+
+    const [updated] = await db
+        .update(payments)
+        .set({ paymentMethod: method })
+        .where(eq(payments.id, paymentId))
+        .returning();
+
+    revalidatePath("/cliente/mis-pagos");
+    revalidatePath(`/cliente/mis-pagos/${paymentId}`);
+    return updated;
+}
+
+export async function createPaymentForAppointment(appointmentId: string, amount: number, tenantId: string, method: string = "card") {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
@@ -201,6 +221,7 @@ export async function createPaymentForAppointment(appointmentId: string, amount:
             amount: amount.toString(),
             status: "pending",
             currency: "MXN",
+            paymentMethod: method,
         })
         .returning();
 

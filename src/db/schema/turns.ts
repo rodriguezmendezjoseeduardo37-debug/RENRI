@@ -15,6 +15,7 @@ export const turnStatusEnum = pgEnum("turn_status", [
     "in_progress",
     "completed",
     "skipped",
+    "cancelled",
 ]);
 
 // ─── Turns ───────────────────────────────────────────────
@@ -28,6 +29,7 @@ export const turns = pgTable(
         clientName: varchar("client_name", { length: 255 }).notNull(),
         clientPhone: varchar("client_phone", { length: 20 }),
         number: integer("number").notNull(),
+        serviceName: varchar("service_name", { length: 255 }),
         status: turnStatusEnum("status").default("waiting").notNull(),
         calledAt: timestamp("called_at", { withTimezone: true }),
         completedAt: timestamp("completed_at", { withTimezone: true }),

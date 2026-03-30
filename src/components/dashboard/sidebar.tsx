@@ -38,6 +38,7 @@ interface SidebarProps {
 
 export const NAV_SERVICIOS: NavItem[] = [
     { href: "/dashboard", icon: Home, label: "INICIO" },
+    { href: "/dashboard/servicios", icon: Briefcase, label: "SERVICIOS" },
     { href: "/dashboard/citas", icon: Calendar, label: "CITAS" },
     { href: "/dashboard/turnos", icon: ListOrdered, label: "TURNOS" },
     { href: "/dashboard/horarios", icon: Clock, label: "HORARIOS" },

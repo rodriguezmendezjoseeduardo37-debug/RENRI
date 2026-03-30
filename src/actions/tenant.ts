@@ -129,3 +129,23 @@ export async function updatePublicSalesEnabled(
     revalidatePath("/dashboard/configuracion");
     return { success: true };
 }
+
+export async function updateQueueOpenStatus(
+    tenantId: string,
+    isOpen: boolean
+) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    await db
+        .update(tenants)
+        .set({
+            isQueueOpen: isOpen,
+            updatedAt: new Date(),
+        })
+        .where(eq(tenants.id, tenantId));
+
+    revalidatePath("/dashboard/turnos");
+    return { success: true };
+}

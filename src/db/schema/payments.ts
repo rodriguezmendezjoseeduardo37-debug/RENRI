@@ -39,6 +39,7 @@ export const payments = pgTable(
         stripePaymentMethod: varchar("stripe_payment_method", { length: 255 }),
         amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
         currency: varchar("currency", { length: 3 }).default("MXN").notNull(),
+        paymentMethod: varchar("payment_method", { length: 20 }).default("card").notNull(), // 'card', 'cash'
         status: paymentStatusEnum("status").default("pending").notNull(),
         paidAt: timestamp("paid_at", { withTimezone: true }),
         createdAt: timestamp("created_at", { withTimezone: true })

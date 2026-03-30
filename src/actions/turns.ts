@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { turns } from "@/db/schema";
+import { turns, tenants } from "@/db/schema";
 import { and, eq, sql, desc, asc, gte, lt } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import type { Turn, CreateTurnInput } from "@/types/turns";
@@ -57,7 +57,16 @@ export async function getTurns(tenantId: string, dateStr?: string) {
 export async function createTurn(data: CreateTurnInput) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN" && user.role !== "CLIENT") throw new Error("Unauthorized");
+
+    const [tenantData] = await db
+        .select({ isQueueOpen: tenants.isQueueOpen })
+        .from(tenants)
+        .where(eq(tenants.id, data.tenantId));
+
+    if (!tenantData || !tenantData.isQueueOpen) {
+        throw new Error("La fila virtual se encuentra cerrada en este momento.");
+    }
 
     const { start, end } = getTodayRange();
 
@@ -217,6 +226,22 @@ export async function skipTurn(id: string, tenantId: string) {
         .returning();
 
     return updated ? mapTurn(updated) : null; // returns updated turn
+}
+
+// ─── Cancel Turn ───────────────────────────────────────────
+
+export async function cancelTurn(id: string, tenantId: string) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN" && user.role !== "CLIENT") throw new Error("Unauthorized");
+
+    const [updated] = await db
+        .update(turns)
+        .set({ status: "cancelled" })
+        .where(and(eq(turns.id, id), eq(turns.tenantId, tenantId)))
+        .returning();
+
+    return updated ? mapTurn(updated) : null;
 }
 
 // ─── Reset Daily Turns ─────────────────────────────────────

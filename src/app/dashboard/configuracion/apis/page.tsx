@@ -6,10 +6,22 @@ import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ApisForm } from "./apis-form";
+import { cookies } from "next/headers";
 
 export default async function ApisConfigPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
+
+    const cookieStore = await cookies();
+    const activeModuleStr = cookieStore.get("renri_active_module")?.value;
+    let currentModule = user.accountType;
+    if (activeModuleStr && ["servicios", "pyme", "cliente"].includes(activeModuleStr)) {
+        if (user.role !== "CLIENT") {
+            currentModule = activeModuleStr as "servicios" | "pyme" | "cliente";
+        }
+    }
+
+    if (currentModule === "pyme") redirect("/dashboard/configuracion");
 
     const [tenant] = await db
         .select()

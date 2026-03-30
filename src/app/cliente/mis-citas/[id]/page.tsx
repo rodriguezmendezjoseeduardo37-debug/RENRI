@@ -114,13 +114,27 @@ export default async function MiCitaDetallePage({
                             <p className="mt-2 text-3xl font-bold text-white">
                                 ${Number(appointment.amount ?? 0).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                             </p>
-                            <p className="mt-3 text-sm text-[#888888]">
-                                {payment
-                                    ? `Estado: ${payment.status.toUpperCase()}`
-                                    : Number(appointment.amount ?? 0) > 0
-                                        ? "Pendiente de generar"
-                                        : "Sin cobro asociado"}
-                            </p>
+                            <div className="mt-4 pt-4 border-t border-[#222222] space-y-2">
+                                <p className="text-[10px] font-bold tracking-[0.2em] text-[#777777] uppercase">
+                                    MÉTODO: {payment?.paymentMethod === "cash" ? "EFECTIVO" : "TARJETA"}
+                                </p>
+                                <p className={`text-sm font-bold ${payment?.status === "completed" ? "text-green-500" : "text-[#888888]"}`}>
+                                    {payment
+                                        ? payment.status === "completed"
+                                            ? "✓ PAGO VALIDADO"
+                                            : payment.paymentMethod === "cash"
+                                                ? "待 ESPERANDO VALIDACIÓN (PAGO FÍSICO)"
+                                                : "待 PENDIENTE DE ACREDITACIÓN ONLINE"
+                                        : Number(appointment.amount ?? 0) > 0
+                                            ? "Pendiente de generar"
+                                            : "Sin cobro asociado"}
+                                </p>
+                                {payment?.paymentMethod === "cash" && payment.status !== "completed" && (
+                                    <p className="text-[10px] text-[#555555] leading-relaxed">
+                                        * Entrega el pago al dueño del negocio para que lo valide en el sistema.
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -131,12 +145,12 @@ export default async function MiCitaDetallePage({
                         <p>
                             Actualizada: {new Date(appointment.updatedAt).toLocaleString("es-MX")}
                         </p>
-                        {payment ? (
+                        {payment && payment.paymentMethod === "card" && payment.status !== "completed" ? (
                             <Link
-                                href={`/dashboard/mis-pagos/${payment.id}`}
-                                className="inline-flex text-white hover:text-[#d6d6d6] transition-colors"
+                                href={`/cliente/mis-pagos/${payment.id}`}
+                                className="inline-flex text-white hover:text-[#d6d6d6] transition-colors font-bold underline decoration-white/30"
                             >
-                                Ir al pago
+                                Ir al pago online
                             </Link>
                         ) : null}
                     </div>

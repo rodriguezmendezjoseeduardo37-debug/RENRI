@@ -10,6 +10,7 @@ import {
     schedules,
     tenants,
     users,
+    clientBusinesses,
 } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
 import { timeToMinutes, minutesToTime } from "@/lib/time-utils";
@@ -136,6 +137,7 @@ export async function bookAppointment(data: {
     clientPhone?: string;
     notes?: string;
     amount?: string;
+    clientId?: string; // Nuevo: Para asignación directa
 }) {
     const appointment = await db.transaction(async (tx) => {
         await tx.execute(
@@ -160,9 +162,19 @@ export async function bookAppointment(data: {
             throw new Error("Ese horario ya no esta disponible");
         }
 
-        let client = await tx.query.users.findFirst({
-            where: and(eq(users.email, data.clientEmail), eq(users.tenantId, data.tenantId)),
-        });
+        let client;
+
+        if (data.clientId) {
+            client = await tx.query.users.findFirst({
+                where: eq(users.id, data.clientId),
+            });
+        }
+
+        if (!client) {
+            client = await tx.query.users.findFirst({
+                where: and(eq(users.email, data.clientEmail), eq(users.tenantId, data.tenantId)),
+            });
+        }
 
         if (!client) {
             const [standaloneClient] = await tx
@@ -189,6 +201,14 @@ export async function bookAppointment(data: {
                     })
                     .where(eq(users.id, standaloneClient.user.id));
 
+                await tx
+                    .insert(clientBusinesses)
+                    .values({
+                        clientId: standaloneClient.user.id,
+                        tenantId: data.tenantId,
+                    })
+                    .onConflictDoNothing();
+
                 client = {
                     ...standaloneClient.user,
                     linkedBusinessId: data.tenantId,
@@ -204,6 +224,15 @@ export async function bookAppointment(data: {
                         role: "CLIENT",
                     })
                     .returning();
+
+                await tx
+                    .insert(clientBusinesses)
+                    .values({
+                        clientId: newClient.id,
+                        tenantId: data.tenantId,
+                    })
+                    .onConflictDoNothing();
+
                 client = newClient;
             }
         }
@@ -257,6 +286,10 @@ export async function bookAppointment(data: {
     });
 
     revalidatePath(`/portal/${data.tenantId}`);
+    revalidatePath("/cliente");
+    revalidatePath("/cliente/mis-citas");
+    revalidatePath("/cliente/mis-pagos");
+    
     return { appointment, clientId: appointment.clientId };
 }
 

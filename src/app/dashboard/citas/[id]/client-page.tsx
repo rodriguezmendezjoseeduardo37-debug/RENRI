@@ -7,19 +7,22 @@ import { StatusTimeline } from "@/components/dashboard/citas/status-timeline";
 import { AppointmentForm } from "@/components/dashboard/citas/appointment-form";
 import { TurnBadge } from "@/components/dashboard/turn-badge";
 import { confirmAppointment, completeAppointment, cancelAppointment, updateAppointment } from "@/actions/appointments";
+import { markPaymentAsPaid } from "@/actions/payments";
 import type { Appointment } from "@/types/appointments";
-import { ArrowLeft, Edit, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit, CheckCircle, XCircle, Clock, Loader2, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 
 interface AppointmentDetailClientProps {
     initialAppointment: Appointment;
+    initialPayment: any; // Using any for now to avoid complex type deep diving
     tenantId: string;
 }
 
-export function AppointmentDetailClient({ initialAppointment, tenantId }: AppointmentDetailClientProps) {
+export function AppointmentDetailClient({ initialAppointment, initialPayment, tenantId }: AppointmentDetailClientProps) {
     const router = useRouter();
     const [editOpen, setEditOpen] = useState(false);
     const [appointment, setAppointment] = useState<Appointment>(initialAppointment);
+    const [payment, setPayment] = useState(initialPayment);
     const [isLoading, setIsLoading] = useState(false);
 
     const details = [
@@ -81,6 +84,7 @@ export function AppointmentDetailClient({ initialAppointment, tenantId }: Appoin
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-[1px] bg-[#222222]">
+                {/* Detalles de la cita */}
                 <div className="lg:col-span-2 bg-black p-6 space-y-6">
                     <h2 className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
                         DETALLES DE LA CITA
@@ -102,31 +106,52 @@ export function AppointmentDetailClient({ initialAppointment, tenantId }: Appoin
                     </div>
                 </div>
 
+                {/* Sidebar: Pagos y Acciones */}
                 <div className="bg-black p-6 space-y-6">
                     <div>
                         <h3 className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase mb-4">
                             PAGO
                         </h3>
                         <div className="bg-[#111111] border border-[#222222] p-6">
-                            <span className="text-[11px] text-[#888888] block">MONTO</span>
+                            <span className="text-[11px] text-[#888888] block uppercase tracking-widest">MONTO</span>
                             <span className="text-3xl font-bold text-white mt-1 block">
                                 ${appointment.amount ?? "0.00"}
                             </span>
-                            <span className="text-[11px] text-[#888888] mt-1 block">MXN</span>
-                            <div className="mt-4 pt-4 border-t border-[#222222]">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-[#888888]" />
-                                    <span className="text-[11px] text-[#888888]">
-                                        {appointment.status === "completed" ? "COBRADO (SIMULADO)" : "PENDIENTE DE COBRO"}
+                            <div className="mt-4 pt-4 border-t border-[#222222] space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] text-[#555555] uppercase tracking-widest">Método</span>
+                                    <span className="text-[10px] text-white font-bold uppercase tracking-widest">
+                                        {payment?.paymentMethod === "cash" ? "EFECTIVO" : "TARJETA"}
                                     </span>
                                 </div>
+                                <div className="flex items-center gap-2">
+                                    <div className={`w-2 h-2 ${payment?.status === "completed" ? "bg-green-500" : "bg-orange-500"}`} />
+                                    <span className={`text-[11px] font-bold uppercase tracking-wider ${payment?.status === "completed" ? "text-green-500" : "text-orange-500"}`}>
+                                        {payment?.status === "completed" ? "COBRADO / VALIDADO" : "PENDIENTE"}
+                                    </span>
+                                </div>
+                                
+                                {payment?.paymentMethod === "cash" && payment?.status !== "completed" && (
+                                    <button
+                                        onClick={() => handleAction(async () => {
+                                            const updated = await markPaymentAsPaid(payment.id);
+                                            setPayment(updated);
+                                            return updated;
+                                        }, "Pago en efectivo validado")}
+                                        disabled={isLoading}
+                                        className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-green-600 text-white hover:bg-green-500 transition-colors disabled:opacity-50"
+                                    >
+                                        {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="h-3.5 w-3.5" />}
+                                        CONFIRMAR RECEPCIÓN
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     <div>
                         <h3 className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase mb-4">
-                            ACCIONES
+                            ACCIONES DE CITA
                         </h3>
                         <div className="space-y-2">
                             {appointment.status === "pending" && (
@@ -136,7 +161,7 @@ export function AppointmentDetailClient({ initialAppointment, tenantId }: Appoin
                                     className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
-                                    CONFIRMAR
+                                    CONFIRMAR CITA
                                 </button>
                             )}
                             {(appointment.status === "confirmed" || appointment.status === "pending") && (
