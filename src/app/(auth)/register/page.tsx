@@ -118,7 +118,7 @@ export default function RegisterPage() {
                             RENRI
                         </h1>
                     </div>
-                    <CardTitle className="text-xl text-white">Crear Cuenta</CardTitle>
+                    <CardTitle className="text-xl text-foreground">Crear Cuenta</CardTitle>
                     <CardDescription className="text-[hsl(0,0%,63.9%)]">
                         {isClientRegistration
                             ? "Activa tu portal para consultar citas y pagos"
@@ -141,7 +141,7 @@ export default function RegisterPage() {
 
                     <Button
                         variant="outline"
-                        className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
+                        className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-foreground hover:bg-[hsl(0,0%,14.9%)] h-11"
                         onClick={handleGoogleSignIn}
                         disabled={isGoogleLoading}
                     >
@@ -182,7 +182,7 @@ export default function RegisterPage() {
                                             setValue("accountType", type.value);
                                         }}
                                         className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
-                                            ? "border-white bg-white/5 text-white"
+                                            ? "border-white bg-white/5 text-foreground"
                                             : "border-[hsl(0,0%,14.9%)] text-[hsl(0,0%,45.1%)] hover:border-[hsl(0,0%,25%)]"
                                             }`}
                                     >
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                             <Input
                                 id="name"
                                 placeholder="Juan Pérez"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                                 {...register("name", { required: true })}
                             />
                             {errors.name && (
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                                 id="email"
                                 type="email"
                                 placeholder="tu@email.com"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                                 {...register("email", { required: true })}
                             />
                             {errors.email && (
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                                 id="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                                 {...register("password", { required: true })}
                             />
                             {errors.password && (
@@ -252,7 +252,7 @@ export default function RegisterPage() {
                                 id="confirmPassword"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                                 {...register("confirmPassword", { required: true })}
                             />
                             {errors.confirmPassword && (
@@ -264,7 +264,7 @@ export default function RegisterPage() {
 
                         <Button
                             type="submit"
-                            className="w-full h-11 bg-white text-black hover:bg-white/90 font-medium"
+                            className="w-full h-11 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-white/90 font-medium"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
@@ -278,7 +278,7 @@ export default function RegisterPage() {
                         ¿Ya tienes cuenta?{" "}
                         <Link
                             href="/login"
-                            className="text-white underline-offset-4 hover:underline"
+                            className="text-foreground underline-offset-4 hover:underline"
                         >
                             Inicia Sesión
                         </Link>

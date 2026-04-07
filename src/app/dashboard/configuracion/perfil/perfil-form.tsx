@@ -23,7 +23,11 @@ interface PerfilFormProps {
         name: string;
         email: string;
     };
-    profile: Record<string, any> | null;
+    profile: {
+        specialty?: string | null;
+        phone?: string | null;
+        bio?: string | null;
+    } | null;
 }
 
 export function PerfilForm({ user, profile }: PerfilFormProps) {
@@ -52,20 +56,20 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
         }
     };
 
-    const inputClass = "w-full bg-[#111111] border border-[#222222] text-white text-sm px-4 py-3 focus:outline-none focus:border-white transition-colors";
-    const labelClass = "text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase block mb-2";
+    const inputClass = "w-full bg-card border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-white transition-colors";
+    const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex items-center gap-6 pb-8 border-b border-[#222222]">
+            <div className="flex items-center gap-6 pb-8 border-b border-border">
                 <div className="relative group cursor-pointer">
-                    <div className="w-20 h-20 rounded-full border border-[#222222] bg-[#050505] flex items-center justify-center overflow-hidden">
-                        <Camera className="w-6 h-6 text-[#333333] group-hover:text-white transition-colors" />
+                    <div className="w-20 h-20 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden">
+                        <Camera className="w-6 h-6 text-foreground group-hover:text-foreground transition-colors" />
                     </div>
                 </div>
                 <div>
-                    <h2 className="text-white font-bold tracking-tight">{user.name}</h2>
-                    <p className="text-[11px] text-[#666666] font-mono">{user.email}</p>
+                    <h2 className="text-foreground font-bold tracking-tight">{user.name}</h2>
+                    <p className="text-[11px] text-muted-foreground font-mono">{user.email}</p>
                 </div>
             </div>
 
@@ -96,11 +100,11 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
                 />
             </div>
 
-            <div className="pt-6 border-t border-[#222222] flex justify-end">
+            <div className="pt-6 border-t border-border flex justify-end">
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR PERFIL"}

@@ -1,17 +1,16 @@
 "use server";
 
-import { and, asc, desc, eq, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { appointments, payments, profiles, tenants, users, clientBusinesses } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
 import { getPortalAvailableSlots } from "@/actions/portal";
+import { verifyCancelToken } from "@/lib/tokens";
 import type { Appointment } from "@/types/appointments";
 
 const staffUser = alias(users, "client_portal_staff");
-const businessTenant = alias(tenants, "client_portal_tenant");
-
 function mapAppointmentRow(row: {
     appointment: typeof appointments.$inferSelect;
     staffName: string | null;
@@ -97,22 +96,40 @@ export async function getClientAppointments() {
 
     // ───────────────────────────────────────────────────────────
     // AUTO-SYNC: Reclamo de citas huérfanas con el mismo correo
-    // Esto asegura que si ya habían citas, se peguen a su cuenta.
+    // Solo reclama citas pending/confirmed dentro de negocios
+    // donde el cliente está enlazado, para evitar expropiación.
     // ───────────────────────────────────────────────────────────
     try {
-        await db
-            .update(appointments)
-            .set({ clientId: user.id })
-            .where(
-                and(
-                    sql`EXISTS (
-                        SELECT 1 FROM ${users} u 
-                        WHERE u.id = ${appointments.clientId} 
-                        AND u.email = ${user.email}
-                        AND u.id != ${user.id}
-                    )`
-                )
-            );
+        // Get all linked business IDs for this user
+        const linkedBusinesses = await db
+            .select({ tenantId: clientBusinesses.tenantId })
+            .from(clientBusinesses)
+            .where(eq(clientBusinesses.clientId, user.id));
+
+        const linkedTenantIds = linkedBusinesses.map(lb => lb.tenantId);
+        // Also include the resolved business ID as fallback
+        const effectiveBusinessId = resolveBusinessId(user);
+        if (!linkedTenantIds.includes(effectiveBusinessId)) {
+            linkedTenantIds.push(effectiveBusinessId);
+        }
+
+        if (linkedTenantIds.length > 0) {
+            await db
+                .update(appointments)
+                .set({ clientId: user.id })
+                .where(
+                    and(
+                        sql`${appointments.tenantId} = ANY(${linkedTenantIds})`,
+                        sql`${appointments.status} IN ('pending', 'confirmed')`,
+                        sql`EXISTS (
+                            SELECT 1 FROM ${users} u 
+                            WHERE u.id = ${appointments.clientId} 
+                            AND u.email = ${user.email}
+                            AND u.id != ${user.id}
+                        )`
+                    )
+                );
+        }
     } catch (e) {
         console.error("Error in appointment auto-sync:", e);
     }
@@ -193,7 +210,16 @@ export async function cancelClientAppointment(id: string) {
     return row ?? null;
 }
 
-export async function cancelPublicAppointment(id: string) {
+export async function cancelPublicAppointment(id: string, token?: string) {
+    // Require a valid signed token for public cancellations
+    if (!token || !verifyCancelToken(id, token)) {
+        return {
+            ok: false as const,
+            state: "inactive" as const,
+            message: "Enlace de cancelación inválido o expirado",
+        };
+    }
+
     const existingAppointment = await db.query.appointments.findFirst({
         where: eq(appointments.id, id),
     });
@@ -281,13 +307,27 @@ export async function ensureClientPaymentForAppointment(appointmentId: string) {
         return existingPayment;
     }
 
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, appointment.tenantId),
+    });
+
+    const settings = tenant?.clinicalSettings as Record<string, any>;
+    const services = Array.isArray(settings?.services) ? settings.services : [];
+    const service = services.find((s) => s.name === appointment.serviceName);
+
+    let finalAmount = Number(appointment.amount);
+    if (service && service.passFeeToClient && finalAmount > 0) {
+        const stripeFee = finalAmount * 0.036 + 3.00;
+        finalAmount += stripeFee;
+    }
+
     const [payment] = await db
         .insert(payments)
         .values({
             tenantId: appointment.tenantId,
             referenceId: appointment.id,
             referenceType: "appointment",
-            amount: appointment.amount,
+            amount: finalAmount.toFixed(2),
             status: "pending",
             currency: "MXN",
             paymentMethod: "card", // Default to card for now
@@ -379,7 +419,7 @@ export async function getClientPaymentDetail(id: string) {
 
 // ─── Availability ────────────────────────────────────────
 
-export async function getClientAvailabilityPreview(daysAhead: number = 7) {
+export async function getClientAvailabilityPreview(daysAhead: number = 14) {
     const user = await requireBusinessLinkedUser();
     // Default to the first business in the list if linkedBusinessId is not set
     const effectiveBusinessId = resolveBusinessId(user);
@@ -444,6 +484,34 @@ export async function getClientAvailabilityPreview(daysAhead: number = 7) {
         tenantSlug: tenant.slug,
         staff: staffWithSlots,
     };
+}
+
+export async function getWeeklySlots(
+    tenantId: string,
+    staffId: string,
+    startDateStr: string, // "YYYY-MM-DD"
+    dayCount: number = 14,
+    serviceDuration?: number
+) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+
+    const days: { date: string; slots: { startTime: string; endTime: string; available: boolean }[] }[] = [];
+    const startDate = new Date(`${startDateStr}T00:00:00`);
+
+    for (let i = 0; i < dayCount; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        const dateStr = currentDate.toISOString().split("T")[0];
+        
+        const slots = await getPortalAvailableSlots(tenantId, staffId, dateStr, serviceDuration);
+        days.push({
+            date: dateStr,
+            slots,
+        });
+    }
+
+    return days;
 }
 
 // ─── Business Linking ────────────────────────────────────
@@ -512,6 +580,8 @@ export async function linkClientToBusiness(businessId: string) {
     // ─── AUTO-CLAIM Logic ────────────────────────────────────
     // Find appointments in this business with the same email 
     // that ARE NOT currently assigned to the client ID.
+    // SECURITY: Only claim pending/confirmed appointments to prevent
+    // reassigning completed/cancelled records from other users.
     await db
         .update(appointments)
         .set({
@@ -521,7 +591,7 @@ export async function linkClientToBusiness(businessId: string) {
         .where(
             and(
                 eq(appointments.tenantId, business.id),
-                eq(appointments.status, "pending"), // Opcional: solo pendientes/confirmadas
+                sql`${appointments.status} IN ('pending', 'confirmed')`,
                 sql`EXISTS (
                     SELECT 1 FROM ${users} u 
                     WHERE u.id = ${appointments.clientId} 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useTurnsRealtime } from "@/hooks/use-turns-realtime";
-import { createTurn, cancelTurn } from "@/actions/turns";
+import { cancelPublicTurn, createPublicTurn } from "@/actions/turns";
 import { Clock, Hash, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -15,9 +15,10 @@ interface PortalTurnoClientProps {
 }
 
 export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
-    const { turns, currentTurn, isConnected } = useTurnsRealtime(tenant.id);
+    const { turns, currentTurn, isConnected } = useTurnsRealtime(tenant.id, { public: true });
 
     const [myTurnId, setMyTurnId] = useState<string | null>(null);
+    const [myTurnToken, setMyTurnToken] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -26,7 +27,14 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
     useEffect(() => {
         const saved = localStorage.getItem(`renri_turn_${tenant.id}`);
         if (saved) {
-            setMyTurnId(saved);
+            try {
+                const parsed = JSON.parse(saved) as { id?: string; cancelToken?: string };
+                setMyTurnId(parsed.id ?? null);
+                setMyTurnToken(parsed.cancelToken ?? null);
+            } catch {
+                setMyTurnId(saved);
+                setMyTurnToken(null);
+            }
         }
     }, [tenant.id]);
 
@@ -49,13 +57,17 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
 
         try {
             setIsSubmitting(true);
-            const newTurn = await createTurn({
+            const result = await createPublicTurn({
                 tenantId: tenant.id,
                 clientName: name,
                 clientPhone: phone,
             });
-            setMyTurnId(newTurn.id);
-            localStorage.setItem(`renri_turn_${tenant.id}`, newTurn.id);
+            setMyTurnId(result.turn.id);
+            setMyTurnToken(result.cancelToken);
+            localStorage.setItem(
+                `renri_turn_${tenant.id}`,
+                JSON.stringify({ id: result.turn.id, cancelToken: result.cancelToken })
+            );
             toast.success("Te has unido a la fila virtual");
         } catch (err: unknown) {
             toast.error(err instanceof Error ? err.message : "Error al unirse a la fila");
@@ -69,11 +81,15 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
         
         try {
             setIsSubmitting(true);
-            await cancelTurn(myTurnId, tenant.id);
+            if (!myTurnToken) {
+                throw new Error("No se encontro el token de cancelacion");
+            }
+            await cancelPublicTurn(myTurnToken);
             toast.success("Has cancelado tu turno");
             // Remove from local storage so they can queue again if they want
             localStorage.removeItem(`renri_turn_${tenant.id}`);
             setMyTurnId(null);
+            setMyTurnToken(null);
         } catch {
             toast.error("Error al cancelar el turno");
         } finally {
@@ -84,6 +100,7 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
     const clearMyTurn = () => {
         localStorage.removeItem(`renri_turn_${tenant.id}`);
         setMyTurnId(null);
+        setMyTurnToken(null);
     };
 
     // Calculate approx wait time (15 mins per person ahead of me)
@@ -95,7 +112,7 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
-            <h1 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase mb-8">
+            <h1 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-8">
                 {tenant.name}
             </h1>
 
@@ -103,7 +120,7 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
             {!tenant.isQueueOpen && !myTurn && (
                 <div className="border border-red-900/50 bg-red-950/20 p-8 text-center max-w-sm w-full mb-8">
                     <p className="text-sm font-bold tracking-widest text-red-500 uppercase">FILA CERRADA</p>
-                    <p className="text-[10px] text-[#888] mt-2 tracking-widest uppercase">
+                    <p className="text-[10px] text-foreground mt-2 tracking-widest uppercase">
                         No se están aceptando nuevos turnos en este momento.
                     </p>
                 </div>
@@ -111,31 +128,31 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
 
             {/* My Turn Tracker */}
             {myTurn ? (
-                <div className="w-full max-w-sm border border-white p-6 bg-black mb-12">
-                    <p className="text-[10px] font-bold tracking-[0.3em] text-[#888888] uppercase mb-4 text-center">
+                <div className="w-full max-w-sm border border-white p-6 bg-background mb-12">
+                    <p className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-4 text-center">
                         TU TURNO {myTurn.status === "in_progress" && " - ¡ES TU TURNO!"}
                     </p>
                     <div className="flex justify-center mb-6">
-                        <span className={`text-6xl font-bold font-mono ${myTurn.status === "in_progress" ? "text-green-400" : "text-white"}`}>
+                        <span className={`text-6xl font-bold font-mono ${myTurn.status === "in_progress" ? "text-green-400" : "text-foreground"}`}>
                             {myTurn.number}
                         </span>
                     </div>
 
                     {myTurn.status === "waiting" && (
-                        <div className="bg-[#111] p-4 text-center border border-[#222] mb-6">
-                            <p className="text-[10px] text-[#888] uppercase tracking-widest mb-1">TIEMPO ESTIMADO</p>
-                            <p className="text-xl font-mono text-white">~{myWaitTime} min</p>
+                        <div className="bg-secondary p-4 text-center border border-border mb-6">
+                            <p className="text-[10px] text-foreground uppercase tracking-widest mb-1">TIEMPO ESTIMADO</p>
+                            <p className="text-xl font-mono text-foreground">~{myWaitTime} min</p>
                         </div>
                     )}
 
                     {["completed", "skipped", "cancelled"].includes(myTurn.status) ? (
                         <div className="text-center space-y-4">
-                            <p className="text-sm tracking-widest font-bold text-[#888] uppercase">
+                            <p className="text-sm tracking-widest font-bold text-foreground uppercase">
                                 ESTADO: {myTurn.status === "completed" ? "Finalizado" : myTurn.status === "skipped" ? "Omitido" : "Cancelado"}
                             </p>
                             <button
                                 onClick={clearMyTurn}
-                                className="w-full py-3 text-[10px] font-bold tracking-[0.2em] bg-white text-black hover:bg-[#ccc] uppercase transition-colors"
+                                className="w-full py-3 text-[10px] font-bold tracking-[0.2em] bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-secondary uppercase transition-colors"
                             >
                                 VOLVER AL INICIO
                             </button>
@@ -145,7 +162,7 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
                             <button
                                 onClick={handleCancelMyTurn}
                                 disabled={isSubmitting}
-                                className="w-full py-3 text-[10px] font-bold tracking-[0.2em] border border-[#222] text-red-500 hover:border-red-500 hover:bg-red-500/10 uppercase transition-colors disabled:opacity-50"
+                                className="w-full py-3 text-[10px] font-bold tracking-[0.2em] border border-border text-red-500 hover:border-red-500 hover:bg-red-500/10 uppercase transition-colors disabled:opacity-50"
                             >
                                 {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" /> : "SALIR DE LA FILA"}
                             </button>
@@ -157,8 +174,8 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
                     {/* Turn entry form */}
                     {tenant.isQueueOpen && (
                         <form onSubmit={handleCreateTurn} className="w-full max-w-sm mb-12 space-y-4">
-                            <div className="bg-[#111] border border-[#222] p-6">
-                                <p className="text-[10px] font-bold tracking-[0.3em] text-white uppercase mb-6 text-center">
+                            <div className="bg-secondary border border-border p-6">
+                                <p className="text-[10px] font-bold tracking-[0.3em] text-foreground uppercase mb-6 text-center">
                                     UNIRSE A LA FILA
                                 </p>
                                 <div className="space-y-4">
@@ -168,19 +185,19 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
                                         placeholder="Tu nombre completo"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="w-full bg-black border border-[#333] text-white text-sm px-4 py-3 placeholder:text-[#555] focus:outline-none focus:border-white transition-colors"
+                                        className="w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-foreground focus:outline-none focus:border-white transition-colors"
                                     />
                                     <input
                                         type="tel"
                                         placeholder="Teléfono (opcional)"
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
-                                        className="w-full bg-black border border-[#333] text-white text-sm px-4 py-3 placeholder:text-[#555] focus:outline-none focus:border-white transition-colors"
+                                        className="w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-foreground focus:outline-none focus:border-white transition-colors"
                                     />
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !name.trim()}
-                                        className="w-full py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50 flex justify-center"
+                                        className="w-full py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50 flex justify-center"
                                     >
                                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "SOLICITAR TURNO"}
                                     </button>
@@ -194,21 +211,21 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
             {/* Current global turn */}
             {!myTurn && (
                 <div className="text-center mb-12">
-                    <p className="text-[10px] font-bold tracking-[0.3em] text-[#666666] uppercase mb-4">
+                    <p className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-4">
                         TURNO EN ATENCIÓN
                     </p>
                     {currentTurn ? (
                         <div className="border border-white p-6">
-                            <span className="text-6xl font-bold font-mono text-white">
+                            <span className="text-6xl font-bold font-mono text-foreground">
                                 {currentTurn.number}
                             </span>
                         </div>
                     ) : (
-                        <div className="border border-[#222222] p-6">
-                            <span className="text-4xl font-bold font-mono text-[#444444]">
+                        <div className="border border-border p-6">
+                            <span className="text-4xl font-bold font-mono text-foreground">
                                 —
                             </span>
-                            <p className="text-[10px] text-[#666666] mt-2 uppercase tracking-widest">
+                            <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-widest">
                                 SIN TURNO ACTIVO
                             </p>
                         </div>
@@ -217,26 +234,26 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-[1px] bg-[#222222] w-full max-w-sm">
-                <div className="bg-black p-5 text-center">
+            <div className="grid grid-cols-2 gap-[1px] bg-popover w-full max-w-sm">
+                <div className="bg-background p-5 text-center">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                        <Hash className="w-3 h-3 text-[#666666]" />
-                        <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">
+                        <Hash className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             EN ESPERA
                         </span>
                     </div>
-                    <span className="text-2xl font-bold font-mono text-white">
+                    <span className="text-2xl font-bold font-mono text-foreground">
                         {waitingTurns.length}
                     </span>
                 </div>
-                <div className="bg-black p-5 text-center">
+                <div className="bg-background p-5 text-center">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                        <Clock className="w-3 h-3 text-[#666666]" />
-                        <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">
+                        <Clock className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             APROX.
                         </span>
                     </div>
-                    <span className="text-2xl font-bold font-mono text-white">
+                    <span className="text-2xl font-bold font-mono text-foreground">
                         {waitingTurns.length * 15} min
                     </span>
                 </div>
@@ -245,7 +262,7 @@ export function PortalTurnoClient({ tenant }: PortalTurnoClientProps) {
             {/* Connection indicator */}
             <div className="mt-8 flex items-center justify-center">
                 <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`} />
-                <span className="ml-2 text-[8px] tracking-[0.3em] uppercase text-[#666]">
+                <span className="ml-2 text-[8px] tracking-[0.3em] uppercase text-foreground">
                     {isConnected ? "EN VIVO" : "DESCONECTADO"}
                 </span>
             </div>

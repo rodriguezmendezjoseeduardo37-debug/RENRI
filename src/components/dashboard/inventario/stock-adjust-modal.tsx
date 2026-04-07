@@ -64,12 +64,12 @@ export function StockAdjustModal({
             : currentStock - (parseInt(quantity) || 0);
 
     const inputClass =
-        "w-full bg-black border border-[#222222] text-white text-sm px-4 py-3 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
 
     return (
         <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-            <DialogContent className="bg-[#111111] border border-[#222222] text-white max-w-md rounded-none p-0">
-                <DialogHeader className="px-6 pt-6 border-b border-[#222222] pb-4">
+            <DialogContent className="bg-card border border-border text-foreground max-w-md rounded-none p-0">
+                <DialogHeader className="px-6 pt-6 border-b border-border pb-4">
                     <DialogTitle className="text-[11px] font-bold tracking-[0.3em] uppercase">
                         AJUSTAR STOCK — {productName}
                     </DialogTitle>
@@ -82,8 +82,8 @@ export function StockAdjustModal({
                             type="button"
                             onClick={() => setType("add")}
                             className={`flex items-center justify-center gap-2 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors ${type === "add"
-                                    ? "bg-white text-black"
-                                    : "bg-[#222222] text-[#888888] hover:text-white"
+                                    ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80"
+                                    : "bg-popover text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             <Plus className="w-3.5 h-3.5" /> AGREGAR
@@ -92,8 +92,8 @@ export function StockAdjustModal({
                             type="button"
                             onClick={() => setType("subtract")}
                             className={`flex items-center justify-center gap-2 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors ${type === "subtract"
-                                    ? "bg-white text-black"
-                                    : "bg-[#222222] text-[#888888] hover:text-white"
+                                    ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80"
+                                    : "bg-popover text-muted-foreground hover:text-foreground"
                                 }`}
                         >
                             <Minus className="w-3.5 h-3.5" /> RESTAR
@@ -102,7 +102,7 @@ export function StockAdjustModal({
 
                     {/* Quantity */}
                     <div>
-                        <label className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block mb-2">
+                        <label className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2">
                             CANTIDAD
                         </label>
                         <input
@@ -118,7 +118,7 @@ export function StockAdjustModal({
 
                     {/* Reason */}
                     <div>
-                        <label className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block mb-2">
+                        <label className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2">
                             RAZÓN
                         </label>
                         <input
@@ -130,12 +130,12 @@ export function StockAdjustModal({
                     </div>
 
                     {/* Preview */}
-                    <div className="border border-[#222222] p-4 flex items-center justify-between">
-                        <span className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase">
+                    <div className="border border-border p-4 flex items-center justify-between">
+                        <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                             STOCK RESULTANTE
                         </span>
                         <span
-                            className={`text-2xl font-bold font-mono ${previewStock < 0 ? "text-red-500" : "text-white"
+                            className={`text-2xl font-bold font-mono ${previewStock < 0 ? "text-red-500" : "text-foreground"
                                 }`}
                         >
                             {previewStock}
@@ -147,7 +147,7 @@ export function StockAdjustModal({
                         <button
                             type="submit"
                             disabled={isLoading || !quantity}
-                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                         >
                             {isLoading && (
                                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -157,7 +157,7 @@ export function StockAdjustModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-[#222222] text-[#888888] hover:border-white hover:text-white transition-colors"
+                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                         >
                             CANCELAR
                         </button>

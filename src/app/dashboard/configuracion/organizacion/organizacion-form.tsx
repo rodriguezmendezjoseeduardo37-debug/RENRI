@@ -65,9 +65,9 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
     };
 
     const inputClass =
-        "w-full bg-[#111111] border border-[#222222] text-white text-sm px-4 py-3 placeholder:text-[#444444] focus:outline-none focus:border-white transition-colors";
+        "w-full bg-card border border-border text-foreground text-sm px-4 py-3 placeholder:text-foreground focus:outline-none focus:border-white transition-colors";
     const labelClass =
-        "text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase block mb-2";
+        "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -82,7 +82,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                     placeholder="Ej. Clínica Dental Sonrisas"
                     className={inputClass}
                 />
-                <p className="text-[10px] text-[#666666] mt-2 tracking-wide font-mono">
+                <p className="text-[10px] text-muted-foreground mt-2 tracking-wide font-mono">
                     Este nombre aparecerá en tu portal público y en los correos enviados a clientes.
                 </p>
             </div>
@@ -90,8 +90,8 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
             {/* Public Slug */}
             <div>
                 <label className={labelClass}>ENLACE DEL PORTAL PÚBLICO (SLUG)</label>
-                <div className="flex bg-[#111111] border border-[#222222] focus-within:border-white transition-colors">
-                    <span className="text-[#666666] text-sm px-4 py-3 border-r border-[#222222] bg-[#050505] font-mono select-none">
+                <div className="flex bg-card border border-border focus-within:border-white transition-colors">
+                    <span className="text-muted-foreground text-sm px-4 py-3 border-r border-border bg-card font-mono select-none">
                         {hostUrl.replace(/^https?:\/\//, "")}/portal/
                     </span>
                     <input
@@ -100,10 +100,10 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                         value={slug}
                         onChange={(e) => setSlug(e.target.value)}
                         placeholder="tu-negocio"
-                        className="flex-1 bg-transparent text-white text-sm px-4 py-3 placeholder:text-[#444444] focus:outline-none font-mono"
+                        className="flex-1 bg-transparent text-foreground text-sm px-4 py-3 placeholder:text-foreground focus:outline-none font-mono"
                     />
                 </div>
-                <p className="text-[10px] text-[#666666] mt-2 tracking-wide font-mono">
+                <p className="text-[10px] text-muted-foreground mt-2 tracking-wide font-mono">
                     Usa solo letras minúsculas, números y guiones. No uses espacios.
                 </p>
             </div>
@@ -182,17 +182,17 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                     placeholder="https://ejemplo.com/logo.png"
                     className={inputClass}
                 />
-                <p className="text-[10px] text-[#666666] mt-2 tracking-wide font-mono">
+                <p className="text-[10px] text-muted-foreground mt-2 tracking-wide font-mono">
                     Este logo se mostrará en el encabezado de tu portal público.
                 </p>
             </div>
 
             {/* Actions */}
-            <div className="pt-6 border-t border-[#222222] flex justify-end">
+            <div className="pt-6 border-t border-border flex justify-end">
                 <button
                     type="submit"
                     disabled={isLoading || !name.trim() || !slug.trim()}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR CAMBIOS"}

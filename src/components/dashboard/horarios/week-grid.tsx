@@ -24,16 +24,16 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
     };
 
     return (
-        <div className="w-full h-full overflow-hidden border border-[#222222] bg-black text-white flex flex-col">
+        <div className="w-full h-full overflow-hidden border border-border bg-background text-foreground flex flex-col">
             {/* Header: Days */}
-            <div className="flex border-b border-[#222222]">
-                <div className="w-16 flex-shrink-0 border-r border-[#222222]"></div>
+            <div className="flex border-b border-border">
+                <div className="w-16 flex-shrink-0 border-r border-border"></div>
                 {DAYS.map((day, i) => (
                     <div
                         key={i}
-                        className="flex-1 min-w-0 border-r border-[#222222] last:border-0 p-3 text-center"
+                        className="flex-1 min-w-0 border-r border-border last:border-0 p-3 text-center"
                     >
-                        <span className="text-[10px] font-bold tracking-[0.2em] text-[#888888]">
+                        <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground">
                             {day}
                         </span>
                     </div>
@@ -45,14 +45,14 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
                 <div className="flex relative" style={{ height: `${HOURS.length * ROW_HEIGHT_PX}px` }}>
 
                     {/* Time Column */}
-                    <div className="w-16 flex-shrink-0 border-r border-[#222222] bg-black z-10 sticky left-0">
+                    <div className="w-16 flex-shrink-0 border-r border-border bg-background z-10 sticky left-0">
                         {HOURS.map((hour) => (
                             <div
                                 key={hour}
-                                className="border-b border-[#222222] flex items-start justify-center pt-2"
+                                className="border-b border-border flex items-start justify-center pt-2"
                                 style={{ height: `${ROW_HEIGHT_PX}px` }}
                             >
-                                <span className="text-[10px] font-mono text-[#666666]">
+                                <span className="text-[10px] font-mono text-muted-foreground">
                                     {hour.toString().padStart(2, "0")}:00
                                 </span>
                             </div>
@@ -66,14 +66,14 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
                         return (
                             <div
                                 key={dayIndex}
-                                className="flex-1 min-w-0 border-r border-[#222222] last:border-0 relative group"
+                                className="flex-1 min-w-0 border-r border-border last:border-0 relative group"
                             >
                                 {/* Grid hour rows (empty slots) */}
                                 {HOURS.map((hour) => (
                                     <div
                                         key={hour}
                                         onClick={() => onDayClick?.(dayIndex, `${hour.toString().padStart(2, "0")}:00:00`)}
-                                        className="border-b border-[#222222]/50 hover:bg-[#111111] cursor-pointer"
+                                        className="border-b border-border/50 hover:bg-card cursor-pointer"
                                         style={{ height: `${ROW_HEIGHT_PX}px` }}
                                     ></div>
                                 ))}

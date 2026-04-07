@@ -32,7 +32,7 @@ export default async function OrderDetailPage({
             {/* Back */}
             <Link
                 href="/dashboard/pedidos"
-                className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white uppercase transition-colors"
+                className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase transition-colors"
             >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 VOLVER A PEDIDOS
@@ -41,10 +41,10 @@ export default async function OrderDetailPage({
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] font-mono">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] font-mono">
                         #{order.id.slice(0, 8).toUpperCase()}
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         {format(new Date(order.createdAt), "dd MMMM yyyy · HH:mm", { locale: es }).toUpperCase()}
                     </p>
                 </div>
@@ -52,8 +52,8 @@ export default async function OrderDetailPage({
                     className={`px-4 py-2 text-[11px] font-bold tracking-[0.2em] uppercase ${isCancelled
                             ? "bg-red-500/10 text-red-500 border border-red-500/30"
                             : order.status === "completed"
-                                ? "bg-white/10 text-white border border-white/30"
-                                : "bg-[#222222] text-[#888888] border border-[#333333]"
+                                ? "bg-white/10 text-foreground border border-white/30"
+                                : "bg-popover text-muted-foreground border border-border"
                         }`}
                 >
                     {ORDER_STATUS_LABELS[order.status as OrderStatus]}
@@ -67,21 +67,21 @@ export default async function OrderDetailPage({
                         <div key={step} className="flex-1 flex items-center">
                             <div
                                 className={`flex items-center justify-center w-8 h-8 text-[10px] font-bold font-mono border ${idx <= currentStepIdx
-                                        ? "bg-white text-black border-white"
-                                        : "bg-black text-[#666666] border-[#333333]"
+                                        ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 border-white"
+                                        : "bg-background text-muted-foreground border-border"
                                     }`}
                             >
                                 {idx + 1}
                             </div>
                             <span
-                                className={`ml-2 text-[9px] font-bold tracking-[0.2em] uppercase ${idx <= currentStepIdx ? "text-white" : "text-[#666666]"
+                                className={`ml-2 text-[9px] font-bold tracking-[0.2em] uppercase ${idx <= currentStepIdx ? "text-foreground" : "text-muted-foreground"
                                     }`}
                             >
                                 {ORDER_STATUS_LABELS[step]}
                             </span>
                             {idx < steps.length - 1 && (
                                 <div
-                                    className={`flex-1 h-[1px] mx-3 ${idx < currentStepIdx ? "bg-white" : "bg-[#333333]"
+                                    className={`flex-1 h-[1px] mx-3 ${idx < currentStepIdx ? "bg-white" : "bg-secondary"
                                         }`}
                                 />
                             )}
@@ -92,15 +92,15 @@ export default async function OrderDetailPage({
 
             {/* Client info */}
             {(order.clientName || order.clientEmail) && (
-                <div className="border border-[#222222] bg-[#111111] p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="border border-border bg-card p-5 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {order.clientName && (
                         <div className="flex items-center gap-3">
-                            <User className="w-4 h-4 text-[#666666]" />
+                            <User className="w-4 h-4 text-muted-foreground" />
                             <div>
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase block">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase block">
                                     CLIENTE
                                 </span>
-                                <span className="text-sm text-white">
+                                <span className="text-sm text-foreground">
                                     {order.clientName}
                                 </span>
                             </div>
@@ -108,12 +108,12 @@ export default async function OrderDetailPage({
                     )}
                     {order.clientEmail && (
                         <div className="flex items-center gap-3">
-                            <Mail className="w-4 h-4 text-[#666666]" />
+                            <Mail className="w-4 h-4 text-muted-foreground" />
                             <div>
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase block">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase block">
                                     EMAIL
                                 </span>
-                                <span className="text-sm text-white">
+                                <span className="text-sm text-foreground">
                                     {order.clientEmail}
                                 </span>
                             </div>
@@ -121,12 +121,12 @@ export default async function OrderDetailPage({
                     )}
                     {order.notes && (
                         <div className="flex items-center gap-3">
-                            <FileText className="w-4 h-4 text-[#666666]" />
+                            <FileText className="w-4 h-4 text-muted-foreground" />
                             <div>
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase block">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase block">
                                     NOTAS
                                 </span>
-                                <span className="text-sm text-[#888888]">
+                                <span className="text-sm text-muted-foreground">
                                     {order.notes}
                                 </span>
                             </div>
@@ -137,27 +137,27 @@ export default async function OrderDetailPage({
 
             {/* Items */}
             <div className="space-y-4">
-                <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                     ARTÍCULOS
                 </h2>
                 <OrderItemsTable items={order.items} />
             </div>
 
             {/* Totals */}
-            <div className="border border-[#222222] bg-[#111111] p-5 space-y-3 max-w-xs ml-auto">
-                <div className="flex justify-between text-xs text-[#888888]">
+            <div className="border border-border bg-card p-5 space-y-3 max-w-xs ml-auto">
+                <div className="flex justify-between text-xs text-muted-foreground">
                     <span className="tracking-[0.2em]">SUBTOTAL</span>
                     <span className="font-mono">
                         ${Number(order.subtotal).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                     </span>
                 </div>
-                <div className="flex justify-between text-xs text-[#888888]">
+                <div className="flex justify-between text-xs text-muted-foreground">
                     <span className="tracking-[0.2em]">IVA (16%)</span>
                     <span className="font-mono">
                         ${Number(order.tax).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                     </span>
                 </div>
-                <div className="flex justify-between text-lg font-bold text-white pt-3 border-t border-[#222222]">
+                <div className="flex justify-between text-lg font-bold text-foreground pt-3 border-t border-border">
                     <span className="tracking-[0.2em]">TOTAL</span>
                     <span className="font-mono">
                         ${Number(order.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}

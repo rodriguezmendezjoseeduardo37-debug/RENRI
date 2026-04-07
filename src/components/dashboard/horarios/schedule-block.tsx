@@ -12,9 +12,9 @@ interface ScheduleBlockProps {
 export function ScheduleBlock({ schedule, staffName, onClick, top, height }: ScheduleBlockProps) {
     const isActive = schedule.isActive;
 
-    // Aesthetic rules: Active = White bg, black text. Inactive = dark bg, gray text, strikethrough.
-    const bgClass = isActive ? "bg-white border-white" : "bg-[#222222] border-[#333333]";
-    const textClass = isActive ? "text-black" : "text-[#888888] line-through";
+    // Aesthetic rules: Active = Strong adaptive contrast. Inactive = dark bg, gray text, strikethrough.
+    const bgClass = isActive ? "bg-foreground border-foreground shadow-sm" : "bg-card border-border border-dashed";
+    const textClass = isActive ? "text-background" : "text-muted-foreground line-through";
 
     // Format time from HH:mm:ss to HH:mm
     const formatTime = (time: string) => time.substring(0, 5);
@@ -22,7 +22,7 @@ export function ScheduleBlock({ schedule, staffName, onClick, top, height }: Sch
     return (
         <div
             onClick={() => onClick?.(schedule)}
-            className={`absolute left-0 right-0 mx-1 border cursor-pointer overflow-hidden transition-all hover:ring-1 hover:ring-white hover:-mx-0 ${bgClass} ${textClass}`}
+            className={`absolute left-0 right-0 mx-1 border cursor-pointer overflow-hidden transition-all hover:ring-2 hover:ring-foreground hover:-mx-0 ${bgClass} ${textClass}`}
             style={{
                 top: `${top}px`,
                 height: `${height}px`,

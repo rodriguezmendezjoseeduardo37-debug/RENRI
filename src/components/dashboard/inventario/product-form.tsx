@@ -42,14 +42,26 @@ export function ProductForm({
 
     const price = watch("price");
     const cost = watch("cost");
+    const passFeeToClient = watch("passFeeToClient");
 
-    // Live margin calculator
+    // Live margin and Stripe fee calculator
     const priceNum = parseFloat(price || "0");
     const costNum = parseFloat(cost || "0");
+    const stripeFee = priceNum > 0 ? (priceNum * 0.036) + 3.00 : 0;
+    
+    const clientPays = passFeeToClient ? priceNum + stripeFee : priceNum;
+    const netProfitWithStripe = passFeeToClient ? priceNum - costNum : priceNum - costNum - stripeFee;
+    const netProfitJustCash = priceNum - costNum;
+
+    // Is the stripe fee eating too much of the product price? (e.g. > 15-20% is very bad, means low ticket item)
+    // If stripe takes more than 15% of the total price, or net profit is negative, warn them, unless they are passing the fee.
+    const stripeEatsTooMuch = !passFeeToClient && priceNum > 0 && (stripeFee / priceNum > 0.15 || netProfitWithStripe <= 0);
+
     const margin =
         priceNum > 0 && costNum > 0
-            ? (((priceNum - costNum) / priceNum) * 100).toFixed(1)
+            ? ((netProfitJustCash / priceNum) * 100).toFixed(1)
             : null;
+
 
     const generateSKU = () => {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -61,9 +73,9 @@ export function ProductForm({
     };
 
     const inputClass =
-        "w-full bg-black border border-[#222222] text-white text-sm px-4 py-3 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
     const labelClass =
-        "text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block mb-2";
+        "text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form
@@ -109,7 +121,7 @@ export function ProductForm({
                     <button
                         type="button"
                         onClick={generateSKU}
-                        className="px-4 py-3 border border-[#222222] text-[#888888] hover:border-white hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap"
+                        className="px-4 py-3 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap"
                     >
                         <Shuffle className="w-3.5 h-3.5" />
                         AUTO
@@ -172,18 +184,46 @@ export function ProductForm({
                 </div>
             </div>
 
-            {/* Margin calculator */}
-            {margin && (
-                <div className="border border-[#222222] bg-[#111111] p-4 flex items-center justify-between">
-                    <span className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase">
-                        MARGEN DE GANANCIA
-                    </span>
-                    <span
-                        className={`text-xl font-bold font-mono ${Number(margin) >= 30 ? "text-green-400" : Number(margin) >= 15 ? "text-white" : "text-red-400"
-                            }`}
-                    >
-                        {margin}%
-                    </span>
+            {/* Margins and Stripe Fees */}
+            {(margin || priceNum > 0) && (
+                <div className="border border-border bg-card divide-y divide-border">
+                    {/* Standard Margin (Cash) */}
+                    {margin && (
+                        <div className="p-4 flex items-center justify-between">
+                            <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+                                MARGEN BRUTO (EFECTIVO)
+                            </span>
+                            <span
+                                className={`text-xl font-bold font-mono ${Number(margin) >= 30 ? "text-green-400" : Number(margin) >= 15 ? "text-foreground" : "text-red-400"
+                                    }`}
+                            >
+                                {margin}%
+                            </span>
+                        </div>
+                    )}
+                    
+                    {/* Stripe Online Payment Calculation */}
+                    <div className={`p-4 ${stripeEatsTooMuch ? "bg-red-950/20" : ""}`}>
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase flex items-center gap-2">
+                                GANANCIA NETA (STRIPE EN LÍNEA)
+                            </span>
+                            <span className={`text-sm font-bold font-mono ${stripeEatsTooMuch ? "text-red-400" : "text-foreground"}`}>
+                                ${Math.max(0, netProfitWithStripe).toFixed(2)} MXN
+                            </span>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-2">
+                            {passFeeToClient 
+                                ? `El cliente final pagará $${clientPays.toFixed(2)} MXN (se le sumarán los $${stripeFee.toFixed(2)} de cargo por servicio).`
+                                : `Stripe descontará aprox. $${stripeFee.toFixed(2)} MXN por procesar el cobro en línea. Tú absorbes este costo.`
+                            }
+                        </div>
+                        {stripeEatsTooMuch && (
+                            <div className="mt-3 text-[10px] text-red-400 font-medium">
+                                ⚠️ El costo base de procesamiento ($3.00 + 3.6%) reduce drásticamente las ganancias de este artículo de bajo costo. Te sugerimos mantenerlo desactivado de &quot;Venta en Línea&quot; y que el cobro sea físico en mostrador.
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
@@ -224,13 +264,13 @@ export function ProductForm({
             </div>
 
             {/* Public visibility toggle */}
-            <div className="border border-[#222222] bg-[#111111] p-4 flex items-center justify-between">
+            <div className="border border-border bg-card p-4 flex items-center justify-between">
                 <div>
-                    <span className="text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block">
+                    <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block">
                         VISIBLE AL PÚBLICO
                     </span>
-                    <span className="text-[10px] text-[#555555] mt-1 block">
-                        Si está activo, el producto aparecerá en la tienda pública del negocio (requiere que la venta pública esté habilitada en la configuración del negocio).
+                    <span className="text-[10px] text-muted-foreground mt-1 block">
+                        Si está activo, el producto aparecerá en la tienda pública del negocio.
                     </span>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
@@ -239,16 +279,36 @@ export function ProductForm({
                         {...register("isPublic")}
                         className="sr-only peer"
                     />
-                    <div className="w-11 h-6 bg-[#222222] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#555555] after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white peer-checked:after:bg-black"></div>
+                    <div className="w-11 h-6 bg-popover peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white peer-checked:after:bg-background"></div>
+                </label>
+            </div>
+
+            {/* Pass fee toggle */}
+            <div className="border border-border bg-card p-4 flex items-center justify-between">
+                <div>
+                    <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block">
+                        TRASPASAR COMISIÓN DE TARJETA AL CLIENTE
+                    </span>
+                    <span className="text-[10px] text-muted-foreground mt-1 block">
+                        Si está activo, al cliente se le sumará automáticamente la comisión de Stripe en su pago en línea para mantener tu margen intacto.
+                    </span>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer ml-4 flex-shrink-0">
+                    <input
+                        type="checkbox"
+                        {...register("passFeeToClient")}
+                        className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-popover peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-secondary after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-white peer-checked:after:bg-background"></div>
                 </label>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-3 pt-4 border-t border-[#222222]">
+            <div className="flex gap-3 pt-4 border-t border-border">
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-2 px-8 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-8 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isSubmitting && (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

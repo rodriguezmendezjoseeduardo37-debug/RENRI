@@ -34,17 +34,17 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
     }
 
     return (
-        <div className="p-6 border border-[#222222] bg-[#050505]">
+        <div className="p-6 border border-border bg-card">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 border border-[#222222] flex items-center justify-center flex-shrink-0">
-                        <ShoppingBag className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 border border-border flex items-center justify-center flex-shrink-0">
+                        <ShoppingBag className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
-                        <h2 className="text-[11px] font-bold tracking-[0.2em] text-white uppercase">
+                        <h2 className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
                             VENTA PÚBLICA DE PRODUCTOS
                         </h2>
-                        <p className="text-[10px] text-[#888888] mt-1.5 leading-relaxed max-w-md">
+                        <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed max-w-md">
                             Cuando está habilitado, los productos marcados como &quot;públicos&quot; aparecerán
                             en la vista pública del negocio para que los clientes puedan verlos y
                             comprarlos. Si está deshabilitado, ningún producto se mostrará
@@ -61,16 +61,16 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
                     aria-label={enabled ? "Deshabilitar venta pública" : "Habilitar venta pública"}
                 >
                     {isPending ? (
-                        <Loader2 className="w-5 h-5 animate-spin text-[#888888]" />
+                        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                     ) : (
                         <div
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? "bg-white" : "bg-[#222222]"
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? "bg-white" : "bg-popover"
                                 }`}
                         >
                             <span
                                 className={`inline-block h-5 w-5 transform rounded-full transition-transform ${enabled
-                                    ? "translate-x-[22px] bg-black"
-                                    : "translate-x-[2px] bg-[#555555]"
+                                    ? "translate-x-[22px] bg-background"
+                                    : "translate-x-[2px] bg-secondary"
                                     }`}
                             />
                         </div>
@@ -79,11 +79,11 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
             </div>
 
             {enabled && (
-                <div className="mt-4 pt-4 border-t border-[#222222]">
+                <div className="mt-4 pt-4 border-t border-border">
                     <p className="text-[10px] font-bold tracking-[0.2em] text-green-400 uppercase">
                         ● TIENDA PÚBLICA ACTIVA
                     </p>
-                    <p className="text-[10px] text-[#555555] mt-1">
+                    <p className="text-[10px] text-muted-foreground mt-1">
                         Los productos con la opción &quot;Visible al público&quot; activada se mostrarán en la vista pública del negocio.
                     </p>
                 </div>

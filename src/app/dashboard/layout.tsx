@@ -3,20 +3,21 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
-import { Space_Grotesk, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
+const spaceGrotesk = localFont({
+    src: "../fonts/GeistMonoVF.woff",
     variable: "--font-heading",
-    weight: ["500", "700"],
+    weight: "100 900",
 });
 
-const inter = Inter({
-    subsets: ["latin"],
+const inter = localFont({
+    src: "../fonts/GeistVF.woff",
     variable: "--font-body",
+    weight: "100 900",
 });
 
 export default async function DashboardLayout({
@@ -46,15 +47,17 @@ export default async function DashboardLayout({
     const cookieStore = await cookies();
     const activeModule = cookieStore.get("renri_active_module")?.value;
 
-    if (activeModule && ["servicios", "pyme", "cliente"].includes(activeModule)) {
+    if (activeModule && ["servicios", "pyme"].includes(activeModule)) {
         if (user.role !== "CLIENT") {
-            accountType = activeModule as "servicios" | "pyme" | "cliente";
+            accountType = activeModule as "servicios" | "pyme";
         }
+    } else if (user.role !== "CLIENT" && accountType === "cliente") {
+        accountType = tenant?.accountType ?? "servicios";
     }
 
     return (
         <div
-            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-black text-white`}
+            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-background text-foreground transition-colors duration-300`}
         >
             <Sidebar
                 accountType={accountType}

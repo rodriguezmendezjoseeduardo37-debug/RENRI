@@ -108,7 +108,7 @@ export function Sidebar({
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out hidden md:flex flex-col"
+            className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 ease-in-out hidden md:flex flex-col"
             style={{ width: expanded ? 240 : 64 }}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => {
@@ -116,18 +116,18 @@ export function Sidebar({
                 setShowModeSwitcher(false);
             }}
         >
-            <div className="flex h-16 items-center border-b border-[#222222] px-4">
+            <div className="flex h-16 items-center border-b border-border px-4">
                 <span
-                    className="text-white font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
+                    className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
                     style={{ opacity: expanded ? 1 : 0, width: expanded ? "auto" : 0 }}
                 >
                     RENRI
-                    <span className="ml-2 text-[8px] tracking-[0.2em] text-[#666666] font-medium">
+                    <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
                         {currentMode.label}
                     </span>
                 </span>
                 {!expanded && (
-                    <span className="text-white font-bold text-lg mx-auto">R</span>
+                    <span className="text-foreground font-bold text-lg mx-auto">R</span>
                 )}
             </div>
 
@@ -136,9 +136,9 @@ export function Sidebar({
                 <div className="relative">
                     <button
                         onClick={() => setShowModeSwitcher(!showModeSwitcher)}
-                        className={`flex items-center w-full h-11 px-5 gap-4 transition-all duration-200 border-b border-[#222222] ${showModeSwitcher
-                            ? "text-white bg-[#111111]"
-                            : "text-[#666666] hover:text-white hover:bg-[#111111]"
+                        className={`flex items-center w-full h-11 px-5 gap-4 transition-all duration-200 border-b border-border ${showModeSwitcher
+                            ? "text-foreground bg-accent"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
                             }`}
                     >
                         <Repeat
@@ -157,7 +157,7 @@ export function Sidebar({
                     </button>
 
                     {showModeSwitcher && expanded && (
-                        <div className="absolute left-0 right-0 bg-[#0a0a0a] border-b border-[#222222] z-50">
+                        <div className="absolute left-0 right-0 bg-popover border-b border-border z-50">
                             {MODE_OPTIONS.map((mode) => {
                                 const isActive = mode.value === accountType;
                                 const ModeIcon = mode.icon;
@@ -168,8 +168,8 @@ export function Sidebar({
                                         onClick={() => handleModeSwitch(mode.value)}
                                         disabled={isPending || isActive}
                                         className={`flex items-center w-full gap-3 px-5 py-3 transition-all duration-150 ${isActive
-                                            ? "bg-white text-black"
-                                            : "text-[#888888] hover:text-white hover:bg-[#111111]"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                             } ${isPending ? "opacity-50" : ""}`}
                                     >
                                         <ModeIcon
@@ -181,7 +181,7 @@ export function Sidebar({
                                                 {mode.label}
                                             </div>
                                             <div
-                                                className={`text-[8px] tracking-[0.15em] ${isActive ? "text-[#666666]" : "text-[#555555]"
+                                                className={`text-[8px] tracking-[0.15em] ${isActive ? "text-primary-foreground/60" : "text-muted-foreground/70"
                                                     }`}
                                             >
                                                 {mode.description}
@@ -206,12 +206,12 @@ export function Sidebar({
                             key={item.href}
                             href={item.href}
                             className={`flex items-center h-12 px-5 gap-4 transition-all duration-200 group relative ${isActive
-                                ? "text-white bg-[#111111]"
-                                : "text-[#888888] hover:text-white hover:bg-[#111111]"
+                                ? "text-foreground bg-accent"
+                                : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                 }`}
                         >
                             {isActive && (
-                                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white" />
+                                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-foreground" />
                             )}
                             <item.icon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
                             <span
@@ -232,7 +232,7 @@ export function Sidebar({
                 onClick={() => setExpanded(!expanded)}
                 aria-label={expanded ? "Colapsar menú" : "Expandir menú"}
                 aria-expanded={expanded}
-                className="flex items-center justify-center h-12 border-t border-[#222222] text-[#888888] hover:text-white transition-colors"
+                className="flex items-center justify-center h-12 border-t border-border text-muted-foreground hover:text-foreground transition-colors"
             >
                 {expanded ? (
                     <ChevronLeft className="h-4 w-4" />

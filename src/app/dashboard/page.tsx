@@ -56,10 +56,10 @@ export default async function DashboardPage() {
     return (
         <div className="space-y-10">
             <div>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)]">
+                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)]">
                     {getGreeting()}, {firstName}
                 </h1>
-                <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     RESUMEN DEL DIA · {formatDate()}
                 </p>
             </div>
@@ -93,8 +93,8 @@ async function BusinessDashboard({
 
     return (
         <div className="space-y-10">
-            <div className="border-b border-[#222222] pb-6">
-                <p className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+            <div className="border-b border-border pb-6">
+                <p className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · MODULO {activeAccountType.toUpperCase()}
                 </p>
             </div>
@@ -167,7 +167,7 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-[#222222]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-popover">
                 <StatCard label="CITAS HOY" value={citasHoy?.count ?? 0} sublabel="agendadas" />
                 <StatCard label="EN ESPERA" value={turnosEspera?.count ?? 0} sublabel="turnos activos" />
                 <StatCard
@@ -181,19 +181,19 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
             <div className="flex flex-wrap gap-3">
                 <Link
                     href="/dashboard/citas"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     NUEVA CITA
                 </Link>
                 <Link
                     href="/dashboard/turnos"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     VER TURNOS
                 </Link>
                 <Link
                     href="/dashboard/horarios"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     HORARIOS
                 </Link>
@@ -210,7 +210,7 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-[#222222]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-popover">
                 <StatCard
                     label="PEDIDOS HOY"
                     value={orderStats.pending}
@@ -234,13 +234,13 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             </div>
 
             {inventoryStats.lowStockCount > 0 && (
-                <div className="border-l-2 border-white bg-[#111111] p-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-[0.2em] text-white uppercase">
+                <div className="border-l-2 border-white bg-card p-4 flex items-center justify-between">
+                    <span className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
                         {inventoryStats.lowStockCount} PRODUCTOS CON STOCK BAJO
                     </span>
                     <Link
                         href="/dashboard/inventario?lowStock=true"
-                        className="text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white transition-colors uppercase"
+                        className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors uppercase"
                     >
                         VER
                     </Link>
@@ -250,19 +250,19 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             <div className="flex flex-wrap gap-3">
                 <Link
                     href="/dashboard/pedidos/nuevo"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     NUEVO PEDIDO
                 </Link>
                 <Link
                     href="/dashboard/inventario"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     VER INVENTARIO
                 </Link>
                 <Link
                     href="/dashboard/pedidos"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     VER PEDIDOS
                 </Link>

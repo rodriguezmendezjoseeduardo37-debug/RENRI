@@ -16,6 +16,8 @@ import { users } from "./users";
 export const appointmentStatusEnum = pgEnum("appointment_status", [
     "pending",
     "confirmed",
+    "waiting",
+    "in_progress",
     "completed",
     "cancelled",
     "no_show",

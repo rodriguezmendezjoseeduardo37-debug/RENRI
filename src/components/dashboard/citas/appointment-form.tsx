@@ -159,7 +159,7 @@ export function AppointmentForm({
             setNewClientPhone("");
             setClientSearch("");
             router.refresh(); // Refresh data in background
-        } catch (error) {
+        } catch {
             toast.error("Error al registrar cliente");
         } finally {
             setIsSubmittingClient(false);
@@ -167,11 +167,11 @@ export function AppointmentForm({
     };
 
     const inputClass =
-        "w-full bg-black border border-[#222222] text-white text-sm px-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
     const labelClass =
-        "text-[11px] font-medium tracking-[0.2em] text-[#888888] uppercase block mb-1.5";
+        "text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-1.5";
     const selectClass =
-        "w-full appearance-none bg-black border border-[#222222] text-white text-sm px-4 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer";
+        "w-full appearance-none bg-background border border-border text-foreground text-sm px-4 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer";
 
     return (
         <Dialog open={open} onOpenChange={(o) => {
@@ -182,7 +182,7 @@ export function AppointmentForm({
                 onClose();
             }
         }}>
-            <DialogContent className="bg-[#111111] border border-[#222222] text-white max-w-lg rounded-none p-0 overflow-y-auto max-h-[85vh]">
+            <DialogContent className="bg-card border border-border text-foreground max-w-lg rounded-none p-0 overflow-y-auto max-h-[85vh]">
                 <DialogHeader className="px-6 pt-6">
                     <DialogTitle className="text-sm font-bold tracking-[0.3em] uppercase">
                         {isEdit ? "EDITAR CITA" : "NUEVA CITA"}
@@ -197,35 +197,35 @@ export function AppointmentForm({
                             <div className="relative">
                                 {/* Selected Value Display or Search Input trigger */}
                                 <div
-                                    className={`w-full flex items-center justify-between border border-[#222222] bg-black px-4 py-2.5 cursor-pointer ${isClientDropdownOpen ? "border-white" : "hover:border-[#444]"}`}
+                                    className={`w-full flex items-center justify-between border border-border bg-background px-4 py-2.5 cursor-pointer ${isClientDropdownOpen ? "border-white" : "hover:border-border"}`}
                                     onClick={() => setIsClientDropdownOpen(!isClientDropdownOpen)}
                                 >
                                     <span className="text-sm truncate">
-                                        {selectedClient ? selectedClient.name : <span className="text-[#888888]">Buscar o seleccionar cliente...</span>}
+                                        {selectedClient ? selectedClient.name : <span className="text-muted-foreground">Buscar o seleccionar cliente...</span>}
                                     </span>
                                     <div className="flex items-center gap-2">
                                         {selectedClient && !isClientDropdownOpen && (
-                                            <div className="text-[10px] text-[#666] uppercase bg-[#111] px-2 py-0.5 rounded-full">
+                                            <div className="text-[10px] text-foreground uppercase bg-secondary px-2 py-0.5 rounded-full">
                                                 ID: {selectedClient.id.substring(0, 8)}
                                             </div>
                                         )}
-                                        <Search className="w-4 h-4 text-[#888888]" />
+                                        <Search className="w-4 h-4 text-foreground" />
                                     </div>
                                 </div>
 
                                 {/* Custom Dropdown Menu */}
                                 {isClientDropdownOpen && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-black border border-[#222222] z-50 shadow-2xl max-h-64 flex flex-col">
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border z-50 shadow-2xl max-h-64 flex flex-col">
                                         
                                         {/* Search Input */}
-                                        <div className="p-2 border-b border-[#222222]">
+                                        <div className="p-2 border-b border-border">
                                             <input
                                                 type="text"
                                                 autoFocus
                                                 placeholder="Buscar por nombre o ID..."
                                                 value={clientSearch}
                                                 onChange={(e) => setClientSearch(e.target.value)}
-                                                className="w-full bg-[#111] text-xs text-white px-3 py-2 border border-[#222] focus:outline-none focus:border-[#444]"
+                                                className="w-full bg-secondary text-xs text-foreground px-3 py-2 border border-border focus:outline-none focus:border-border"
                                             />
                                         </div>
 
@@ -233,10 +233,10 @@ export function AppointmentForm({
                                         <button
                                             type="button"
                                             onClick={() => setIsCreatingClient(true)}
-                                            className="w-full flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white hover:bg-[#111] border-b border-[#222222] transition-colors uppercase text-left"
+                                            className="w-full flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground hover:bg-secondary border-b border-border transition-colors uppercase text-left"
                                         >
-                                            <Plus className="w-3.5 h-3.5" />
-                                            REGISTRAR NUEVO CLIENTE
+                                                <Plus className="w-3.5 h-3.5 text-foreground" />
+                                                REGISTRAR NUEVO CLIENTE
                                         </button>
 
                                         {/* Client List */}
@@ -252,21 +252,21 @@ export function AppointmentForm({
                                                             setIsClientDropdownOpen(false);
                                                             setClientSearch("");
                                                         }}
-                                                        className={`w-full text-left px-3 py-2.5 text-sm hover:bg-[#111] flex items-center justify-between group ${watcherClientId === c.id ? "bg-[#111]" : ""}`}
+                                                        className={`w-full text-left px-3 py-2.5 text-sm hover:bg-secondary flex items-center justify-between group ${watcherClientId === c.id ? "bg-secondary" : ""}`}
                                                     >
-                                                        <span className={watcherClientId === c.id ? "text-white" : "text-[#aaa] group-hover:text-white"}>
+                                                        <span className={watcherClientId === c.id ? "text-foreground" : "text-foreground group-hover:text-foreground"}>
                                                             {c.name}
                                                         </span>
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-[10px] font-mono text-[#555]">
+                                                            <span className="text-[10px] font-mono text-foreground">
                                                                 {c.id.substring(0, 8)}
                                                             </span>
-                                                            {watcherClientId === c.id && <Check className="w-3.5 h-3.5 text-white" />}
+                                                            {watcherClientId === c.id && <Check className="w-3.5 h-3.5 text-foreground" />}
                                                         </div>
                                                     </button>
                                                 ))
                                             ) : (
-                                                <div className="text-center py-4 text-xs text-[#555]">
+                                                <div className="text-center py-4 text-xs text-foreground">
                                                     No se encontraron clientes
                                                 </div>
                                             )}
@@ -275,10 +275,10 @@ export function AppointmentForm({
                                 )}
                             </div>
                         ) : (
-                            <div className="p-4 border border-white bg-black space-y-4">
-                                <div className="flex items-center justify-between pb-2 border-b border-[#222]">
-                                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white">NUEVO CLIENTE MANUAL</span>
-                                    <button type="button" onClick={() => setIsCreatingClient(false)} className="text-[#888] hover:text-white">
+                            <div className="p-4 border border-white bg-background space-y-4">
+                                <div className="flex items-center justify-between pb-2 border-b border-border">
+                                    <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground">NUEVO CLIENTE MANUAL</span>
+                                    <button type="button" onClick={() => setIsCreatingClient(false)} className="text-foreground hover:text-foreground">
                                         <X className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -314,7 +314,7 @@ export function AppointmentForm({
                                         type="button"
                                         onClick={handleCreateClient}
                                         disabled={isSubmittingClient || !newClientName.trim()}
-                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#ccc] disabled:opacity-50 transition-colors"
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-secondary disabled:opacity-50 transition-colors"
                                     >
                                         {isSubmittingClient && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                                         GUARDAR Y SELECCIONAR
@@ -369,7 +369,7 @@ export function AppointmentForm({
                             <input
                                 type="date"
                                 {...register("date")}
-                                className={`${inputClass} [color-scheme:dark]`}
+                                className={`${inputClass} dark:[color-scheme:dark]`}
                             />
                             {errors.date && (
                                 <p className="text-[10px] text-red-400 mt-1">{errors.date.message}</p>
@@ -381,8 +381,8 @@ export function AppointmentForm({
                             <div>
                                 <label className={labelClass}>INICIO</label>
                                 {loadingSlots ? (
-                                    <div className="flex h-[42px] items-center justify-center border border-[#222222] bg-black">
-                                        <Loader2 className="h-4 w-4 animate-spin text-white" />
+                                    <div className="flex h-[42px] items-center justify-center border border-border bg-background">
+                                        <Loader2 className="h-4 w-4 animate-spin text-foreground" />
                                     </div>
                                 ) : slots.length > 0 ? (
                                     <select
@@ -411,7 +411,7 @@ export function AppointmentForm({
                                     <input
                                         type="time"
                                         {...register("startTime")}
-                                        className={`${inputClass} [color-scheme:dark]`}
+                                        className={`${inputClass} dark:[color-scheme:dark]`}
                                     />
                                 )}
                                 {errors.startTime && (
@@ -423,7 +423,7 @@ export function AppointmentForm({
                                 <input
                                     type="time"
                                     {...register("endTime")}
-                                    className={`${inputClass} [color-scheme:dark]`}
+                                    className={`${inputClass} dark:[color-scheme:dark]`}
                                 />
                                 {errors.endTime && (
                                     <p className="text-[10px] text-red-400 mt-1">{errors.endTime.message}</p>
@@ -457,7 +457,7 @@ export function AppointmentForm({
                             <button
                                 type="submit"
                                 disabled={isSubmitting || isCreatingClient}
-                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                             >
                                 {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                                 {isEdit ? "GUARDAR" : "CREAR CITA"}
@@ -470,7 +470,7 @@ export function AppointmentForm({
                                     setIsCreatingClient(false);
                                     onClose();
                                 }}
-                                className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-[#222222] text-[#888888] hover:border-white hover:text-white transition-colors"
+                                className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >
                                 CANCELAR
                             </button>

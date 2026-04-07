@@ -8,13 +8,15 @@ import { revalidatePath } from "next/cache";
 import {
     createScheduleSchema,
     createBlockedDateSchema,
+    bulkScheduleSchema,
 } from "@/types/schedules";
 import type {
     CreateScheduleInput,
     UpdateScheduleInput,
     CreateBlockedDateInput,
+    BulkScheduleInput,
     TimeSlot,
-    DayAvailability
+    DayAvailability,
 } from "@/types/schedules";
 import { addMinutes, format, parse, isAfter, isBefore, isEqual, startOfDay, endOfDay, eachDayOfInterval } from "date-fns";
 
@@ -138,6 +140,62 @@ export async function deleteBlockedDate(id: string, tenantId: string) {
     revalidatePath("/dashboard/horarios");
 }
 
+export async function saveBulkSchedule(data: BulkScheduleInput) {
+    const user = await requireAuth();
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") {
+         throw new Error("Unauthorized");
+    }
+
+    const validated = bulkScheduleSchema.parse(data);
+
+    await db.transaction(async (tx) => {
+        // 1. Delete ALL existing schedules for this staff to start clean
+        await tx
+            .delete(schedules)
+            .where(and(eq(schedules.tenantId, validated.tenantId), eq(schedules.staffId, validated.staffId)));
+
+        const insertValues: Array<typeof schedules.$inferInsert> = [];
+
+        // 2. Weekdays (1-5: Mon-Fri)
+        if (validated.weekdays.isOpen) {
+            for (let day = 1; day <= 5; day++) {
+                insertValues.push({
+                    tenantId: validated.tenantId,
+                    staffId: validated.staffId,
+                    dayOfWeek: day,
+                    startTime: validated.weekdays.startTime + ":00", 
+                    endTime: validated.weekdays.endTime + ":00",
+                    slotDurationMinutes: validated.weekdays.slotDuration,
+                    isActive: true,
+                });
+            }
+        }
+
+        // 3. Weekend (0: Sun, 6: Sat)
+        if (validated.weekend.isOpen) {
+            [0, 6].forEach((day) => {
+                insertValues.push({
+                    tenantId: validated.tenantId,
+                    staffId: validated.staffId,
+                    dayOfWeek: day,
+                    startTime: validated.weekend.startTime + ":00",
+                    endTime: validated.weekend.endTime + ":00",
+                    slotDurationMinutes: validated.weekend.slotDuration,
+                    isActive: true,
+                });
+            });
+        }
+
+        if (insertValues.length > 0) {
+            await tx.insert(schedules).values(insertValues);
+        }
+    });
+
+    revalidatePath("/dashboard/horarios");
+    return { success: true };
+}
+
 // ─── Availability Computation ───────────────────────────────
 export async function getStaffAvailability(staffId: string, tenantId: string, from: Date, to: Date): Promise<DayAvailability[]> {
     const user = await requireAuth();
@@ -191,7 +249,7 @@ export async function getStaffAvailability(staffId: string, tenantId: string, fr
                 date: dateStr,
                 dayOfWeek,
                 slots: [],
-                isBlocked: true
+                isBlocked: false
             });
             continue;
         }

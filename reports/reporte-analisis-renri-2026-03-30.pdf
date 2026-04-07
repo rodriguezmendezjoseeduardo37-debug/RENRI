@@ -1,0 +1,461 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+2 0 obj
+<< /Length 3732 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (REPORTE DE ANALISIS TECNICO - RENRI) Tj
+1 0 0 1 48 780 Tm () Tj
+1 0 0 1 48 766 Tm () Tj
+1 0 0 1 48 752 Tm (Fecha del analisis: 2026-03-30) Tj
+1 0 0 1 48 738 Tm (Alcance: revision de la base actual en `C:\\Users\\LENOVO\\Documents\\RENRI`) Tj
+1 0 0 1 48 724 Tm (Estado del arbol: hay cambios locales sin commit; el reporte describe el estado actual del) Tj
+1 0 0 1 48 710 Tm (workspace, no necesariamente el ultimo commit limpio.) Tj
+1 0 0 1 48 696 Tm () Tj
+1 0 0 1 48 682 Tm (RESUMEN EJECUTIVO) Tj
+1 0 0 1 48 668 Tm () Tj
+1 0 0 1 48 654 Tm () Tj
+1 0 0 1 48 640 Tm (RENRI tiene una base de producto ambiciosa y una estructura bastante buena para crecer:) Tj
+1 0 0 1 48 626 Tm (multi-tenant, agenda, pagos, portal cliente, portal publico, inventario, pedidos, turnos y) Tj
+1 0 0 1 48 612 Tm (Stripe Connect. La direccion del producto esta clara.) Tj
+1 0 0 1 48 598 Tm () Tj
+1 0 0 1 48 584 Tm (El problema es que el proyecto todavia no esta en un estado confiable para produccion. Hoy) Tj
+1 0 0 1 48 570 Tm (conviven buenas decisiones de arquitectura con errores graves de autorizacion, flujos publicos) Tj
+1 0 0 1 48 556 Tm (rotos, deuda de calidad y documentacion desactualizada. El resultado es un sistema con potencial) Tj
+1 0 0 1 48 542 Tm (alto, pero con riesgo operativo alto.) Tj
+1 0 0 1 48 528 Tm () Tj
+1 0 0 1 48 514 Tm (Diagnostico general:) Tj
+1 0 0 1 48 500 Tm () Tj
+1 0 0 1 48 486 Tm (- Base tecnica: buena) Tj
+1 0 0 1 48 472 Tm (- Madurez de producto: media) Tj
+1 0 0 1 48 458 Tm (- Madurez operativa: baja) Tj
+1 0 0 1 48 444 Tm (- Riesgo de seguridad: alto) Tj
+1 0 0 1 48 430 Tm (- Riesgo de regresion: alto) Tj
+1 0 0 1 48 416 Tm () Tj
+1 0 0 1 48 402 Tm (Validaciones ejecutadas:) Tj
+1 0 0 1 48 388 Tm () Tj
+1 0 0 1 48 374 Tm (- `npm run lint`: falla con 28 errores y 6 warnings) Tj
+1 0 0 1 48 360 Tm (- `npm run build`: falla por error de tipos en `src/app/portal/turno/[tenantSlug]/page.tsx:53`) Tj
+1 0 0 1 48 346 Tm (- Busqueda de pruebas automatizadas: no se detectaron archivos `test` o `spec`) Tj
+1 0 0 1 48 332 Tm (- CI/CD: no existe carpeta `.github/`) Tj
+1 0 0 1 48 318 Tm () Tj
+1 0 0 1 48 304 Tm (LO BUENO) Tj
+1 0 0 1 48 290 Tm () Tj
+1 0 0 1 48 276 Tm () Tj
+1 0 0 1 48 262 Tm (- La separacion principal del proyecto es clara: `src/app`, `src/actions`, `src/db`,) Tj
+1 0 0 1 48 248 Tm (  `src/components`, `src/lib`. Eso facilita mantenimiento y onboarding.) Tj
+1 0 0 1 48 234 Tm (- La capa de base de datos esta bien centralizada con Drizzle y un cliente lazy en) Tj
+1 0 0 1 48 220 Tm (  `src/db/index.ts:5-41`.) Tj
+1 0 0 1 48 206 Tm (- El modelado multi-tenant existe de forma explicita en esquema y auth. Ejemplos:) Tj
+1 0 0 1 48 192 Tm (  `src/db/schema/tenants.ts:29-63`, `src/auth.ts:20-58`, `src/auth.config.ts:33-71`.) Tj
+1 0 0 1 48 178 Tm (- Hay validacion con Zod centralizada para varias entidades en `src/lib/schemas.ts:10-116`.) Tj
+1 0 0 1 48 164 Tm (- Se ve intencion de seguridad en cabeceras HTTP globales dentro de `next.config.mjs:14-24`.) Tj
+1 0 0 1 48 150 Tm (- El flujo de reservacion publica de citas usa transaccion y lock asesorio para evitar doble) Tj
+1 0 0 1 48 136 Tm (  reserva. Eso es una buena decision en `src/actions/portal.ts:143-160`.) Tj
+1 0 0 1 48 122 Tm (- La integracion de pagos no esta improvisada: existe soporte para Stripe y Stripe Connect con) Tj
+1 0 0 1 48 108 Tm (  separacion utilitaria en `src/lib/stripe.ts`.) Tj
+1 0 0 1 48 94 Tm (- El sistema usa revalidacion despues de mutaciones y ya contempla portales distintos para) Tj
+1 0 0 1 48 80 Tm (  negocio y cliente.) Tj
+1 0 0 1 48 66 Tm (- El alcance funcional ya es amplio. No es un CRUD pequeno; el proyecto ya modela casos reales) Tj
+1 0 0 1 477 38 Tm (Pagina 1 de 7) Tj
+ET
+endstream
+endobj
+3 0 obj
+<< /Length 3507 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (  de negocio.) Tj
+1 0 0 1 48 780 Tm () Tj
+1 0 0 1 48 766 Tm (LO MALO) Tj
+1 0 0 1 48 752 Tm () Tj
+1 0 0 1 48 738 Tm () Tj
+1 0 0 1 48 724 Tm (HALLAZGOS CRITICOS) Tj
+1 0 0 1 48 710 Tm () Tj
+1 0 0 1 48 696 Tm () Tj
+1 0 0 1 48 682 Tm (1. Stripe Connect puede vincularse sin validar sesion ni firmar correctamente el `state`.) Tj
+1 0 0 1 48 668 Tm (   Evidencia:) Tj
+1 0 0 1 48 654 Tm (   - `src/lib/stripe.ts:62-73` genera `state` como Base64 simple.) Tj
+1 0 0 1 48 640 Tm (   - `src/app/api/stripe/connect/callback/route.ts:30-38` confia en ese `state`.) Tj
+1 0 0 1 48 626 Tm (   - `src/actions/stripe-connect.ts:70-85` guarda la cuenta conectada sin verificar usuario) Tj
+1 0 0 1 48 612 Tm (autenticado.) Tj
+1 0 0 1 48 598 Tm (   Impacto:) Tj
+1 0 0 1 48 584 Tm (   - Riesgo serio de asociar una cuenta de Stripe a un tenant ajeno.) Tj
+1 0 0 1 48 570 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 556 Tm (   - Reemplazar `state` por token firmado con expiracion, verificar sesion del owner en callback) Tj
+1 0 0 1 48 542 Tm (y comparar tenant contra sesion antes de persistir.) Tj
+1 0 0 1 48 528 Tm () Tj
+1 0 0 1 48 514 Tm (2. Existe un endpoint de debug abierto que expone todos los tenants.) Tj
+1 0 0 1 48 500 Tm (   Evidencia:) Tj
+1 0 0 1 48 486 Tm (   - `src/app/api/test/route.ts:5-7`) Tj
+1 0 0 1 48 472 Tm (   Impacto:) Tj
+1 0 0 1 48 458 Tm (   - Fuga innecesaria de datos de negocio y superficie de ataque.) Tj
+1 0 0 1 48 444 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 430 Tm (   - Eliminar el endpoint o protegerlo con rol `SUPER_ADMIN` y deshabilitarlo fuera de) Tj
+1 0 0 1 48 416 Tm (desarrollo.) Tj
+1 0 0 1 48 402 Tm () Tj
+1 0 0 1 48 388 Tm (3. El flujo publico de turnos no es realmente publico y hoy rompe build.) Tj
+1 0 0 1 48 374 Tm (   Evidencia:) Tj
+1 0 0 1 48 360 Tm (   - UI publica llama `createTurn` en `src/app/portal/turno/[tenantSlug]/page.tsx:46-55`) Tj
+1 0 0 1 48 346 Tm (   - `createTurn` exige sesion en `src/actions/turns.ts:56-58`) Tj
+1 0 0 1 48 332 Tm (   - build falla en `src/app/portal/turno/[tenantSlug]/page.tsx:53`) Tj
+1 0 0 1 48 318 Tm (   - el flujo nuevo repite la misma dependencia en) Tj
+1 0 0 1 48 304 Tm (`src/app/portal/[tenantSlug]/turno/portal-turno-client.tsx:46-57`) Tj
+1 0 0 1 48 290 Tm (   Impacto:) Tj
+1 0 0 1 48 276 Tm (   - La fila publica no es confiable y parte del producto no compila.) Tj
+1 0 0 1 48 262 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 248 Tm (   - Separar `publicCreateTurn` de `createTurn`, permitir identidad anonima o tokenizada, tipar) Tj
+1 0 0 1 48 234 Tm (`Turn.number` de forma consistente y eliminar una de las dos rutas duplicadas.) Tj
+1 0 0 1 48 220 Tm () Tj
+1 0 0 1 48 206 Tm (4. El cron de recordatorios probablemente esta roto.) Tj
+1 0 0 1 48 192 Tm (   Evidencia:) Tj
+1 0 0 1 48 178 Tm (   - `src/app/api/cron/reminders/route.ts:20` llama `getUpcomingAppointments\(24\)`) Tj
+1 0 0 1 48 164 Tm (   - `src/actions/portal.ts:331-333` exige usuario autenticado para esa consulta) Tj
+1 0 0 1 48 150 Tm (   Impacto:) Tj
+1 0 0 1 48 136 Tm (   - Los recordatorios automatizados no deberian funcionar desde cron sin sesion.) Tj
+1 0 0 1 48 122 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 108 Tm (   - Mover la consulta a una funcion interna de servidor sin `requireAuth`, y dejar la) Tj
+1 0 0 1 48 94 Tm (proteccion en el route handler via `CRON_SECRET`.) Tj
+1 0 0 1 48 80 Tm () Tj
+1 0 0 1 48 66 Tm (5. El portal cliente puede reapropiar citas por email sin limitar por tenant.) Tj
+1 0 0 1 477 38 Tm (Pagina 2 de 7) Tj
+ET
+endstream
+endobj
+4 0 obj
+<< /Length 3579 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (   Evidencia:) Tj
+1 0 0 1 48 780 Tm (   - `src/actions/client-portal.ts:103-115`) Tj
+1 0 0 1 48 766 Tm (   Impacto:) Tj
+1 0 0 1 48 752 Tm (   - Riesgo de reasignacion global de citas entre tenants si coincide el correo.) Tj
+1 0 0 1 48 738 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 724 Tm (   - Restringir el auto-claim al negocio activo y registrar auditoria de la reasignacion.) Tj
+1 0 0 1 48 710 Tm () Tj
+1 0 0 1 48 696 Tm (6. Hay acciones sensibles de usuarios con autorizacion insuficiente.) Tj
+1 0 0 1 48 682 Tm (   Evidencia:) Tj
+1 0 0 1 48 668 Tm (   - `src/actions/users.ts:84-96` crea clientes en cualquier `tenantId` recibido) Tj
+1 0 0 1 48 654 Tm (   - `src/actions/users.ts:108-125` verifica o elimina clientes con solo estar autenticado) Tj
+1 0 0 1 48 640 Tm (   Impacto:) Tj
+1 0 0 1 48 626 Tm (   - Un usuario autenticado podria operar datos de otros tenants.) Tj
+1 0 0 1 48 612 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 598 Tm (   - Exigir rol `OWNER`/`ADMIN`, verificar pertenencia al tenant y auditar operaciones) Tj
+1 0 0 1 48 584 Tm (destructivas.) Tj
+1 0 0 1 48 570 Tm () Tj
+1 0 0 1 48 556 Tm (HALLAZGOS ALTOS) Tj
+1 0 0 1 48 542 Tm () Tj
+1 0 0 1 48 528 Tm () Tj
+1 0 0 1 48 514 Tm (1. El checkout de productos descuenta stock antes de confirmar el pago.) Tj
+1 0 0 1 48 500 Tm (   Evidencia:) Tj
+1 0 0 1 48 486 Tm (   - `src/actions/checkout.ts:59-120`) Tj
+1 0 0 1 48 472 Tm (   Impacto:) Tj
+1 0 0 1 48 458 Tm (   - Carritos abandonados o pagos fallidos dejan inventario reducido.) Tj
+1 0 0 1 48 444 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 430 Tm (   - Reservar stock temporalmente o descontarlo solo al recibir `payment_intent.succeeded`.) Tj
+1 0 0 1 48 416 Tm () Tj
+1 0 0 1 48 402 Tm (2. Las citas pendientes bloquean horarios aunque el pago nunca se complete.) Tj
+1 0 0 1 48 388 Tm (   Evidencia:) Tj
+1 0 0 1 48 374 Tm (   - `src/actions/portal.ts:97-126` considera ocupada cualquier cita no cancelada) Tj
+1 0 0 1 48 360 Tm (   - `src/actions/portal.ts:259-272` crea la cita en estado `pending`) Tj
+1 0 0 1 48 346 Tm (   Impacto:) Tj
+1 0 0 1 48 332 Tm (   - Slots quedan bloqueados indefinidamente.) Tj
+1 0 0 1 48 318 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 304 Tm (   - Introducir expiracion para citas pendientes y job de limpieza o confirmacion temporal.) Tj
+1 0 0 1 48 290 Tm () Tj
+1 0 0 1 48 276 Tm (3. La pantalla de APIs promete cifrado de llaves, pero el codigo no lo hace y ademas esas llaves) Tj
+1 0 0 1 48 262 Tm (ni siquiera alimentan el runtime real.) Tj
+1 0 0 1 48 248 Tm (   Evidencia:) Tj
+1 0 0 1 48 234 Tm (   - `src/app/dashboard/configuracion/apis/apis-form.tsx:47-50` afirma que las llaves se) Tj
+1 0 0 1 48 220 Tm (almacenan encriptadas) Tj
+1 0 0 1 48 206 Tm (   - `src/actions/tenant.ts:102-106` guarda el JSON validado directamente en `billingSettings`) Tj
+1 0 0 1 48 192 Tm (   - busqueda de uso: `stripePublicKey`, `stripeWebhookSecret` y `billingSettings` no alimentan) Tj
+1 0 0 1 48 178 Tm (`src/lib/stripe.ts` ni `src/app/api/webhooks/stripe/route.ts`) Tj
+1 0 0 1 48 164 Tm (   Impacto:) Tj
+1 0 0 1 48 150 Tm (   - Riesgo de seguridad, falsa promesa al usuario y feature a medio cablear.) Tj
+1 0 0 1 48 136 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 122 Tm (   - O bien eliminar esa UI hasta implementar KMS/secret manager real, o cifrar de verdad y) Tj
+1 0 0 1 48 108 Tm (hacer que el runtime use esos secretos.) Tj
+1 0 0 1 48 94 Tm () Tj
+1 0 0 1 48 80 Tm (4. La cancelacion publica de citas depende solo del `appointmentId`.) Tj
+1 0 0 1 48 66 Tm (   Evidencia:) Tj
+1 0 0 1 477 38 Tm (Pagina 3 de 7) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Length 3387 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (   - `src/app/portal/cancel/[appointmentId]/page.tsx:42-68`) Tj
+1 0 0 1 48 780 Tm (   - `src/actions/client-portal.ts:196-248`) Tj
+1 0 0 1 48 766 Tm (   Impacto:) Tj
+1 0 0 1 48 752 Tm (   - Cualquier persona con el enlace puede cancelar; no hay expiracion ni firma.) Tj
+1 0 0 1 48 738 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 724 Tm (   - Usar token firmado, de un solo uso, con expiracion y revocacion.) Tj
+1 0 0 1 48 710 Tm () Tj
+1 0 0 1 48 696 Tm (5. Hay textos con codificacion rota en UI, metadata, logs y documentos.) Tj
+1 0 0 1 48 682 Tm (   Evidencia:) Tj
+1 0 0 1 48 668 Tm (   - `src/app/layout.tsx:20-32`) Tj
+1 0 0 1 48 654 Tm (   - `src/components/error-boundary.tsx:12-13`, `:32`, `:70-80`) Tj
+1 0 0 1 48 640 Tm (   - `src/lib/logger.ts:2-4`, `:52`) Tj
+1 0 0 1 48 626 Tm (   - `IMPROVEMENTS.md:1-18`) Tj
+1 0 0 1 48 612 Tm (   Impacto:) Tj
+1 0 0 1 48 598 Tm (   - Mala percepcion de calidad, riesgo SEO y errores visibles al usuario final.) Tj
+1 0 0 1 48 584 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 570 Tm (   - Normalizar codificacion UTF-8 y revisar todos los archivos afectados.) Tj
+1 0 0 1 48 556 Tm () Tj
+1 0 0 1 48 542 Tm (6. El hook realtime recrea el cliente de Supabase en cada render.) Tj
+1 0 0 1 48 528 Tm (   Evidencia:) Tj
+1 0 0 1 48 514 Tm (   - `src/hooks/use-turns-realtime.ts:16`) Tj
+1 0 0 1 48 500 Tm (   - dependencia del effect: `src/hooks/use-turns-realtime.ts:36-69`) Tj
+1 0 0 1 48 486 Tm (   Impacto:) Tj
+1 0 0 1 48 472 Tm (   - Re-suscripciones innecesarias, mas consumo y comportamiento dificil de depurar.) Tj
+1 0 0 1 48 458 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 444 Tm (   - Crear el cliente una sola vez por componente con `useState` o memo estable.) Tj
+1 0 0 1 48 430 Tm () Tj
+1 0 0 1 48 416 Tm (7. La busqueda de citas se aplica despues de paginar.) Tj
+1 0 0 1 48 402 Tm (   Evidencia:) Tj
+1 0 0 1 48 388 Tm (   - consulta paginada en `src/actions/appointments.ts:69-81`) Tj
+1 0 0 1 48 374 Tm (   - filtrado por texto en memoria en `src/actions/appointments.ts:85-94`) Tj
+1 0 0 1 48 360 Tm (   Impacto:) Tj
+1 0 0 1 48 346 Tm (   - Resultados incompletos y totales inconsistentes.) Tj
+1 0 0 1 48 332 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 318 Tm (   - Llevar la busqueda a SQL antes de `limit/offset`.) Tj
+1 0 0 1 48 304 Tm () Tj
+1 0 0 1 48 290 Tm (8. `stripeServer` usa un secreto dummy cuando falta la variable de entorno.) Tj
+1 0 0 1 48 276 Tm (   Evidencia:) Tj
+1 0 0 1 48 262 Tm (   - `src/lib/stripe.ts:4-7`) Tj
+1 0 0 1 48 248 Tm (   Impacto:) Tj
+1 0 0 1 48 234 Tm (   - Misconfiguraciones silenciosas y errores mas dificiles de detectar.) Tj
+1 0 0 1 48 220 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 206 Tm (   - Fallar en arranque si `STRIPE_SECRET_KEY` no existe.) Tj
+1 0 0 1 48 192 Tm () Tj
+1 0 0 1 48 178 Tm (9. El portal usa `next/font/google`, lo que agrega dependencia externa al build.) Tj
+1 0 0 1 48 164 Tm (   Evidencia:) Tj
+1 0 0 1 48 150 Tm (   - `src/app/portal/[tenantSlug]/layout.tsx:1-12`) Tj
+1 0 0 1 48 136 Tm (   - `src/app/portal/cancel/[appointmentId]/page.tsx:3-17`) Tj
+1 0 0 1 48 122 Tm (   Impacto:) Tj
+1 0 0 1 48 108 Tm (   - Builds menos portables y mas fragiles en entornos restringidos.) Tj
+1 0 0 1 48 94 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 80 Tm (   - Mover esas fuentes a local assets o asumir fallo controlado.) Tj
+1 0 0 1 48 66 Tm () Tj
+1 0 0 1 477 38 Tm (Pagina 4 de 7) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Length 3549 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (HALLAZGOS MEDIOS) Tj
+1 0 0 1 48 780 Tm () Tj
+1 0 0 1 48 766 Tm () Tj
+1 0 0 1 48 752 Tm (1. El middleware ya usa una convencion deprecada.) Tj
+1 0 0 1 48 738 Tm (   Evidencia:) Tj
+1 0 0 1 48 724 Tm (   - warning de build sobre `src/middleware.ts`) Tj
+1 0 0 1 48 710 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 696 Tm (   - Migrar a `proxy` segun la guia actual de Next.) Tj
+1 0 0 1 48 682 Tm () Tj
+1 0 0 1 48 668 Tm (2. Hay desalineacion de versiones base.) Tj
+1 0 0 1 48 654 Tm (   Evidencia:) Tj
+1 0 0 1 48 640 Tm (   - `package.json:40-45` usa `next` 16 y `react` 18) Tj
+1 0 0 1 48 626 Tm (   - `package.json:64-66` usa `eslint-config-next` 14) Tj
+1 0 0 1 48 612 Tm (   Impacto:) Tj
+1 0 0 1 48 598 Tm (   - Mantenimiento mas fragil y falsos positivos/negativos en tooling.) Tj
+1 0 0 1 48 584 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 570 Tm (   - Alinear `next`, `eslint-config-next`, `react` y tipos al stack oficialmente soportado.) Tj
+1 0 0 1 48 556 Tm () Tj
+1 0 0 1 48 542 Tm (3. La documentacion principal no describe el producto real.) Tj
+1 0 0 1 48 528 Tm (   Evidencia:) Tj
+1 0 0 1 48 514 Tm (   - `README.md:1-36` sigue siendo el template de `create-next-app`) Tj
+1 0 0 1 48 500 Tm (   Impacto:) Tj
+1 0 0 1 48 486 Tm (   - Onboarding pobre y despliegues mas lentos.) Tj
+1 0 0 1 48 472 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 458 Tm (   - Reescribir README con arquitectura, variables de entorno, modulos, comandos, seeds y) Tj
+1 0 0 1 48 444 Tm (riesgos conocidos.) Tj
+1 0 0 1 48 430 Tm () Tj
+1 0 0 1 48 416 Tm (4. La documentacion interna esta desactualizada y contradice el estado actual.) Tj
+1 0 0 1 48 402 Tm (   Evidencia:) Tj
+1 0 0 1 48 388 Tm (   - `IMPROVEMENTS.md:10-18` afirma que el proyecto compila) Tj
+1 0 0 1 48 374 Tm (   - `IMPROVEMENTS.md:26-34` muestra una version de Stripe distinta a la actual) Tj
+1 0 0 1 48 360 Tm (   Impacto:) Tj
+1 0 0 1 48 346 Tm (   - Confusion tecnica y decisiones basadas en supuestos incorrectos.) Tj
+1 0 0 1 48 332 Tm (   Cambio sugerido:) Tj
+1 0 0 1 48 318 Tm (   - Depurar o archivar esa documentacion y dejar una sola fuente de verdad.) Tj
+1 0 0 1 48 304 Tm () Tj
+1 0 0 1 48 290 Tm (LO QUE FALTA IMPLEMENTAR) Tj
+1 0 0 1 48 276 Tm () Tj
+1 0 0 1 48 262 Tm () Tj
+1 0 0 1 48 248 Tm (- Suite de pruebas automatizadas. No detecte pruebas unitarias, integracion ni e2e.) Tj
+1 0 0 1 48 234 Tm (- Pipeline de CI/CD. No existe `.github/` con validaciones obligatorias.) Tj
+1 0 0 1 48 220 Tm (- Tracking de errores real. Hay TODOs explicitos en `src/components/error-boundary.tsx:19` y) Tj
+1 0 0 1 48 206 Tm (  `src/lib/logger.ts:52`.) Tj
+1 0 0 1 48 192 Tm (- `.env.example` o guia completa de configuracion. Solo existe `.env.local`.) Tj
+1 0 0 1 48 178 Tm (- Rate limiting y anti-abuso en flujos publicos. Inferencia: no encontre implementacion al) Tj
+1 0 0 1 48 164 Tm (  revisar booking, turnos publicos, checkout ni endpoints publicos.) Tj
+1 0 0 1 48 150 Tm (- Expiracion y limpieza de estados `pending` para citas, pagos y ordenes.) Tj
+1 0 0 1 48 136 Tm (- Tokens firmados para acciones publicas sensibles como cancelacion.) Tj
+1 0 0 1 48 122 Tm (- Integracion real de correos de confirmacion y cancelacion. Las funciones existen en) Tj
+1 0 0 1 48 108 Tm (  `src/lib/emails.ts:11-112`, pero solo se usa el recordatorio del cron.) Tj
+1 0 0 1 48 94 Tm (- Cierre real del rollout de RLS en Supabase. El propio documento) Tj
+1 0 0 1 48 80 Tm (  `supabase/IMPLEMENTATION-STATUS.md` lo marca como pendiente.) Tj
+1 0 0 1 48 66 Tm () Tj
+1 0 0 1 477 38 Tm (Pagina 5 de 7) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Length 3325 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (LO QUE NO ESTA BIEN IMPLEMENTADO) Tj
+1 0 0 1 48 780 Tm () Tj
+1 0 0 1 48 766 Tm () Tj
+1 0 0 1 48 752 Tm (- Autorizacion dispersa y manual en muchas server actions. Eso ya produjo inconsistencias) Tj
+1 0 0 1 48 738 Tm (  graves.) Tj
+1 0 0 1 48 724 Tm (- Logica de negocio mezclada con atajos de producto. Ejemplo: placeholder emails en) Tj
+1 0 0 1 48 710 Tm (  `src/actions/users.ts:93` y turnos apoyados en `clientId`/`staffId` del usuario actual en) Tj
+1 0 0 1 48 696 Tm (  `src/actions/turns.ts:85-100`.) Tj
+1 0 0 1 48 682 Tm (- Duplicacion funcional en rutas de turnos publicos: `src/app/portal/[tenantSlug]/turno/...` y) Tj
+1 0 0 1 48 668 Tm (  `src/app/portal/turno/[tenantSlug]/...`.) Tj
+1 0 0 1 48 654 Tm (- Claims de seguridad no respaldados por implementacion real en la configuracion de APIs.) Tj
+1 0 0 1 48 640 Tm (- Higiene de codigo insuficiente: `any`, imports sin uso, hooks con dependencias incompletas,) Tj
+1 0 0 1 48 626 Tm (  `img` en vez de `next/image`, comentarios de "mock" y placeholders.) Tj
+1 0 0 1 48 612 Tm () Tj
+1 0 0 1 48 598 Tm (RECOMENDACIONES PRIORITARIAS) Tj
+1 0 0 1 48 584 Tm () Tj
+1 0 0 1 48 570 Tm () Tj
+1 0 0 1 48 556 Tm (PRIORIDAD 0 - BLOQUEANTES ANTES DE PRODUCCION) Tj
+1 0 0 1 48 542 Tm () Tj
+1 0 0 1 48 528 Tm () Tj
+1 0 0 1 48 514 Tm (- Corregir Stripe Connect callback: `state` firmado, sesion obligatoria y validacion) Tj
+1 0 0 1 48 500 Tm (  tenant-owner.) Tj
+1 0 0 1 48 486 Tm (- Eliminar o proteger `/api/test`.) Tj
+1 0 0 1 48 472 Tm (- Arreglar el error de build de `src/app/portal/turno/[tenantSlug]/page.tsx:53`.) Tj
+1 0 0 1 48 458 Tm (- Redisenar el flujo publico de turnos para que no dependa de `requireAuth`.) Tj
+1 0 0 1 48 444 Tm (- Corregir `getUpcomingAppointments` para cron.) Tj
+1 0 0 1 48 430 Tm (- Restringir `users.ts` y el auto-claim del portal cliente por tenant y rol.) Tj
+1 0 0 1 48 416 Tm () Tj
+1 0 0 1 48 402 Tm (PRIORIDAD 1 - RIESGO OPERATIVO) Tj
+1 0 0 1 48 388 Tm () Tj
+1 0 0 1 48 374 Tm () Tj
+1 0 0 1 48 360 Tm (- No descontar stock hasta pago confirmado o introducir reserva con expiracion.) Tj
+1 0 0 1 48 346 Tm (- Expirar citas `pending` que no se pagan.) Tj
+1 0 0 1 48 332 Tm (- Reemplazar enlaces publicos de cancelacion por tokens firmados.) Tj
+1 0 0 1 48 318 Tm (- Eliminar fallback `sk_test_123` y fallar rapido por variables faltantes.) Tj
+1 0 0 1 48 304 Tm (- Normalizar UTF-8 en todo el repo.) Tj
+1 0 0 1 48 290 Tm () Tj
+1 0 0 1 48 276 Tm (PRIORIDAD 2 - CALIDAD Y ESCALABILIDAD) Tj
+1 0 0 1 48 262 Tm () Tj
+1 0 0 1 48 248 Tm () Tj
+1 0 0 1 48 234 Tm (- Agregar pruebas:) Tj
+1 0 0 1 48 220 Tm (- Unitarias para helpers y autorizacion.) Tj
+1 0 0 1 48 206 Tm (- Integracion para server actions criticas.) Tj
+1 0 0 1 48 192 Tm (- E2E para booking, checkout, cancelacion y Stripe Connect.) Tj
+1 0 0 1 48 178 Tm (- Crear CI con al menos `lint`, `build` y pruebas.) Tj
+1 0 0 1 48 164 Tm (- Unificar versionado de Next/React/ESLint.) Tj
+1 0 0 1 48 150 Tm (- Reescribir README y consolidar documentacion tecnica.) Tj
+1 0 0 1 48 136 Tm (- Implementar observabilidad real con Sentry o equivalente.) Tj
+1 0 0 1 48 122 Tm () Tj
+1 0 0 1 48 108 Tm (ORDEN RECOMENDADO DE IMPLEMENTACION) Tj
+1 0 0 1 48 94 Tm () Tj
+1 0 0 1 48 80 Tm () Tj
+1 0 0 1 48 66 Tm (1. Seguridad y autorizacion.) Tj
+1 0 0 1 477 38 Tm (Pagina 6 de 7) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Length 1135 >>
+stream
+BT
+/F1 10 Tf
+0 g
+1 0 0 1 48 794 Tm (2. Flujos de dinero e inventario.) Tj
+1 0 0 1 48 780 Tm (3. Flujos publicos y cron.) Tj
+1 0 0 1 48 766 Tm (4. Calidad automatizada: tests + CI.) Tj
+1 0 0 1 48 752 Tm (5. Documentacion, encoding y limpieza general.) Tj
+1 0 0 1 48 738 Tm () Tj
+1 0 0 1 48 724 Tm (VEREDICTO FINAL) Tj
+1 0 0 1 48 710 Tm () Tj
+1 0 0 1 48 696 Tm () Tj
+1 0 0 1 48 682 Tm (RENRI no es un proyecto malo; al contrario, tiene buena base, buen alcance y varias decisiones) Tj
+1 0 0 1 48 668 Tm (correctas. Lo que hoy le impide estar fuerte no es falta de vision, sino falta de cierre tecnico) Tj
+1 0 0 1 48 654 Tm (en seguridad, calidad operativa y consistencia de implementacion.) Tj
+1 0 0 1 48 640 Tm () Tj
+1 0 0 1 48 626 Tm (Si corriges primero autorizacion, pagos/stock, turnos publicos y automatizacion minima de) Tj
+1 0 0 1 48 612 Tm (calidad, el proyecto puede subir mucho de nivel en poco tiempo. Pero en su estado actual yo no) Tj
+1 0 0 1 48 598 Tm (lo consideraria listo para produccion sin antes cerrar los hallazgos criticos y altos de este) Tj
+1 0 0 1 48 584 Tm (reporte.) Tj
+1 0 0 1 477 38 Tm (Pagina 7 de 7) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Pages /Count 7 /Kids [10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R] >>
+endobj
+10 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 2 0 R >>
+endobj
+11 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 3 0 R >>
+endobj
+12 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 4 0 R >>
+endobj
+13 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 5 0 R >>
+endobj
+14 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 6 0 R >>
+endobj
+15 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 7 0 R >>
+endobj
+16 0 obj
+<< /Type /Page /Parent 9 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 1 0 R >> >> /Contents 8 0 R >>
+endobj
+17 0 obj
+<< /Type /Catalog /Pages 9 0 R >>
+endobj
+xref
+0 18
+0000000000 65535 f 
+0000000015 00000 n 
+0000000085 00000 n 
+0000003869 00000 n 
+0000007428 00000 n 
+0000011059 00000 n 
+0000014498 00000 n 
+0000018099 00000 n 
+0000021476 00000 n 
+0000022663 00000 n 
+0000022763 00000 n 
+0000022890 00000 n 
+0000023017 00000 n 
+0000023144 00000 n 
+0000023271 00000 n 
+0000023398 00000 n 
+0000023525 00000 n 
+0000023652 00000 n 
+trailer
+<< /Size 18 /Root 17 0 R >>
+startxref
+23702
+%%EOF

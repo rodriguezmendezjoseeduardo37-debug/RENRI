@@ -14,15 +14,15 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
     const getStatusStyle = (status: Payment["status"]) => {
         switch (status) {
             case "completed":
-                return "bg-white text-black font-bold";
+                return "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 font-bold";
             case "pending":
             case "processing":
-                return "bg-transparent border border-[#888888] text-[#888888]";
+                return "bg-transparent border border-border text-muted-foreground";
             case "failed":
             case "refunded":
-                return "bg-[#333333] text-white line-through opacity-70";
+                return "bg-secondary text-foreground line-through opacity-70";
             default:
-                return "bg-[#111111] text-[#888888]";
+                return "bg-card text-muted-foreground";
         }
     };
 
@@ -42,19 +42,19 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
     };
 
     return (
-        <tr className="border-b border-[#222222] hover:bg-[#111111] transition-colors group">
+        <tr className="border-b border-border hover:bg-card transition-colors group">
             <td className="px-6 py-4">
-                <span className="text-xs font-mono font-bold text-white tracking-widest">
+                <span className="text-xs font-mono font-bold text-foreground tracking-widest">
                     #{payment.id.split("-")[0].toUpperCase()}
                 </span>
             </td>
-            <td className="px-6 py-4 text-sm text-[#cccccc] font-medium tracking-[0.05em]">
+            <td className="px-6 py-4 text-sm text-muted-foreground font-medium tracking-[0.05em]">
                 {clientName}
             </td>
-            <td className="px-6 py-4 text-xs text-[#888888] tracking-[0.1em] uppercase">
+            <td className="px-6 py-4 text-xs text-muted-foreground tracking-[0.1em] uppercase">
                 {concept}
             </td>
-            <td className="px-6 py-4 text-sm font-mono text-white">
+            <td className="px-6 py-4 text-sm font-mono text-foreground">
                 {formatAmount(payment.amount)}
             </td>
             <td className="px-6 py-4">
@@ -66,13 +66,13 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
                     {statusTranslations[payment.status]}
                 </span>
             </td>
-            <td className="px-6 py-4 text-xs font-mono text-[#888888]">
+            <td className="px-6 py-4 text-xs font-mono text-muted-foreground">
                 {format(new Date(payment.createdAt), "dd MMM yyyy", { locale: es }).toUpperCase()}
             </td>
             <td className="px-6 py-4 text-right">
                 <Link
                     href={`/dashboard/pagos/${payment.id}`}
-                    className="inline-block px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] group-hover:border-white group-hover:text-white transition-all"
+                    className="inline-block px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground group-hover:border-foreground group-hover:text-foreground transition-all"
                 >
                     VER
                 </Link>

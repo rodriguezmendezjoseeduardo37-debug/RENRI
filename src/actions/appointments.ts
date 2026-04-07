@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { appointments, schedules, users } from "@/db/schema";
-import { and, eq, sql, asc } from "drizzle-orm";
+import { and, eq, sql, asc, ilike, or } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { CreateAppointmentSchema } from "@/lib/schemas";
 import type {
@@ -66,6 +66,16 @@ export async function getAppointments(
     if (staffId) conditions.push(eq(appointments.staffId, staffId));
     if (status) conditions.push(eq(appointments.status, status));
 
+    if (search) {
+        const searchCondition = or(
+            ilike(clientUser.name, `%${search}%`),
+            ilike(appointments.serviceName, `%${search}%`)
+        );
+        if (searchCondition) {
+            conditions.push(searchCondition);
+        }
+    }
+
     const baseQuery = db
         .select({
             appointment: appointments,
@@ -82,21 +92,13 @@ export async function getAppointments(
 
     const rows = await baseQuery;
 
-    // Filter by search (client name) in JS since it's across a join
-    let mapped = rows.map(mapRow);
-    if (search) {
-        const q = search.toLowerCase();
-        mapped = mapped.filter(
-            (a) =>
-                a.clientName.toLowerCase().includes(q) ||
-                a.serviceName.toLowerCase().includes(q)
-        );
-    }
+    const mapped = rows.map(mapRow);
 
-    // Total count
+        // Total count
     const [countResult] = await db
         .select({ count: sql<number>`count(*)` })
         .from(appointments)
+        .leftJoin(clientUser, eq(appointments.clientId, clientUser.id))
         .where(and(...conditions));
 
     return {

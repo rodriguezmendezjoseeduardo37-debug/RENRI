@@ -30,8 +30,8 @@ export function ClientAppointmentActions({
         <div className="flex flex-wrap gap-3">
             {paymentId ? (
                 <Link
-                    href={`/dashboard/mis-pagos/${paymentId}`}
-                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
+                    href={`/cliente/mis-pagos/${paymentId}`}
+                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     VER PAGO
                 </Link>
@@ -48,8 +48,7 @@ export function ClientAppointmentActions({
                                     appointmentId
                                 );
                                 toast.success("Pago listo para procesarse");
-                                router.push(`/dashboard/mis-pagos/${payment.id}`);
-                                router.refresh();
+                                router.push(`/cliente/mis-pagos/${payment.id}`);
                             } catch (error) {
                                 toast.error(
                                     error instanceof Error
@@ -59,7 +58,7 @@ export function ClientAppointmentActions({
                             }
                         })
                     }
-                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors disabled:opacity-50"
+                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isPending ? (
                         <span className="inline-flex items-center gap-2">
@@ -87,7 +86,7 @@ export function ClientAppointmentActions({
                             }
                         })
                     }
-                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#aaaaaa] hover:border-white hover:text-white transition-colors disabled:opacity-50"
+                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isPending ? (
                         <span className="inline-flex items-center gap-2">

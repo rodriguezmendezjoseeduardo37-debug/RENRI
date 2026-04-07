@@ -41,16 +41,16 @@ export default async function PedidosPage({
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         PEDIDOS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         GESTIÓN DE ÓRDENES Y VENTAS
                     </p>
                 </div>
                 <Link
                     href="/dashboard/pedidos/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PEDIDO
@@ -58,7 +58,7 @@ export default async function PedidosPage({
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-[1px] bg-[#222222]">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-[1px] bg-popover">
                 {[
                     { label: "TOTAL", value: stats.total, icon: ShoppingCart },
                     { label: "PENDIENTES", value: stats.pending, icon: Clock },
@@ -66,14 +66,14 @@ export default async function PedidosPage({
                     { label: "COMPLETADOS", value: stats.completed, icon: CheckCircle },
                     { label: "CANCELADOS", value: stats.cancelled, icon: XCircle },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-black p-4 flex flex-col">
+                    <div key={stat.label} className="bg-background p-4 flex flex-col">
                         <div className="flex items-center gap-2 mb-2">
-                            <stat.icon className="w-3 h-3 text-[#666666]" />
-                            <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">
+                            <stat.icon className="w-3 h-3 text-muted-foreground" />
+                            <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                                 {stat.label}
                             </span>
                         </div>
-                        <span className="text-xl font-bold font-mono text-white">
+                        <span className="text-xl font-bold font-mono text-foreground">
                             {stat.value}
                         </span>
                     </div>
@@ -85,13 +85,13 @@ export default async function PedidosPage({
                 <div className="flex gap-[1px]">
                     <Link
                         href={`?view=kanban`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
                     >
                         KANBAN
                     </Link>
                     <Link
                         href={`?view=list`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
                     >
                         LISTA
                     </Link>
@@ -104,14 +104,14 @@ export default async function PedidosPage({
 
             {/* Content */}
             {ordersList.length === 0 ? (
-                <div className="border border-[#222222] p-16 text-center">
-                    <ShoppingCart className="w-8 h-8 text-[#333333] mx-auto mb-4" />
-                    <p className="text-sm font-mono text-[#666666]">
+                <div className="border border-border p-16 text-center">
+                    <ShoppingCart className="w-8 h-8 text-foreground mx-auto mb-4" />
+                    <p className="text-sm font-mono text-muted-foreground">
                         No se encontraron pedidos.
                     </p>
                     <Link
                         href="/dashboard/pedidos/nuevo"
-                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
+                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                     >
                         CREAR PRIMER PEDIDO
                     </Link>
@@ -119,7 +119,7 @@ export default async function PedidosPage({
             ) : viewMode === "kanban" ? (
                 <OrderKanban orders={ordersList} />
             ) : (
-                <div className="space-y-[1px] bg-[#222222]">
+                <div className="space-y-[1px] bg-popover">
                     {ordersList.map((order) => (
                         <OrderCard key={order.id} order={order} />
                     ))}

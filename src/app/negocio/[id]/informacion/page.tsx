@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { getPublicBusinessInfo } from "@/actions/public-business";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Phone, Globe, Instagram, Facebook, Info, Building2 } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, MapPin, Phone, Globe, Instagram, Facebook, Building2 } from "lucide-react";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -17,26 +18,29 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
     const socialMedia = (business.socialMedia || {}) as Record<string, string>;
 
     return (
-        <div className="min-h-screen bg-[hsl(0,0%,3.9%)] text-white">
+        <div className="min-h-screen bg-[hsl(0,0%,3.9%)] text-foreground">
             {/* Header */}
-            <header className="border-b border-[#222222] bg-[#050505] sticky top-0 z-50">
+            <header className="border-b border-border bg-card sticky top-0 z-50">
                 <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Link
                             href={`/negocio/${business.id}`}
-                            className="w-11 h-11 border border-[#222222] flex items-center justify-center hover:bg-white hover:text-black transition-colors rounded-full mr-2"
+                            className="w-11 h-11 border border-border flex items-center justify-center hover:bg-white hover:text-primary-foreground transition-colors rounded-full mr-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
                         {business.logoUrl ? (
-                            <img
+                            <Image
                                 src={business.logoUrl}
                                 alt={business.name}
-                                className="w-10 h-10 rounded-full object-cover border border-[#222222]"
+                                width={40}
+                                height={40}
+                                className="w-10 h-10 rounded-full object-cover border border-border"
+                                unoptimized
                             />
                         ) : (
-                            <div className="w-10 h-10 rounded-full bg-[#111111] border border-[#222222] flex items-center justify-center">
-                                <span className="text-base font-bold text-white uppercase">
+                            <div className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center">
+                                <span className="text-base font-bold text-foreground uppercase">
                                     {business.name.charAt(0)}
                                 </span>
                             </div>
@@ -54,18 +58,18 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                 
                 {/* Intro Section */}
                 <section className="space-y-6">
-                    <div className="border-b border-[#222222] pb-4">
+                    <div className="border-b border-border pb-4">
                         <h2 className="text-2xl font-bold tracking-[0.05em] uppercase flex items-center gap-3 font-[family-name:var(--font-heading)]">
                             <Building2 className="w-5 h-5" />
                             Sobre Nosotros
                         </h2>
                     </div>
                     {business.description ? (
-                        <p className="text-sm text-[#AAAAAA] leading-relaxed whitespace-pre-wrap">
+                        <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
                             {business.description}
                         </p>
                     ) : (
-                        <p className="text-[#888888] text-sm italic">
+                        <p className="text-muted-foreground text-sm italic">
                             Este negocio no ha proporcionado una descripción.
                         </p>
                     )}
@@ -74,7 +78,7 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                 {/* Contact & Location */}
                 {(business.address || business.phone) && (
                     <section className="space-y-6">
-                        <div className="border-b border-[#222222] pb-4">
+                        <div className="border-b border-border pb-4">
                             <h2 className="text-xl font-bold tracking-[0.05em] uppercase flex items-center gap-3 font-[family-name:var(--font-heading)]">
                                 <MapPin className="w-5 h-5" />
                                 Contacto y Ubicación
@@ -83,13 +87,13 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                         
                         <div className="grid gap-4">
                             {business.address && (
-                                <div className="flex items-start gap-4 p-5 bg-[#111111] border border-[#222222]">
-                                    <MapPin className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                                <div className="flex items-start gap-4 p-5 bg-card border border-border">
+                                    <MapPin className="w-5 h-5 text-foreground flex-shrink-0 mt-0.5" />
                                     <div>
-                                        <h3 className="text-[10px] font-bold tracking-[0.2em] text-[#666666] uppercase mb-1">
+                                        <h3 className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">
                                             Dirección
                                         </h3>
-                                        <p className="text-sm text-white">
+                                        <p className="text-sm text-foreground">
                                             {business.address}
                                         </p>
                                     </div>
@@ -97,13 +101,13 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                             )}
                             
                             {business.phone && (
-                                <div className="flex items-start gap-4 p-5 bg-[#111111] border border-[#222222]">
-                                    <Phone className="w-5 h-5 text-white flex-shrink-0 mt-0.5" />
+                                <div className="flex items-start gap-4 p-5 bg-card border border-border">
+                                    <Phone className="w-5 h-5 text-foreground flex-shrink-0 mt-0.5" />
                                     <div>
-                                        <h3 className="text-[10px] font-bold tracking-[0.2em] text-[#666666] uppercase mb-1">
+                                        <h3 className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">
                                             Teléfono
                                         </h3>
-                                        <a href={`tel:${business.phone}`} className="text-sm text-white hover:underline block">
+                                        <a href={`tel:${business.phone}`} className="text-sm text-foreground hover:underline block">
                                             {business.phone}
                                         </a>
                                     </div>
@@ -116,7 +120,7 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                 {/* Social Media */}
                 {Object.keys(socialMedia).length > 0 && (
                     <section className="space-y-6">
-                        <div className="border-b border-[#222222] pb-4">
+                        <div className="border-b border-border pb-4">
                             <h2 className="text-xl font-bold tracking-[0.05em] uppercase flex items-center gap-3 font-[family-name:var(--font-heading)]">
                                 <Globe className="w-5 h-5" />
                                 Enlaces Web
@@ -129,7 +133,7 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                                     href={socialMedia.instagram} 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="flex items-center gap-3 px-5 py-3 bg-[#111111] border border-[#222222] hover:border-white hover:bg-white hover:text-black transition-all group"
+                                    className="flex items-center gap-3 px-5 py-3 bg-card border border-border hover:border-foreground hover:bg-white hover:text-primary-foreground transition-all group"
                                 >
                                     <Instagram className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                     <span className="text-[11px] font-bold tracking-[0.1em] uppercase">Instagram</span>
@@ -140,7 +144,7 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                                     href={socialMedia.facebook} 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="flex items-center gap-3 px-5 py-3 bg-[#111111] border border-[#222222] hover:border-white hover:bg-white hover:text-black transition-all group"
+                                    className="flex items-center gap-3 px-5 py-3 bg-card border border-border hover:border-foreground hover:bg-white hover:text-primary-foreground transition-all group"
                                 >
                                     <Facebook className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                     <span className="text-[11px] font-bold tracking-[0.1em] uppercase">Facebook</span>
@@ -151,7 +155,7 @@ export default async function PublicBusinessInfoPage({ params }: Props) {
                                     href={socialMedia.website} 
                                     target="_blank" 
                                     rel="noreferrer"
-                                    className="flex items-center gap-3 px-5 py-3 bg-[#111111] border border-[#222222] hover:border-white hover:bg-white hover:text-black transition-all group"
+                                    className="flex items-center gap-3 px-5 py-3 bg-card border border-border hover:border-foreground hover:bg-white hover:text-primary-foreground transition-all group"
                                 >
                                     <Globe className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                     <span className="text-[11px] font-bold tracking-[0.1em] uppercase">Sitio Web</span>

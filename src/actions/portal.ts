@@ -72,7 +72,8 @@ export async function getPortalServices(tenantId: string) {
 export async function getPortalAvailableSlots(
     tenantId: string,
     staffId: string,
-    date: string
+    date: string,
+    serviceDuration?: number
 ) {
     const dayOfWeek = new Date(`${date}T00:00:00`).getDay();
 
@@ -91,7 +92,7 @@ export async function getPortalAvailableSlots(
     if (staffSchedules.length === 0) return [];
 
     const schedule = staffSchedules[0];
-    const slotDuration = schedule.slotDurationMinutes;
+    const slotDuration = serviceDuration || schedule.slotDurationMinutes;
 
     const existingAppointments = await db
         .select()
@@ -331,6 +332,10 @@ export async function getUpcomingAppointments(hoursAhead: number = 24) {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
 
+    return getUpcomingAppointmentsForReminderJob(hoursAhead);
+}
+
+export async function getUpcomingAppointmentsForReminderJob(hoursAhead: number = 24) {
     const now = new Date();
     const target = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
     const targetDate = target.toISOString().split("T")[0];
@@ -352,4 +357,3 @@ export async function getUpcomingAppointments(hoursAhead: number = 24) {
 
     return rows;
 }
-

@@ -32,6 +32,7 @@ export const products = pgTable(
         imageUrl: varchar("image_url", { length: 2048 }),
         isPublic: boolean("is_public").default(false).notNull(),
         isActive: boolean("is_active").default(true).notNull(),
+        passFeeToClient: boolean("pass_fee_to_client").default(false).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()
             .notNull(),

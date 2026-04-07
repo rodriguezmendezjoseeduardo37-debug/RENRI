@@ -44,7 +44,19 @@ function LoginForm() {
     
     const isClientLogin = selectedType === "cliente";
     const defaultPath = isClientLogin ? "/cliente/mis-citas" : "/dashboard";
-    const callbackUrl = searchParams.get("callbackUrl") ?? defaultPath;
+    
+    let callbackUrl = searchParams.get("callbackUrl") || defaultPath;
+    const isClientPath = callbackUrl.includes("/cliente");
+    const isDashboardPath = callbackUrl.includes("/dashboard");
+    
+    // Ignore callbackUrl if it points to a different module than the one selected
+    // Note: This prevents the bug where logging out from /cliente and selecting /pyme 
+    // forces the user back into /cliente.
+    if (isClientLogin && !isClientPath) {
+        callbackUrl = defaultPath;
+    } else if (!isClientLogin && !isDashboardPath) {
+        callbackUrl = defaultPath;
+    }
 
     const {
         register,
@@ -59,11 +71,16 @@ function LoginForm() {
     async function onSubmit(data: LoginValues) {
         setError(null);
         document.cookie = `renri_active_module=${selectedType}; path=/; max-age=2592000; samesite=lax`;
+        
+        // EXPLICIT ROOT OVERRIDE: We ignore any existing callbackUrl from history/URLs
+        // and strictly send the user to the panel they chose on screen.
+        const enforcePath = selectedType === "cliente" ? "/cliente/mis-citas" : "/dashboard";
+
         const result = await signIn("credentials", {
             email: data.email,
             password: data.password,
             redirect: false,
-            callbackUrl,
+            callbackUrl: enforcePath,
         });
 
         if (result?.error) {
@@ -88,7 +105,7 @@ function LoginForm() {
                         RENRI
                     </h1>
                 </div>
-                <CardTitle className="text-xl text-white">Iniciar Sesión</CardTitle>
+                <CardTitle className="text-xl text-foreground">Iniciar Sesión</CardTitle>
                 <CardDescription className="text-[hsl(0,0%,63.9%)]">
                     Ingresa a tu cuenta para continuar
                 </CardDescription>
@@ -107,7 +124,7 @@ function LoginForm() {
                                     setValue("accountType", type.value);
                                 }}
                                 className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
-                                    ? "border-white bg-white/5 text-white"
+                                    ? "border-white bg-white/5 text-foreground"
                                     : "border-[hsl(0,0%,14.9%)] text-[hsl(0,0%,45.1%)] hover:border-[hsl(0,0%,25%)]"
                                     }`}
                             >
@@ -122,7 +139,7 @@ function LoginForm() {
 
                 <Button
                     variant="outline"
-                    className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
+                    className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-foreground hover:bg-[hsl(0,0%,14.9%)] h-11"
                     onClick={handleGoogleSignIn}
                     disabled={isGoogleLoading}
                 >
@@ -156,7 +173,7 @@ function LoginForm() {
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -172,7 +189,7 @@ function LoginForm() {
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -184,7 +201,7 @@ function LoginForm() {
 
                     <Button
                         type="submit"
-                        className="w-full h-11 bg-white text-black hover:bg-white/90 font-medium"
+                        className="w-full h-11 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-white/90 font-medium"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? (
@@ -198,7 +215,7 @@ function LoginForm() {
                     ¿No tienes cuenta?{" "}
                     <Link
                         href="/register"
-                        className="text-white underline-offset-4 hover:underline"
+                        className="text-foreground underline-offset-4 hover:underline"
                     >
                         Regístrate
                     </Link>
@@ -221,7 +238,7 @@ export default function LoginPage() {
                         </div>
                     </CardHeader>
                     <CardContent className="flex justify-center py-10">
-                        <Loader2 className="h-6 w-6 animate-spin text-white" />
+                        <Loader2 className="h-6 w-6 animate-spin text-foreground" />
                     </CardContent>
                 </Card>
             }>

@@ -16,14 +16,14 @@ export function OrderKanban({ orders }: OrderKanbanProps) {
                 return (
                     <div
                         key={status}
-                        className="border border-[#222222] bg-black flex flex-col"
+                        className="border border-border bg-background flex flex-col"
                     >
                         {/* Column header */}
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-[#222222] bg-[#111111]">
-                            <span className="text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+                            <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                                 {ORDER_STATUS_LABELS[status]}
                             </span>
-                            <span className="text-[10px] font-mono font-bold text-white bg-[#222222] px-2 py-0.5">
+                            <span className="text-[10px] font-mono font-bold text-foreground bg-popover px-2 py-0.5">
                                 {columnOrders.length}
                             </span>
                         </div>
@@ -39,7 +39,7 @@ export function OrderKanban({ orders }: OrderKanbanProps) {
                                     />
                                 ))
                             ) : (
-                                <div className="flex items-center justify-center h-24 text-[10px] text-[#444444] font-mono">
+                                <div className="flex items-center justify-center h-24 text-[10px] text-foreground font-mono">
                                     VACÍO
                                 </div>
                             )}

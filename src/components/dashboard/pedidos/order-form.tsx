@@ -113,15 +113,15 @@ export function OrderForm({ products }: OrderFormProps) {
     };
 
     const inputClass =
-        "w-full bg-black border border-[#222222] text-white text-sm px-4 py-3 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
     const labelClass =
-        "text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase block mb-2";
+        "text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* LEFT: Product catalog */}
             <div className="space-y-4">
-                <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                     CATÁLOGO DE PRODUCTOS
                 </h2>
                 <ProductSearch products={products} onAddItem={handleAddItem} />
@@ -129,7 +129,7 @@ export function OrderForm({ products }: OrderFormProps) {
 
             {/* RIGHT: Order summary */}
             <div className="space-y-6">
-                <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                     RESUMEN DEL PEDIDO
                 </h2>
 
@@ -156,10 +156,10 @@ export function OrderForm({ products }: OrderFormProps) {
                 </div>
 
                 {/* Cart items */}
-                <div className="border border-[#222222] bg-black">
+                <div className="border border-border bg-background">
                     {items.length === 0 ? (
                         <div className="p-8 text-center">
-                            <p className="text-[10px] text-[#666666] font-mono">
+                            <p className="text-[10px] text-muted-foreground font-mono">
                                 Haz clic en un producto para agregarlo
                             </p>
                         </div>
@@ -171,10 +171,10 @@ export function OrderForm({ products }: OrderFormProps) {
                                     className="flex items-center justify-between p-3"
                                 >
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-xs font-bold text-white uppercase truncate tracking-[0.05em]">
+                                        <p className="text-xs font-bold text-foreground uppercase truncate tracking-[0.05em]">
                                             {item.name}
                                         </p>
-                                        <p className="text-[9px] font-mono text-[#666666]">
+                                        <p className="text-[9px] font-mono text-muted-foreground">
                                             ${item.price.toFixed(2)} c/u
                                         </p>
                                     </div>
@@ -183,17 +183,17 @@ export function OrderForm({ products }: OrderFormProps) {
                                         <button
                                             onClick={() => updateQuantity(item.productId, -1)}
                                             aria-label="Disminuir cantidad"
-                                            className="w-6 h-6 flex items-center justify-center border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
+                                            className="w-6 h-6 flex items-center justify-center bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                                         >
                                             <Minus className="w-3 h-3" />
                                         </button>
-                                        <span className="text-xs font-bold font-mono text-white w-6 text-center">
+                                        <span className="text-xs font-bold font-mono text-foreground w-6 text-center">
                                             {item.quantity}
                                         </span>
                                         <button
                                             onClick={() => updateQuantity(item.productId, 1)}
                                             aria-label="Aumentar cantidad"
-                                            className="w-6 h-6 flex items-center justify-center border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
+                                            className="w-6 h-6 flex items-center justify-center bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                                         >
                                             <Plus className="w-3 h-3" />
                                         </button>
@@ -206,7 +206,7 @@ export function OrderForm({ products }: OrderFormProps) {
                                         </button>
                                     </div>
 
-                                    <span className="text-xs font-bold font-mono text-white ml-3 w-20 text-right">
+                                    <span className="text-xs font-bold font-mono text-foreground ml-3 w-20 text-right">
                                         ${(item.price * item.quantity).toFixed(2)}
                                     </span>
                                 </div>
@@ -217,16 +217,16 @@ export function OrderForm({ products }: OrderFormProps) {
 
                 {/* Totals */}
                 {items.length > 0 && (
-                    <div className="border border-[#222222] bg-[#111111] p-4 space-y-2">
-                        <div className="flex justify-between text-xs text-[#888888]">
+                    <div className="border border-border bg-card p-4 space-y-2">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                             <span>SUBTOTAL</span>
                             <span className="font-mono">${subtotal.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-xs text-[#888888]">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                             <span>IVA (16%)</span>
                             <span className="font-mono">${tax.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-[#222222]">
+                        <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
                             <span className="tracking-[0.2em]">TOTAL</span>
                             <span className="font-mono text-lg">
                                 ${total.toFixed(2)}
@@ -251,7 +251,7 @@ export function OrderForm({ products }: OrderFormProps) {
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting || items.length === 0}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isSubmitting && (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -45,13 +45,13 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar productos..."
-                className="bg-black border border-[#222222] text-white text-sm px-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
+                className="bg-background border border-border text-foreground text-sm px-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
             />
             <select
                 name="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="bg-black border border-[#222222] text-white text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                className="bg-background border border-border text-foreground text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
             >
                 <option value="">TODAS LAS CATEGORÍAS</option>
                 {categories.map((c) => (
@@ -60,7 +60,7 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
                     </option>
                 ))}
             </select>
-            <label className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase cursor-pointer">
+            <label className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase cursor-pointer">
                 <input
                     type="checkbox"
                     name="lowStock"
@@ -72,7 +72,7 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
             </label>
             <button
                 type="submit"
-                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
+                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
             >
                 FILTRAR
             </button>
@@ -81,13 +81,13 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
             <div className="flex gap-[1px] ml-auto">
                 <Link
                     href={`?view=grid&search=${currentSearch}&category=${currentCategory}&lowStock=${currentLowStock ? "true" : ""}`}
-                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "grid" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
+                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "grid" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
                 >
                     GRID
                 </Link>
                 <Link
                     href={`?view=list&search=${currentSearch}&category=${currentCategory}&lowStock=${currentLowStock ? "true" : ""}`}
-                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-white text-black" : "bg-[#222222] text-[#888888] hover:text-white"}`}
+                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
                 >
                     LISTA
                 </Link>

@@ -17,6 +17,10 @@ import {
     createPaymentIntent as stripeCreatePaymentIntent,
     refundPayment as stripeRefundPayment,
 } from "@/lib/stripe";
+import {
+    getTenantStripeAccountId,
+} from "@/actions/stripe-connect";
+import { COMMISSION_RATES } from "@/lib/constants";
 
 type PaymentFilters = {
     status?: "pending" | "processing" | "completed" | "failed" | "refunded";
@@ -172,12 +176,12 @@ export async function getPayments(tenantId: string, filters?: PaymentFilters) {
 export async function getPaymentById(id: string, tenantId: string) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
-        throw new Error("Unauthorized");
-    }
-
     if (user.role === "CLIENT") {
         return assertClientCanAccessPayment(user.id, id);
+    }
+
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
     }
 
     return db.query.payments.findFirst({
@@ -229,6 +233,48 @@ export async function createPaymentForAppointment(appointmentId: string, amount:
     return payment;
 }
 
+export async function createPresentialPayment(
+    appointmentId: string,
+    tenantId: string,
+    method: "cash" | "card",
+    amount: number
+) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
+
+    const isCash = method === "cash";
+
+    const [payment] = await db
+        .insert(payments)
+        .values({
+            tenantId,
+            referenceId: appointmentId,
+            referenceType: "appointment",
+            amount: amount.toString(),
+            currency: "MXN",
+            paymentMethod: method,
+            status: isCash ? "completed" : "pending",
+            paidAt: isCash ? new Date() : null,
+        })
+        .returning();
+
+    // If cash, also confirm the appointment as completed
+    if (isCash) {
+        await db
+            .update(appointments)
+            .set({ status: "completed", updatedAt: new Date() })
+            .where(and(eq(appointments.id, appointmentId), eq(appointments.tenantId, tenantId)));
+    }
+
+    revalidatePath("/dashboard/pagos");
+    revalidatePath("/dashboard/citas");
+    revalidatePath("/dashboard/turnos");
+    return payment;
+}
+
 export async function createPaymentForOrder(orderId: string, amount: number, tenantId: string) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
@@ -270,7 +316,7 @@ export async function processPayment(paymentId: string) {
             throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
         }
 
-        if (user.tenantId !== payment.tenantId && user.role !== "SUPER_ADMIN") {
+        if (user.role !== "CLIENT" && user.tenantId !== payment.tenantId && user.role !== "SUPER_ADMIN") {
             throw new ActionError("Unauthorized", "UNAUTHORIZED");
         }
 
@@ -278,12 +324,20 @@ export async function processPayment(paymentId: string) {
             throw new ActionError("Payment already completed", "ALREADY_COMPLETED");
         }
 
-        const intent = await stripeCreatePaymentIntent(Number(payment.amount), payment.currency, {
-            paymentId: payment.id,
-            tenantId: payment.tenantId,
-            referenceId: payment.referenceId,
-            referenceType: payment.referenceType,
-        });
+        const intent = await stripeCreatePaymentIntent(
+            Number(payment.amount),
+            payment.currency,
+            {
+                paymentId: payment.id,
+                tenantId: payment.tenantId,
+                referenceId: payment.referenceId,
+                referenceType: payment.referenceType,
+            },
+            // Route to the business's connected Stripe account
+            await getTenantStripeAccountId(payment.tenantId),
+            // Commission: 0% for appointments, 0.5% for orders
+            Math.round(Number(payment.amount) * 100 * (COMMISSION_RATES[payment.referenceType as keyof typeof COMMISSION_RATES] ?? 0))
+        );
 
         const [updated] = await db
             .update(payments)
@@ -379,7 +433,11 @@ export async function refundPaymentAction(paymentId: string, tenantId: string) {
     }
 }
 
-export async function getRevenueStats(tenantId: string, period: "day" | "week" | "month" | "year") {
+export async function getRevenueStats(
+    tenantId: string,
+    period: "day" | "week" | "month" | "year",
+    referenceType?: "appointment" | "order"
+) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
@@ -393,12 +451,18 @@ export async function getRevenueStats(tenantId: string, period: "day" | "week" |
     if (period === "month") startDate = subMonths(now, 1);
     if (period === "year") startDate = subYears(now, 1);
 
+    const conditions = [
+        eq(payments.tenantId, tenantId),
+        eq(payments.status, "completed"),
+        gte(payments.paidAt, startDate),
+    ];
+
+    if (referenceType) {
+        conditions.push(eq(payments.referenceType, referenceType));
+    }
+
     const completedPayments = await db.query.payments.findMany({
-        where: and(
-            eq(payments.tenantId, tenantId),
-            eq(payments.status, "completed"),
-            gte(payments.paidAt, startDate)
-        ),
+        where: and(...conditions),
         columns: {
             amount: true,
             paidAt: true,

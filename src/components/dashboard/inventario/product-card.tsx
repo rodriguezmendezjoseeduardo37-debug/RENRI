@@ -20,12 +20,12 @@ export function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/dashboard/inventario/${product.id}`}
-            className="border border-[#222222] bg-[#111111] p-5 flex flex-col justify-between group hover:border-white transition-all min-h-[220px]"
+            className="border border-border bg-card p-5 flex flex-col justify-between group hover:border-foreground transition-all min-h-[220px]"
         >
             {/* Image or placeholder */}
             <div className="flex items-center justify-between mb-4">
                 {product.imageUrl ? (
-                    <div className="w-12 h-12 bg-[#222222] overflow-hidden">
+                    <div className="w-12 h-12 bg-popover overflow-hidden">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                             src={product.imageUrl}
@@ -34,8 +34,8 @@ export function ProductCard({ product }: ProductCardProps) {
                         />
                     </div>
                 ) : (
-                    <div className="w-12 h-12 bg-[#222222] flex items-center justify-center">
-                        <Package className="w-5 h-5 text-[#444444]" />
+                    <div className="w-12 h-12 bg-popover flex items-center justify-center">
+                        <Package className="w-5 h-5 text-foreground" />
                     </div>
                 )}
                 {isLowStock && (
@@ -45,30 +45,30 @@ export function ProductCard({ product }: ProductCardProps) {
 
             {/* Info */}
             <div className="flex-1">
-                <h3 className="text-sm font-bold tracking-[0.1em] text-white uppercase line-clamp-2 group-hover:text-white transition-colors">
+                <h3 className="text-sm font-bold tracking-[0.1em] text-foreground uppercase line-clamp-2 group-hover:text-foreground transition-colors">
                     {product.name}
                 </h3>
                 {product.sku && (
-                    <p className="text-[9px] font-mono tracking-[0.2em] text-[#666666] mt-1">
+                    <p className="text-[9px] font-mono tracking-[0.2em] text-muted-foreground mt-1">
                         SKU: {product.sku}
                     </p>
                 )}
             </div>
 
             {/* Bottom */}
-            <div className="flex items-end justify-between mt-4 pt-3 border-t border-[#222222]">
+            <div className="flex items-end justify-between mt-4 pt-3 border-t border-border">
                 <div>
-                    <span className="text-lg font-bold text-white tracking-tight">
+                    <span className="text-lg font-bold text-foreground tracking-tight">
                         ${Number(product.price).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                     </span>
                     {margin && (
-                        <span className="text-[9px] text-[#888888] ml-2 font-mono">
+                        <span className="text-[9px] text-muted-foreground ml-2 font-mono">
                             {margin}% margen
                         </span>
                     )}
                 </div>
                 <span
-                    className={`text-sm font-bold font-mono ${isLowStock ? "text-red-500" : "text-[#888888]"
+                    className={`text-sm font-bold font-mono ${isLowStock ? "text-red-500" : "text-muted-foreground"
                         }`}
                 >
                     {product.stock}

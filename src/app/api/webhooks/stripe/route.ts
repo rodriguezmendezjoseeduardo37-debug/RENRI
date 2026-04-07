@@ -11,15 +11,19 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
     const body = await req.text();
     const signature = req.headers.get("Stripe-Signature") as string;
+    // Stripe-Connect sends a separate `stripe-account` header for connected account events
+    const connectedAccountId = req.headers.get("Stripe-Account");
 
     let event: Stripe.Event;
 
     try {
-        event = stripeServer.webhooks.constructEvent(
-            body,
-            signature,
-            process.env.STRIPE_WEBHOOK_SECRET!
-        );
+        // Use the appropriate webhook secret
+        // For connect events use STRIPE_CONNECT_WEBHOOK_SECRET, else the platform secret
+        const webhookSecret = connectedAccountId
+            ? (process.env.STRIPE_CONNECT_WEBHOOK_SECRET ?? process.env.STRIPE_WEBHOOK_SECRET!)
+            : process.env.STRIPE_WEBHOOK_SECRET!;
+
+        event = stripeServer.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";
         console.error(`Webhook Error: ${errorMessage}`);

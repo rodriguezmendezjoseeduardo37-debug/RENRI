@@ -44,14 +44,14 @@ export default async function ProductDetailPage({
             {/* Back */}
             <Link
                 href="/dashboard/inventario"
-                className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white uppercase transition-colors"
+                className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase transition-colors"
             >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 VOLVER AL INVENTARIO
             </Link>
 
             {/* Product name */}
-            <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                 {product.name}
             </h1>
 
@@ -60,12 +60,12 @@ export default async function ProductDetailPage({
                 {/* Left: Details */}
                 <div className="lg:col-span-2 space-y-6">
                     {product.description && (
-                        <p className="text-sm text-[#888888] leading-relaxed">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                             {product.description}
                         </p>
                     )}
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-[1px] bg-[#222222]">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-[1px] bg-popover">
                         {[
                             {
                                 label: "SKU",
@@ -95,15 +95,15 @@ export default async function ProductDetailPage({
                         ].map((item) => (
                             <div
                                 key={item.label}
-                                className="bg-black p-5 flex flex-col"
+                                className="bg-background p-5 flex flex-col"
                             >
                                 <div className="flex items-center gap-2 mb-2">
-                                    <item.icon className="w-3 h-3 text-[#666666]" />
-                                    <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">
+                                    <item.icon className="w-3 h-3 text-muted-foreground" />
+                                    <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                                         {item.label}
                                     </span>
                                 </div>
-                                <span className="text-sm font-bold font-mono text-white">
+                                <span className="text-sm font-bold font-mono text-foreground">
                                     {item.value}
                                 </span>
                             </div>
@@ -112,7 +112,7 @@ export default async function ProductDetailPage({
 
                     {/* Stock Movement History */}
                     <div className="space-y-4">
-                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             HISTORIAL DE MOVIMIENTOS
                         </h2>
                         <StockMovementTable movements={movements} />
@@ -121,13 +121,13 @@ export default async function ProductDetailPage({
 
                 {/* Right: Stock Panel */}
                 <div className="space-y-6">
-                    <div className="border border-[#222222] bg-[#111111] p-6 space-y-6">
+                    <div className="border border-border bg-card p-6 space-y-6">
                         <div className="text-center">
-                            <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase block mb-2">
+                            <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase block mb-2">
                                 STOCK ACTUAL
                             </span>
                             <span
-                                className={`text-5xl font-bold font-mono ${isLowStock ? "text-red-500" : "text-white"
+                                className={`text-5xl font-bold font-mono ${isLowStock ? "text-red-500" : "text-foreground"
                                     }`}
                             >
                                 {product.stock}
@@ -143,12 +143,12 @@ export default async function ProductDetailPage({
                             </div>
                         )}
 
-                        <div className="border-t border-[#222222] pt-4">
+                        <div className="border-t border-border pt-4">
                             <div className="flex items-center justify-between">
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                                     UMBRAL MÍNIMO
                                 </span>
-                                <span className="text-sm font-mono font-bold text-[#888888]">
+                                <span className="text-sm font-mono font-bold text-muted-foreground">
                                     {product.lowStockAlert}
                                 </span>
                             </div>

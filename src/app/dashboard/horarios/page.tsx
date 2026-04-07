@@ -46,12 +46,16 @@ export default async function SchedulesPage({
         <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         HORARIOS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · {staffName}
                     </p>
+                    <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-[9px] font-bold tracking-[0.2em] text-foreground uppercase">Horario Semanal Recurrente Automático</span>
+                    </div>
                 </div>
 
                 <div className="flex gap-4">
@@ -61,7 +65,7 @@ export default async function SchedulesPage({
 
                     <Link
                         href="/dashboard/horarios/configuracion"
-                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                     >
                         CONFIGURAR
                     </Link>

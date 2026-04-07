@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, Ban } from "lucide-react";
+import { toast } from "sonner";
 
 interface Slot {
     startTime: string;
@@ -21,12 +22,12 @@ export function TimeSlotPicker({
 }: TimeSlotPickerProps) {
     if (slots.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center p-8 bg-black/40 border border-white/5 rounded-2xl">
-                <Ban className="w-8 h-8 text-white/20 mb-3" />
-                <p className="text-[11px] font-bold tracking-[0.2em] text-white/50 uppercase text-center">
+            <div className="flex flex-col items-center justify-center p-8 bg-card border border-border rounded-2xl">
+                <Ban className="w-8 h-8 text-foreground/20 mb-3" />
+                <p className="text-[11px] font-bold tracking-[0.2em] text-foreground/50 uppercase text-center">
                     No hay horarios para este día
                 </p>
-                <p className="text-[9px] tracking-widest text-white/30 uppercase mt-2">
+                <p className="text-[9px] tracking-widest text-foreground/30 uppercase mt-2">
                     Intenta con otra fecha
                 </p>
             </div>
@@ -41,23 +42,28 @@ export function TimeSlotPicker({
                 return (
                     <button
                         key={slot.startTime}
-                        disabled={!slot.available}
-                        onClick={() => onSelect(slot.startTime)}
+                        onClick={() => {
+                            if (!slot.available) {
+                                toast("Ese turno ya se encuentra agendado", { description: "Por favor selecciona un horario disponible." });
+                                return;
+                            }
+                            onSelect(slot.startTime);
+                        }}
                         className={`flex items-center justify-center gap-2 py-4 px-3 border transition-all duration-300 relative group overflow-hidden ${
                             !slot.available
-                                ? "border-white/5 bg-black/20 text-white/20 cursor-not-allowed"
+                                ? "border-border bg-muted/50 text-muted-foreground/50 cursor-not-allowed"
                                 : isSelected
-                                    ? "border-transparent bg-white text-black font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] scale-[1.02]"
-                                    : "border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:bg-white/10 hover:text-white active:scale-95"
+                                    ? "border-transparent bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 font-bold scale-[1.02]"
+                                    : "border-border bg-card text-foreground hover:border-foreground/30 hover:bg-muted active:scale-95"
                         }`}
                         title={!slot.available ? "Horario Ocupado" : "Seleccionar Horario"}
                     >
                         {/* Glow effect on hover */}
                         {slot.available && !isSelected && (
-                            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors pointer-events-none" />
+                            <div className="absolute inset-0 bg-transparent group-hover:bg-muted/50 transition-colors pointer-events-none" />
                         )}
                         
-                        <Clock className={`w-3.5 h-3.5 ${!slot.available ? "opacity-30" : isSelected ? "text-black" : "text-white/40 group-hover:text-white/60"}`} />
+                        <Clock className={`w-3.5 h-3.5 ${!slot.available ? "opacity-30" : isSelected ? "text-primary-foreground" : "text-foreground/40 group-hover:text-foreground/60"}`} />
                         <span className="text-sm font-mono tracking-wider">
                             {slot.startTime.slice(0, 5)}
                         </span>

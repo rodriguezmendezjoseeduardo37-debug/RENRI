@@ -15,6 +15,7 @@ export interface Product {
     imageUrl: string | null;
     isPublic: boolean;
     isActive: boolean;
+    passFeeToClient: boolean;
     createdAt: string;
     updatedAt: string;
 }
@@ -44,6 +45,7 @@ export const createProductSchema = z.object({
     category: z.string().optional(),
     imageUrl: z.string().optional(),
     isPublic: z.boolean().default(false),
+    passFeeToClient: z.boolean().default(false),
 });
 
 export type CreateProductInput = z.infer<typeof createProductSchema> & {

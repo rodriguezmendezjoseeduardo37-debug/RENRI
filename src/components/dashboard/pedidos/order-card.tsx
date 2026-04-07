@@ -26,29 +26,29 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
     return (
         <Link
             href={`/dashboard/pedidos/${order.id}`}
-            className={`block border border-[#222222] bg-[#111111] hover:border-[#444444] transition-all border-l-2 ${statusColors[order.status] || "border-l-white"} ${compact ? "p-3" : "p-4"}`}
+            className={`block border border-border bg-card hover:border-border transition-all border-l-2 ${statusColors[order.status] || "border-l-white"} ${compact ? "p-3" : "p-4"}`}
         >
             <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                    <span className="text-xs font-bold font-mono text-white">
+                    <span className="text-xs font-bold font-mono text-foreground">
                         #{order.id.slice(0, 8).toUpperCase()}
                     </span>
                     {order.clientName && (
-                        <p className="text-[11px] text-[#888888] mt-1 truncate">
+                        <p className="text-[11px] text-muted-foreground mt-1 truncate">
                             {order.clientName}
                         </p>
                     )}
                 </div>
-                <span className="text-sm font-bold font-mono text-white whitespace-nowrap">
+                <span className="text-sm font-bold font-mono text-foreground whitespace-nowrap">
                     ${Number(order.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                 </span>
             </div>
             {!compact && (
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-[#222222]">
-                    <span className="text-[9px] font-bold tracking-[0.2em] text-[#666666] uppercase">
+                <div className="flex items-center justify-between mt-3 pt-2 border-t border-border">
+                    <span className="text-[9px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                         {ORDER_STATUS_LABELS[order.status]}
                     </span>
-                    <span className="text-[9px] text-[#666666]">{timeAgo}</span>
+                    <span className="text-[9px] text-muted-foreground">{timeAgo}</span>
                 </div>
             )}
         </Link>

@@ -27,9 +27,9 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-black border border-white p-3 shadow-2xl">
-                <p className="text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase mb-1">{label}</p>
-                <p className="text-sm font-mono text-white font-bold">
+            <div className="bg-background border border-white p-3 shadow-2xl">
+                <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">{label}</p>
+                <p className="text-sm font-mono text-foreground font-bold">
                     ${payload[0].value.toLocaleString("es-MX")} MXN
                 </p>
             </div>
@@ -41,8 +41,8 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export function RevenueChart({ data }: RevenueChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="w-full h-[300px] border border-[#222222] flex items-center justify-center bg-[#0a0a0a]">
-                <span className="text-[10px] font-bold tracking-[0.3em] text-[#444444] uppercase">
+            <div className="w-full h-[300px] border border-border flex items-center justify-center bg-background">
+                <span className="text-[10px] font-bold tracking-[0.3em] text-foreground uppercase">
                     SIN DATOS SUFICIENTES
                 </span>
             </div>
@@ -50,7 +50,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
     }
 
     return (
-        <div className="w-full h-[300px] border border-[#222222] bg-[#0a0a0a] p-4 pt-8">
+        <div className="w-full h-[300px] border border-border bg-background p-4 pt-8">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} />

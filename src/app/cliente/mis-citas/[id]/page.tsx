@@ -38,7 +38,7 @@ export default async function MiCitaDetallePage({
         <div className="max-w-5xl mx-auto space-y-8">
             <Link
                 href="/dashboard/mis-citas"
-                className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-[#888888] hover:text-white transition-colors uppercase"
+                className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors uppercase"
             >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 MIS CITAS
@@ -46,10 +46,10 @@ export default async function MiCitaDetallePage({
 
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         {appointment.serviceName}
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                         {appointment.date} · {appointment.startTime} · {appointment.staffName}
                     </p>
                 </div>
@@ -58,7 +58,7 @@ export default async function MiCitaDetallePage({
 
             <div className="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-6">
                 <div className="space-y-6">
-                    <div className="border border-[#222222] bg-[#111111] p-6 space-y-[1px]">
+                    <div className="border border-border bg-card p-6 space-y-[1px]">
                         {[
                             ["PROFESIONAL", appointment.staffName],
                             ["SERVICIO", appointment.serviceName],
@@ -68,20 +68,20 @@ export default async function MiCitaDetallePage({
                         ].map(([label, value]) => (
                             <div
                                 key={label}
-                                className="bg-black px-5 py-4 flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
+                                className="bg-background px-5 py-4 flex flex-col gap-2 md:flex-row md:items-start md:justify-between"
                             >
-                                <span className="text-[10px] font-bold tracking-[0.2em] text-[#777777] uppercase">
+                                <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                                     {label}
                                 </span>
-                                <span className="text-sm text-white md:text-right">
+                                <span className="text-sm text-foreground md:text-right">
                                     {value}
                                 </span>
                             </div>
                         ))}
                     </div>
 
-                    <div className="border border-[#222222] bg-black p-6 space-y-4">
-                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                    <div className="border border-border bg-background p-6 space-y-4">
+                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             ACCIONES
                         </h2>
                         <ClientAppointmentActions
@@ -94,7 +94,7 @@ export default async function MiCitaDetallePage({
                             <Link
                                 href={`/portal/${tenant.slug}/agendar`}
                                 target="_blank"
-                                className="inline-flex px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#aaaaaa] hover:border-white hover:text-white transition-colors"
+                                className="inline-flex px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >
                                 REAGENDAR DESDE EL PORTAL
                             </Link>
@@ -102,23 +102,23 @@ export default async function MiCitaDetallePage({
                     </div>
                 </div>
 
-                <div className="border border-[#222222] bg-[#111111] p-6 space-y-6">
+                <div className="border border-border bg-card p-6 space-y-6">
                     <div>
-                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                        <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             PAGO
                         </h2>
-                        <div className="mt-4 border border-[#222222] bg-black p-5">
-                            <p className="text-[10px] font-bold tracking-[0.2em] text-[#777777] uppercase">
+                        <div className="mt-4 border border-border bg-background p-5">
+                            <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                                 MONTO
                             </p>
-                            <p className="mt-2 text-3xl font-bold text-white">
+                            <p className="mt-2 text-3xl font-bold text-foreground">
                                 ${Number(appointment.amount ?? 0).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                             </p>
-                            <div className="mt-4 pt-4 border-t border-[#222222] space-y-2">
-                                <p className="text-[10px] font-bold tracking-[0.2em] text-[#777777] uppercase">
+                            <div className="mt-4 pt-4 border-t border-border space-y-2">
+                                <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                                     MÉTODO: {payment?.paymentMethod === "cash" ? "EFECTIVO" : "TARJETA"}
                                 </p>
-                                <p className={`text-sm font-bold ${payment?.status === "completed" ? "text-green-500" : "text-[#888888]"}`}>
+                                <p className={`text-sm font-bold ${payment?.status === "completed" ? "text-green-500" : "text-muted-foreground"}`}>
                                     {payment
                                         ? payment.status === "completed"
                                             ? "✓ PAGO VALIDADO"
@@ -130,7 +130,7 @@ export default async function MiCitaDetallePage({
                                             : "Sin cobro asociado"}
                                 </p>
                                 {payment?.paymentMethod === "cash" && payment.status !== "completed" && (
-                                    <p className="text-[10px] text-[#555555] leading-relaxed">
+                                    <p className="text-[10px] text-muted-foreground leading-relaxed">
                                         * Entrega el pago al dueño del negocio para que lo valide en el sistema.
                                     </p>
                                 )}
@@ -138,7 +138,7 @@ export default async function MiCitaDetallePage({
                         </div>
                     </div>
 
-                    <div className="space-y-3 text-sm text-[#777777]">
+                    <div className="space-y-3 text-sm text-muted-foreground">
                         <p>
                             Creada: {new Date(appointment.createdAt).toLocaleString("es-MX")}
                         </p>
@@ -148,7 +148,7 @@ export default async function MiCitaDetallePage({
                         {payment && payment.paymentMethod === "card" && payment.status !== "completed" ? (
                             <Link
                                 href={`/cliente/mis-pagos/${payment.id}`}
-                                className="inline-flex text-white hover:text-[#d6d6d6] transition-colors font-bold underline decoration-white/30"
+                                className="inline-flex text-foreground hover:text-muted-foreground transition-colors font-bold underline decoration-white/30"
                             >
                                 Ir al pago online
                             </Link>

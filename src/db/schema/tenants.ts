@@ -36,6 +36,9 @@ export const tenants = pgTable(
         accountType: accountTypeEnum("account_type").default("servicios").notNull(),
         stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
         stripeSubscriptionId: varchar("stripe_subscription_id", { length: 255 }),
+        // ─── Stripe Connect (per-tenant payments) ────────────────
+        stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
+        stripeConnectEnabled: boolean("stripe_connect_enabled").default(false).notNull(),
         logoUrl: varchar("logo_url", { length: 2048 }),
         description: text("description"),
         address: varchar("address", { length: 500 }),

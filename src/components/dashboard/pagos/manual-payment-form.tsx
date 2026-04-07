@@ -32,20 +32,20 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
     };
 
     return (
-        <form onSubmit={handleSubmit} className="border border-[#222222] bg-[#111111] p-6 space-y-6">
-            <h3 className="text-[14px] font-bold tracking-[0.2em] text-white uppercase">
+        <form onSubmit={handleSubmit} className="border border-border bg-card p-6 space-y-6">
+            <h3 className="text-[14px] font-bold tracking-[0.2em] text-foreground uppercase">
                 REGISTRO MANUAL OFF-PLATFORM
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase block">
+                    <label className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block">
                         MÉTODO
                     </label>
                     <select
                         value={method}
                         onChange={(e) => setMethod(e.target.value)}
-                        className="w-full bg-black border border-[#333333] p-3 text-sm text-white focus:border-white focus:outline-none transition-colors"
+                        className="w-full bg-background border border-border p-3 text-sm text-foreground focus:border-white focus:outline-none transition-colors"
                     >
                         <option value="EFECTIVO">EFECTIVO</option>
                         <option value="TRANSFERENCIA">TRANSFERENCIA BANCARIA</option>
@@ -55,7 +55,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase block">
+                    <label className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block">
                         REFERENCIA (Opcional)
                     </label>
                     <input
@@ -63,7 +63,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                         value={reference}
                         onChange={(e) => setReference(e.target.value)}
                         placeholder="Folio, Autorización..."
-                        className="w-full bg-black border border-[#333333] p-3 text-sm text-white focus:border-white focus:outline-none transition-colors font-mono"
+                        className="w-full bg-background border border-border p-3 text-sm text-foreground focus:border-white focus:outline-none transition-colors font-mono"
                     />
                 </div>
             </div>
@@ -71,7 +71,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-white text-black py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                className="w-full bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors disabled:opacity-50"
             >
                 {isLoading ? "REGISTRANDO..." : "CONFIRMAR PAGO RECIBIDO"}
             </button>

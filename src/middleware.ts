@@ -37,6 +37,11 @@ export default auth((req) => {
             loginUrl.searchParams.set("callbackUrl", pathname);
             return Response.redirect(loginUrl);
         }
+        
+        // Block clients from accessing business dashboards
+        if (isClient) {
+            return Response.redirect(new URL("/cliente/mis-citas", nextUrl));
+        }
     }
 
     if (pathname.startsWith("/cliente")) {

@@ -45,7 +45,7 @@ function ErrorContent() {
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10">
                     <AlertTriangle className="h-7 w-7 text-red-400" />
                 </div>
-                <CardTitle className="text-xl text-white">{title}</CardTitle>
+                <CardTitle className="text-xl text-foreground">{title}</CardTitle>
                 <CardDescription className="text-[hsl(0,0%,63.9%)]">
                     {message}
                 </CardDescription>
@@ -55,14 +55,14 @@ function ErrorContent() {
                     <Button
                         asChild
                         variant="outline"
-                        className="w-full h-11 border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)]"
+                        className="w-full h-11 border-[hsl(0,0%,14.9%)] bg-transparent text-foreground hover:bg-[hsl(0,0%,14.9%)]"
                     >
                         <Link href="/register">Volver a Registro</Link>
                     </Button>
                 )}
                 <Button
                     asChild
-                    className="w-full h-11 bg-white text-black hover:bg-white/90"
+                    className="w-full h-11 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-white/90"
                 >
                     <Link href="/login">Volver al Inicio de Sesion</Link>
                 </Button>
@@ -74,7 +74,7 @@ function ErrorContent() {
 export default function AuthErrorPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,3.9%)] px-4">
-            <Suspense fallback={<div className="text-white">Cargando...</div>}>
+            <Suspense fallback={<div className="text-foreground">Cargando...</div>}>
                 <ErrorContent />
             </Suspense>
         </div>

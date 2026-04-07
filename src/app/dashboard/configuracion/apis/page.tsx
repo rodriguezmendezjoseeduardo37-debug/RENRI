@@ -7,6 +7,20 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ApisForm } from "./apis-form";
 import { cookies } from "next/headers";
+import { isEncrypted } from "@/lib/crypto";
+
+const SENSITIVE_FIELDS = ["stripeSecretKey", "stripeWebhookSecret", "stripePublicKey"];
+
+function maskSettings(settings: Record<string, unknown>): Record<string, unknown> {
+    const masked = { ...settings };
+    for (const field of SENSITIVE_FIELDS) {
+        const value = masked[field];
+        if (typeof value === "string" && value.length > 0 && isEncrypted(value)) {
+            masked[field] = "••••••••";
+        }
+    }
+    return masked;
+}
 
 export default async function ApisConfigPage() {
     const user = await getCurrentUser();
@@ -31,20 +45,23 @@ export default async function ApisConfigPage() {
 
     if (!tenant) redirect("/dashboard/configuracion");
 
+    const rawSettings = (tenant.billingSettings as Record<string, unknown>) || {};
+    const safeSettings = maskSettings(rawSettings);
+
     return (
         <div className="max-w-3xl mx-auto space-y-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#222222] pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         APIS Y WEBHOOKS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         STRIPE, WEBHOOKS Y CREDENCIALES DE INTEGRACION
                     </p>
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase border border-[#222222] hover:text-white hover:border-white transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border hover:text-foreground hover:border-foreground transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -53,7 +70,7 @@ export default async function ApisConfigPage() {
 
             <ApisForm 
                 tenantId={tenant.id} 
-                settings={(tenant.billingSettings as Record<string, unknown>) || {}} 
+                settings={safeSettings} 
             />
         </div>
     );

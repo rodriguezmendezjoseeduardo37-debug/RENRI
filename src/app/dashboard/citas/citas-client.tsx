@@ -72,8 +72,12 @@ export function CitasClient({
     };
 
     // Week start for calendar
-    const weekStart = new Date();
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+    const weekStart = useMemo(() => {
+        const d = filters.date ? new Date(filters.date + "T00:00:00") : new Date();
+        const dateObj = new Date(d);
+        dateObj.setDate(dateObj.getDate() - dateObj.getDay() + 1); // Get Monday
+        return dateObj;
+    }, [filters.date]);
 
     const fetchSlots = useCallback(async (staffId: string, date: string) => {
         if (!staffId || !date) {
@@ -151,12 +155,12 @@ export function CitasClient({
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-end justify-between">
-                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)]">
+                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)]">
                     CITAS
                 </h1>
                 <button
                     onClick={() => setFormOpen(true)}
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVA CITA
@@ -165,63 +169,63 @@ export function CitasClient({
 
             {/* Stats bar */}
             <div className="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm">
-                <span className="text-[#888888]">
+                <span className="text-muted-foreground">
                     HOY:{" "}
-                    <span className="text-white font-bold">{stats.total}</span>
+                    <span className="text-foreground font-bold">{stats.total}</span>
                 </span>
-                <span className="text-[#888888]">
+                <span className="text-muted-foreground">
                     CONFIRMADAS:{" "}
-                    <span className="text-white font-bold">{stats.confirmed}</span>
+                    <span className="text-foreground font-bold">{stats.confirmed}</span>
                 </span>
-                <span className="text-[#888888]">
+                <span className="text-muted-foreground">
                     PENDIENTES:{" "}
-                    <span className="text-white font-bold">{stats.pending}</span>
+                    <span className="text-foreground font-bold">{stats.pending}</span>
                 </span>
-                <span className="text-[#888888]">
+                <span className="text-muted-foreground">
                     CANCELADAS:{" "}
-                    <span className="text-white font-bold">{stats.cancelled}</span>
+                    <span className="text-foreground font-bold">{stats.cancelled}</span>
                 </span>
-                {isPending && <Loader2 className="w-4 h-4 text-white animate-spin ml-auto" />}
+                {isPending && <Loader2 className="w-4 h-4 text-foreground animate-spin ml-auto" />}
             </div>
 
             {/* Filter bar */}
             <AppointmentFilters filters={filters} onChange={setFilters} />
 
             {/* View toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#222222] gap-4 sm:gap-0 pb-4 sm:pb-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border gap-4 sm:gap-0 pb-4 sm:pb-0">
                 <div className="flex gap-6 sm:gap-8">
                     <button
                         onClick={() => setViewMode("list")}
-                        className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "list" ? "text-white" : "text-[#888888] hover:text-white"
+                        className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "list" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                             }`}
                     >
                         <List className="h-3.5 w-3.5" />
                         LISTA
                         {viewMode === "list" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-foreground" />
                         )}
                     </button>
                     <button
                         onClick={() => setViewMode("calendar")}
-                        className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "calendar" ? "text-white" : "text-[#888888] hover:text-white"
+                        className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "calendar" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                             }`}
                     >
                         <CalendarIcon className="h-3.5 w-3.5" />
                         CALENDARIO
                         {viewMode === "calendar" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-foreground" />
                         )}
                     </button>
                 </div>
 
-                <span className="text-[11px] text-[#888888] pb-3">
+                <span className="text-[11px] text-muted-foreground pb-3">
                     {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
                 </span>
             </div>
 
             {/* Content */}
             {viewMode === "list" ? (
-                <div className="space-y-[1px] bg-[#222222]">
+                <div className="space-y-[1px] bg-popover">
                     {filtered.length > 0 ? (
                         filtered.map((apt) => (
                             <AppointmentCard
@@ -232,8 +236,8 @@ export function CitasClient({
                             />
                         ))
                     ) : (
-                        <div className="bg-[#111111] px-6 py-16 text-center">
-                            <p className="text-[#888888] text-sm">
+                        <div className="bg-card px-6 py-16 text-center">
+                            <p className="text-muted-foreground text-sm">
                                 No se encontraron citas
                             </p>
                         </div>
@@ -245,6 +249,9 @@ export function CitasClient({
                     weekStart={weekStart}
                     onSlotClick={() => {
                         setFormOpen(true);
+                    }}
+                    onAppointmentClick={(apt) => {
+                        router.push(`/dashboard/citas/${apt.id}`);
                     }}
                 />
             )}

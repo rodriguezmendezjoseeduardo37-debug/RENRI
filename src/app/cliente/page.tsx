@@ -51,18 +51,18 @@ export default async function ClienteDashboardPage() {
     );
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6 sm:space-y-10">
             <div>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)]">
+                <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)]">
                     {getGreeting()}, {firstName}
                 </h1>
-                <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                <p className="mt-2 sm:mt-3 text-[10px] sm:text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     RESUMEN DEL DIA · {formatDate()}
                 </p>
             </div>
 
-            <div className="space-y-8">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-[1px] bg-[#222222]">
+            <div className="space-y-5 sm:space-y-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-[1px] bg-popover">
                     <StatCard
                         label="MIS CITAS"
                         value={appointments.length}
@@ -88,60 +88,60 @@ export default async function ClienteDashboardPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_1fr] gap-6">
-                    <div className="border border-[#222222] bg-[#111111] p-8 space-y-5">
-                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 sm:gap-6">
+                    <div className="border border-border bg-card p-5 sm:p-8 space-y-4 sm:space-y-5">
+                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             SIGUIENTE PASO
                         </h3>
                         {upcomingAppointment ? (
                             <>
                                 <div>
-                                    <p className="text-2xl font-bold text-white uppercase tracking-[0.05em]">
+                                    <p className="text-lg sm:text-2xl font-bold text-foreground uppercase tracking-[0.05em]">
                                         {upcomingAppointment.serviceName}
                                     </p>
-                                    <p className="mt-2 text-sm text-[#aaaaaa]">
+                                    <p className="mt-2 text-sm text-muted-foreground">
                                         {upcomingAppointment.date} ·{" "}
                                         {upcomingAppointment.startTime} ·{" "}
                                         {upcomingAppointment.staffName}
                                     </p>
                                 </div>
-                                <p className="text-sm text-[#777777] max-w-xl">
+                                <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
                                     Consulta el detalle de tu cita, prepara el
                                     pago si sigue pendiente o agenda una nueva
                                     fecha desde tu portal.
                                 </p>
                             </>
                         ) : (
-                            <p className="text-sm text-[#777777] max-w-xl">
+                            <p className="text-sm text-muted-foreground max-w-xl">
                                 {isLinked
                                     ? "Aun no tienes citas en este negocio. Agenda una desde el portal del negocio o desde la seccion de disponibilidad."
                                     : "Enlaza tu cuenta con un negocio para ver tus citas, pagos y horarios disponibles."}
                             </p>
                         )}
-                        <div className="flex flex-wrap gap-3 pt-2">
+                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pt-2">
                             <Link
                                 href="/cliente/mis-citas"
-                                className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >
                                 VER MIS CITAS
                             </Link>
                             <Link
                                 href="/cliente/disponibilidad"
-                                className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >
                                 VER HORARIOS
                             </Link>
                             <Link
                                 href="/cliente/mis-pagos"
-                                className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-white hover:bg-[#222222] transition-colors"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >
                                 VER PAGOS
                             </Link>
                         </div>
                     </div>
 
-                    <div className="border border-[#222222] bg-black p-8 space-y-5">
-                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                    <div className="border border-border bg-background p-5 sm:p-8 space-y-4 sm:space-y-5">
+                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             {isLinked
                                 ? "NEGOCIO ENLAZADO"
                                 : "ENLAZAR NEGOCIO"}
@@ -150,15 +150,15 @@ export default async function ClienteDashboardPage() {
                         {isLinked && tenant ? (
                             <>
                                 <div className="space-y-2">
-                                    <p className="text-xl font-bold text-white uppercase tracking-[0.05em]">
+                                    <p className="text-base sm:text-xl font-bold text-foreground uppercase tracking-[0.05em]">
                                         {tenant.name}
                                     </p>
                                     {ownerName && (
-                                        <p className="text-sm text-[#aaaaaa]">
+                                        <p className="text-sm text-muted-foreground">
                                             Dueño: {ownerName}
                                         </p>
                                     )}
-                                    <p className="text-xs font-mono text-[#666666]">
+                                    <p className="text-xs font-mono text-muted-foreground">
                                         ID:{" "}
                                         {businessId
                                             .slice(0, 8)
@@ -167,18 +167,18 @@ export default async function ClienteDashboardPage() {
                                 </div>
 
                                 <div className="flex flex-col gap-3">
-                                    {tenant.slug ? (
+                                    {businessId ? (
                                         <Link
-                                            href={`/portal/${tenant.slug}`}
+                                            href={`/negocio/${businessId}`}
                                             target="_blank"
-                                            className="inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#d6d6d6] transition-colors"
+                                            className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors"
                                         >
                                             ABRIR PORTAL
                                         </Link>
                                     ) : null}
                                     <Link
                                         href="/cliente/enlazar-negocio"
-                                        className="inline-flex items-center justify-center gap-2 border border-[#333333] text-white px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#222222] transition-colors"
+                                        className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-all"
                                     >
                                         CAMBIAR NEGOCIO
                                     </Link>
@@ -186,14 +186,14 @@ export default async function ClienteDashboardPage() {
                             </>
                         ) : (
                             <>
-                                <p className="text-sm text-[#777777]">
+                                <p className="text-sm text-muted-foreground">
                                     Conecta tu cuenta con un negocio usando su
                                     Business ID para centralizar tus citas,
                                     pagos y horarios.
                                 </p>
                                 <Link
                                     href="/cliente/enlazar-negocio"
-                                    className="inline-flex items-center justify-center gap-2 bg-white text-black px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#d6d6d6] transition-colors"
+                                    className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors"
                                 >
                                     ENLAZAR NEGOCIO
                                 </Link>

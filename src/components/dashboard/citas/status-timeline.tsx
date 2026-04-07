@@ -18,14 +18,14 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
 
     return (
         <div className="space-y-4">
-            <h3 className="text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+            <h3 className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                 PROGRESO
             </h3>
 
             {isCancelled ? (
-                <div className="flex items-center gap-3 p-4 bg-[#111111] border border-[#222222]">
-                    <div className="w-3 h-3 bg-[#333333]" />
-                    <span className="text-sm text-[#888888] uppercase tracking-[0.1em]">
+                <div className="flex items-center gap-3 p-4 bg-card border border-border">
+                    <div className="w-3 h-3 bg-secondary" />
+                    <span className="text-sm text-muted-foreground uppercase tracking-[0.1em]">
                         {currentStatus === "cancelled" ? "CANCELADA" : "NO SHOW"}
                     </span>
                 </div>
@@ -40,15 +40,15 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Step indicator */}
                                 <div className="flex flex-col items-center gap-2 flex-1">
                                     <div
-                                        className={`w-4 h-4 flex items-center justify-center ${isDone ? "bg-white" : "border border-[#222222]"
+                                        className={`w-4 h-4 flex items-center justify-center ${isDone ? "bg-white" : "border border-border"
                                             }`}
                                     >
                                         {isDone && (
-                                            <div className="w-1.5 h-1.5 bg-black" />
+                                            <div className="w-1.5 h-1.5 bg-background" />
                                         )}
                                     </div>
                                     <span
-                                        className={`text-[9px] font-medium tracking-[0.15em] ${isCurrent ? "text-white" : isDone ? "text-[#888888]" : "text-[#333333]"
+                                        className={`text-[9px] font-medium tracking-[0.15em] ${isCurrent ? "text-foreground" : isDone ? "text-muted-foreground" : "text-foreground"
                                             }`}
                                     >
                                         {step.label}
@@ -58,7 +58,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Connector line */}
                                 {i < STEPS.length - 1 && (
                                     <div
-                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-white" : "bg-[#222222]"
+                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-white" : "bg-popover"
                                             }`}
                                     />
                                 )}

@@ -5,9 +5,10 @@ import { cancelPublicAppointment } from "@/actions/client-portal";
 
 type CancelButtonProps = {
     appointmentId: string;
+    token: string | null;
 };
 
-export function CancelButton({ appointmentId }: CancelButtonProps) {
+export function CancelButton({ appointmentId, token }: CancelButtonProps) {
     const [isPending, startTransition] = useTransition();
     const [result, setResult] = useState<{
         state: "idle" | "cancelled" | "inactive" | "error";
@@ -20,7 +21,7 @@ export function CancelButton({ appointmentId }: CancelButtonProps) {
     const handleCancel = () => {
         startTransition(async () => {
             try {
-                const response = await cancelPublicAppointment(appointmentId);
+                const response = await cancelPublicAppointment(appointmentId, token ?? undefined);
                 setResult({
                     state: response.state,
                     message: response.message,
@@ -36,8 +37,8 @@ export function CancelButton({ appointmentId }: CancelButtonProps) {
 
     if (result.state === "cancelled") {
         return (
-            <div className="border border-white bg-[#111111] px-6 py-5 text-center">
-                <p className="text-[11px] font-bold tracking-[0.3em] text-white uppercase">
+            <div className="border border-white bg-card px-6 py-5 text-center">
+                <p className="text-[11px] font-bold tracking-[0.3em] text-foreground uppercase">
                     Tu cita ha sido cancelada
                 </p>
             </div>
@@ -46,11 +47,11 @@ export function CancelButton({ appointmentId }: CancelButtonProps) {
 
     if (result.state === "inactive") {
         return (
-            <div className="border border-[#333333] bg-[#111111] px-6 py-5 text-center">
-                <p className="text-[11px] font-bold tracking-[0.3em] text-[#bbbbbb] uppercase">
+            <div className="border border-border bg-card px-6 py-5 text-center">
+                <p className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                     Esta cita ya no esta activa
                 </p>
-                <p className="mt-3 text-sm text-[#777777]">{result.message}</p>
+                <p className="mt-3 text-sm text-muted-foreground">{result.message}</p>
             </div>
         );
     }
@@ -61,7 +62,7 @@ export function CancelButton({ appointmentId }: CancelButtonProps) {
                 type="button"
                 onClick={handleCancel}
                 disabled={isPending}
-                className="w-full px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {isPending ? "Cancelando..." : "Confirmar cancelacion"}
             </button>

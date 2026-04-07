@@ -19,20 +19,20 @@ export default async function NuevoPedidoPage() {
             <div>
                 <Link
                     href="/dashboard/pedidos"
-                    className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:text-white uppercase transition-colors mb-6"
+                    className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase transition-colors mb-6"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER A PEDIDOS
                 </Link>
-                <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                     NUEVO PEDIDO
                 </h1>
-                <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     SELECCIONA PRODUCTOS Y CREA UNA ORDEN
                 </p>
             </div>
 
-            <div className="border-t border-[#222222] pt-8">
+            <div className="border-t border-border pt-8">
                 <OrderForm products={productsList} />
             </div>
         </div>

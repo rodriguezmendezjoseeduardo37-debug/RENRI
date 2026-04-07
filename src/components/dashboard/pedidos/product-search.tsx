@@ -23,12 +23,12 @@ export function ProductSearch({ products, onAddItem }: ProductSearchProps) {
     return (
         <div className="space-y-3">
             <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#888888]" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Buscar por nombre o SKU..."
-                    className="w-full bg-black border border-[#222222] text-white text-sm pl-10 pr-4 py-3 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-background border border-border text-foreground text-sm pl-10 pr-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors"
                 />
             </div>
 
@@ -39,29 +39,29 @@ export function ProductSearch({ products, onAddItem }: ProductSearchProps) {
                             key={product.id}
                             onClick={() => onAddItem(product.id, product)}
                             disabled={product.stock <= 0}
-                            className="w-full flex items-center justify-between p-3 bg-[#111111] hover:bg-[#1a1a1a] text-left transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
+                            className="w-full flex items-center justify-between p-3 bg-card hover:bg-popover text-left transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
                         >
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-8 h-8 bg-[#222222] flex items-center justify-center flex-shrink-0">
-                                    <Package className="w-3.5 h-3.5 text-[#444444]" />
+                                <div className="w-8 h-8 bg-popover flex items-center justify-center flex-shrink-0">
+                                    <Package className="w-3.5 h-3.5 text-foreground" />
                                 </div>
                                 <div className="min-w-0">
-                                    <p className="text-xs font-bold text-[#cccccc] group-hover:text-white uppercase truncate tracking-[0.05em]">
+                                    <p className="text-xs font-bold text-muted-foreground group-hover:text-foreground uppercase truncate tracking-[0.05em]">
                                         {product.name}
                                     </p>
-                                    <p className="text-[9px] font-mono text-[#666666]">
+                                    <p className="text-[9px] font-mono text-muted-foreground">
                                         {product.sku || "Sin SKU"} · Stock: {product.stock}
                                     </p>
                                 </div>
                             </div>
-                            <span className="text-xs font-bold font-mono text-white whitespace-nowrap ml-2">
+                            <span className="text-xs font-bold font-mono text-foreground whitespace-nowrap ml-2">
                                 ${Number(product.price).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                             </span>
                         </button>
                     ))
                 ) : (
                     <div className="p-8 text-center">
-                        <p className="text-[10px] text-[#666666] font-mono">
+                        <p className="text-[10px] text-muted-foreground font-mono">
                             No se encontraron productos
                         </p>
                     </div>

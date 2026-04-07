@@ -62,12 +62,12 @@ export function OrderDetailClient({
     if (isCancelled || isCompleted) return null;
 
     return (
-        <div className="flex gap-3 pt-4 border-t border-[#222222]">
+        <div className="flex gap-3 pt-4 border-t border-border">
             {next && (
                 <button
                     onClick={handleUpdateStatus}
                     disabled={isLoading}
-                    className="flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                     ACTUALIZAR A {ORDER_STATUS_LABELS[next]}

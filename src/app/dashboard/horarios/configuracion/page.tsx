@@ -10,6 +10,7 @@ import { BlockedDatesManager } from "@/components/dashboard/horarios/blocked-dat
 import { addDays } from "date-fns";
 import type { BlockedDate } from "@/types/schedules";
 import { ConfigStaffSelector } from "./config-staff-selector";
+import { BulkScheduleEditor } from "@/components/dashboard/horarios/bulk-schedule-editor";
 
 export default async function SchedulesConfigPage({
     searchParams,
@@ -53,12 +54,12 @@ export default async function SchedulesConfigPage({
     return (
         <div className="space-y-10">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#222222] pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         CONFIGURACIÓN HORARIOS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         GESTIONA TUS BLOQUEOS Y VERIFICA DISPONIBILIDAD
                     </p>
                 </div>
@@ -71,11 +72,19 @@ export default async function SchedulesConfigPage({
                     )}
                     <Link
                         href="/dashboard/horarios"
-                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-[#888888] text-[#888888] hover:text-white hover:border-white transition-colors"
+                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
                     >
                         VOLVER A LA SEMANA
                     </Link>
                 </div>
+            </div>
+
+            {/* Bulk Schedule Editor */}
+            <div className="space-y-6">
+                <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
+                    HORARIOS DE ATENCIÓN (PREESTABLECIDOS)
+                </h2>
+                <BulkScheduleEditor tenantId={tenantId} staffId={targetStaffId} />
             </div>
 
             {/* Availability Prediction (Read Only logic test) */}
@@ -85,8 +94,8 @@ export default async function SchedulesConfigPage({
             />
 
             {/* Blocked Dates Manager Form */}
-            <div className="pt-10 border-t border-[#222222]">
-                <h2 className="text-[11px] font-bold tracking-[0.3em] text-[#888888] uppercase mb-6">
+            <div className="pt-10 border-t border-border">
+                <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-6">
                     FECHAS BLOQUEADAS (DÍAS DE DESCANSO, VACACIONES, ETC)
                 </h2>
                 {/* Need to cast blockedDatesData depending on date type conversion rules in Drizzle */}

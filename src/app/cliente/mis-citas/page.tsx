@@ -16,12 +16,12 @@ export default async function MisCitasPage() {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-[#222222] pb-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-border pb-6">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         MIS CITAS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · RESERVAS, HISTORIAL Y SEGUIMIENTO
                     </p>
                 </div>
@@ -29,7 +29,7 @@ export default async function MisCitasPage() {
                     <Link
                         href={`/portal/${tenant.slug}/agendar`}
                         target="_blank"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                     >
                         NUEVA CITA
                     </Link>
@@ -37,12 +37,12 @@ export default async function MisCitasPage() {
             </div>
 
             {appointments.length === 0 ? (
-                <div className="border border-[#222222] bg-[#111111] p-10 text-center space-y-4">
-                    <CalendarDays className="mx-auto h-10 w-10 text-[#555555]" />
-                    <p className="text-lg font-bold tracking-[0.1em] uppercase text-white">
+                <div className="border border-border bg-card p-10 text-center space-y-4">
+                    <CalendarDays className="mx-auto h-10 w-10 text-muted-foreground" />
+                    <p className="text-lg font-bold tracking-[0.1em] uppercase text-foreground">
                         AUN NO TIENES CITAS
                     </p>
-                    <p className="text-sm text-[#777777] max-w-xl mx-auto">
+                    <p className="text-sm text-muted-foreground max-w-xl mx-auto">
                         Cuando reserves desde el portal del negocio con este mismo correo, aqui apareceran tus fechas, horarios y pagos asociados.
                     </p>
                 </div>
@@ -51,19 +51,19 @@ export default async function MisCitasPage() {
                     {appointments.map((appointment) => (
                         <div
                             key={appointment.id}
-                            className="border border-[#222222] bg-[#111111] p-6 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
+                            className="border border-border bg-card p-6 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between"
                         >
                             <div className="space-y-2">
                                 <div className="flex items-center gap-3">
-                                    <p className="text-xl font-bold uppercase tracking-[0.05em] text-white">
+                                    <p className="text-xl font-bold uppercase tracking-[0.05em] text-foreground">
                                         {appointment.serviceName}
                                     </p>
                                     <TurnBadge status={appointment.status} />
                                 </div>
-                                <p className="text-sm text-[#aaaaaa]">
+                                <p className="text-sm text-muted-foreground">
                                     {appointment.staffName}
                                 </p>
-                                <div className="flex flex-wrap gap-5 text-xs font-mono text-[#777777]">
+                                <div className="flex flex-wrap gap-5 text-xs font-mono text-muted-foreground">
                                     <span className="inline-flex items-center gap-2">
                                         <CalendarDays className="h-3.5 w-3.5" />
                                         {appointment.date}
@@ -78,7 +78,7 @@ export default async function MisCitasPage() {
                             <div className="flex flex-wrap gap-3">
                                 <Link
                                     href={`/cliente/mis-citas/${appointment.id}`}
-                                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#d6d6d6] transition-colors"
+                                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                                 >
                                     VER DETALLE
                                 </Link>
@@ -86,7 +86,7 @@ export default async function MisCitasPage() {
                                     <Link
                                         href={`/portal/${tenant.slug}/agendar`}
                                         target="_blank"
-                                        className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#aaaaaa] hover:border-white hover:text-white transition-colors"
+                                        className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                                     >
                                         AGENDAR OTRA
                                     </Link>

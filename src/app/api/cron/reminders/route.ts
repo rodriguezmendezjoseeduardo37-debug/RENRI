@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getUpcomingAppointments } from "@/actions/portal";
+import { getUpcomingAppointmentsForReminderJob } from "@/actions/portal";
 import { sendAppointmentReminder } from "@/lib/emails";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
@@ -17,7 +17,7 @@ export async function GET(req: Request) {
     }
 
     try {
-        const upcoming = await getUpcomingAppointments(24);
+        const upcoming = await getUpcomingAppointmentsForReminderJob(24);
         let sent = 0;
 
         for (const row of upcoming) {

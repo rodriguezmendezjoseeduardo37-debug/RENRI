@@ -47,10 +47,28 @@ export const createBlockedDateSchema = z.object({
     reason: z.string().max(500).optional().nullable(),
 });
 
+export const bulkScheduleSchema = z.object({
+    tenantId: z.string().uuid(),
+    staffId: z.string().uuid(),
+    weekdays: z.object({
+        isOpen: z.boolean(),
+        startTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:mm)"),
+        endTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:mm)"),
+        slotDuration: z.number().int().min(5).max(120),
+    }),
+    weekend: z.object({
+        isOpen: z.boolean(),
+        startTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:mm)"),
+        endTime: z.string().regex(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/, "Invalid time format (HH:mm)"),
+        slotDuration: z.number().int().min(5).max(120),
+    }),
+});
+
 // TypeScript input types inferred from Zod
 export type CreateScheduleInput = z.infer<typeof createScheduleSchema>;
 export type UpdateScheduleInput = z.infer<typeof updateScheduleSchema>;
 export type CreateBlockedDateInput = z.infer<typeof createBlockedDateSchema>;
+export type BulkScheduleInput = z.infer<typeof bulkScheduleSchema>;
 
 // Helpers for the UI/Grid
 export interface TimeSlot {

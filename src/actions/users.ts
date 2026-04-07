@@ -8,17 +8,45 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const updateProfileSchema = z.object({
-    name: z.string().min(1, "El nombre no puede estar vacío").max(255).optional(),
+    name: z.string().min(1, "El nombre no puede estar vacio").max(255).optional(),
     bio: z.string().max(1000).optional(),
     specialty: z.string().max(255).optional(),
     phone: z.string().max(20).optional(),
     avatarUrl: z.string().url().max(2048).optional(),
 });
 
+async function requireClientManager(expectedTenantId?: string) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+
+    if (expectedTenantId && user.tenantId !== expectedTenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
+
+    return user;
+}
+
+async function getManagedClient(clientId: string) {
+    const manager = await requireClientManager();
+    const client = await db.query.users.findFirst({
+        where: eq(users.id, clientId),
+    });
+
+    if (!client || client.role !== "CLIENT") {
+        throw new Error("Cliente no encontrado");
+    }
+
+    if (manager.role !== "SUPER_ADMIN" && client.tenantId !== manager.tenantId) {
+        throw new Error("Unauthorized");
+    }
+
+    return client;
+}
+
 export async function getUserProfile() {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
-    
+
     const profile = await db.query.profiles.findFirst({
         where: eq(profiles.userId, user.id),
     });
@@ -31,23 +59,19 @@ export async function updateUserProfile(data: {
     bio?: string;
     specialty?: string;
     phone?: string;
-
     avatarUrl?: string;
 }) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
 
-    // Runtime validation
     const validated = updateProfileSchema.parse(data);
 
-    // 1. Update User Name if provided
     if (validated.name) {
         await db.update(users)
             .set({ name: validated.name, updatedAt: new Date() })
             .where(eq(users.id, user.id));
     }
 
-    // 2. Check if profile exists
     const existing = await db.query.profiles.findFirst({
         where: eq(profiles.userId, user.id),
     });
@@ -81,8 +105,7 @@ export async function createQuickClient(data: {
     phone?: string;
     tenantId: string;
 }) {
-    const session = await requireAuth();
-    if (!session) throw new Error("Unauthorized");
+    await requireClientManager(data.tenantId);
 
     const newUserId = crypto.randomUUID();
 
@@ -103,4 +126,23 @@ export async function createQuickClient(data: {
     revalidatePath("/dashboard/citas");
 
     return { id: newUser.id, name: newUser.name };
+}
+
+export async function verifyClient(clientId: string) {
+    await getManagedClient(clientId);
+
+    await db.update(users)
+        .set({ isVerified: true, updatedAt: new Date() })
+        .where(eq(users.id, clientId));
+
+    revalidatePath("/dashboard/clientes");
+}
+
+export async function rejectClient(clientId: string) {
+    await getManagedClient(clientId);
+
+    await db.delete(users)
+        .where(eq(users.id, clientId));
+
+    revalidatePath("/dashboard/clientes");
 }

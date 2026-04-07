@@ -1,4 +1,4 @@
-export type TurnStatus = "waiting" | "in_progress" | "completed" | "skipped" | "cancelled";
+export type TurnStatus = "waiting" | "in_progress" | "completed" | "skipped" | "cancelled" | "pending" | "confirmed";
 
 export interface Turn {
     id: string;
@@ -6,7 +6,7 @@ export interface Turn {
     clientName: string;
     clientPhone: string | null;
     serviceName: string | null;
-    number: number;
+    number: string | number;
     status: TurnStatus;
     calledAt: string | null;
     completedAt: string | null;

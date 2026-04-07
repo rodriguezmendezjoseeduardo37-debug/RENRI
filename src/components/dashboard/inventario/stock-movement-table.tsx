@@ -10,8 +10,8 @@ interface StockMovementTableProps {
 export function StockMovementTable({ movements }: StockMovementTableProps) {
     if (movements.length === 0) {
         return (
-            <div className="border border-[#222222] p-8 text-center">
-                <p className="text-sm font-mono text-[#666666]">
+            <div className="border border-border p-8 text-center">
+                <p className="text-sm font-mono text-muted-foreground">
                     Sin movimientos registrados.
                 </p>
             </div>
@@ -19,14 +19,14 @@ export function StockMovementTable({ movements }: StockMovementTableProps) {
     }
 
     return (
-        <div className="border border-[#222222] overflow-x-auto bg-black">
+        <div className="border border-border overflow-x-auto bg-background">
             <table className="w-full text-left">
-                <thead className="bg-[#111111] border-b border-[#222222]">
+                <thead className="bg-card border-b border-border">
                     <tr>
                         {["FECHA", "TIPO", "CANTIDAD", "RAZÓN"].map((h) => (
                             <th
                                 key={h}
-                                className="px-5 py-3 text-[10px] font-medium tracking-[0.2em] text-[#888888] uppercase whitespace-nowrap"
+                                className="px-5 py-3 text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase whitespace-nowrap"
                             >
                                 {h}
                             </th>
@@ -37,9 +37,9 @@ export function StockMovementTable({ movements }: StockMovementTableProps) {
                     {movements.map((m) => (
                         <tr
                             key={m.id}
-                            className="border-b border-[#222222] hover:bg-[#111111] transition-colors"
+                            className="border-b border-border hover:bg-card transition-colors"
                         >
-                            <td className="px-5 py-3 text-xs font-mono text-white">
+                            <td className="px-5 py-3 text-xs font-mono text-foreground">
                                 {format(
                                     new Date(m.createdAt),
                                     "dd MMM yyyy HH:mm",
@@ -61,11 +61,11 @@ export function StockMovementTable({ movements }: StockMovementTableProps) {
                                     {m.type === "add" ? "ENTRADA" : "SALIDA"}
                                 </span>
                             </td>
-                            <td className="px-5 py-3 text-sm font-bold font-mono text-white">
+                            <td className="px-5 py-3 text-sm font-bold font-mono text-foreground">
                                 {m.type === "add" ? "+" : "-"}
                                 {m.quantity}
                             </td>
-                            <td className="px-5 py-3 text-xs text-[#888888]">
+                            <td className="px-5 py-3 text-xs text-muted-foreground">
                                 {m.reason || "—"}
                             </td>
                         </tr>

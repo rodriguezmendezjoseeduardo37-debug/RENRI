@@ -1,14 +1,15 @@
-import { Space_Grotesk, Inter } from "next/font/google";
+import localFont from "next/font/local";
 
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
+const headingFont = localFont({
+    src: "../../fonts/GeistMonoVF.woff",
     variable: "--font-heading",
-    weight: ["500", "700"],
+    weight: "100 900",
 });
 
-const inter = Inter({
-    subsets: ["latin"],
+const bodyFont = localFont({
+    src: "../../fonts/GeistVF.woff",
     variable: "--font-body",
+    weight: "100 900",
 });
 
 export default function PortalLayout({
@@ -18,7 +19,7 @@ export default function PortalLayout({
 }) {
     return (
         <div
-            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-black text-white`}
+            className={`${headingFont.variable} ${bodyFont.variable} font-[family-name:var(--font-body)] min-h-screen bg-background text-foreground`}
         >
             {children}
         </div>

@@ -27,23 +27,25 @@ export function AppointmentFilters({
         <div className="flex flex-wrap items-center gap-3">
             {/* Search */}
             <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#888888]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                     type="text"
                     placeholder="Buscar cliente o servicio..."
                     value={filters.search ?? ""}
                     onChange={(e) => onChange({ ...filters, search: e.target.value })}
-                    className="w-full bg-black border border-[#222222] text-white text-sm pl-10 pr-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-background border border-border text-foreground text-sm pl-10 pr-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors"
                 />
             </div>
 
             {/* Date */}
-            <input
-                type="date"
-                value={filters.date ?? ""}
-                onChange={(e) => onChange({ ...filters, date: e.target.value || undefined })}
-                className="bg-black border border-[#222222] text-white text-sm px-4 py-2.5 focus:outline-none focus:border-white transition-colors [color-scheme:dark]"
-            />
+            <div className="relative">
+                <input
+                    type="date"
+                    value={filters.date ?? ""}
+                    onChange={(e) => onChange({ ...filters, date: e.target.value || undefined })}
+                    className="bg-background border border-border text-foreground text-sm px-4 py-2.5 focus:outline-none focus:border-foreground transition-colors dark:[color-scheme:dark]"
+                />
+            </div>
 
             {/* Status filter */}
             <div className="relative">
@@ -55,7 +57,7 @@ export function AppointmentFilters({
                             status: (e.target.value as AppointmentStatus) || undefined,
                         })
                     }
-                    className="appearance-none bg-black border border-[#222222] text-white text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
+                    className="appearance-none bg-background border border-border text-foreground text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
                 >
                     {STATUS_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -63,7 +65,7 @@ export function AppointmentFilters({
                         </option>
                     ))}
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#888888] pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             </div>
 
             {/* Staff filter */}
@@ -74,7 +76,7 @@ export function AppointmentFilters({
                         onChange={(e) =>
                             onChange({ ...filters, staffId: e.target.value || undefined })
                         }
-                        className="appearance-none bg-black border border-[#222222] text-white text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
+                        className="appearance-none bg-background border border-border text-foreground text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
                     >
                         <option value="">TODOS STAFF</option>
                         {staffList.map((s) => (
@@ -83,7 +85,7 @@ export function AppointmentFilters({
                             </option>
                         ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#888888] pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                 </div>
             )}
         </div>

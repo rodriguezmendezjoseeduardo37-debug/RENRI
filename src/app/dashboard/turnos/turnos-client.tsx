@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTurnsRealtime } from "@/hooks/use-turns-realtime";
 import {
     createTurn,
@@ -25,6 +26,7 @@ interface TurnosClientProps {
 }
 
 export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps) {
+    const router = useRouter();
     const { turns, currentTurn, isConnected } = useTurnsRealtime(tenantId);
     
     const [isQueueOpen, setIsQueueOpen] = useState(initialIsQueueOpen);
@@ -66,6 +68,7 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
         try {
             setIsLoading(true);
             await completeTurn(id, tenantId);
+            router.refresh();
         } catch {
             toast.error("Error al completar el turno");
         } finally {
@@ -118,21 +121,21 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] flex items-center gap-4">
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] flex items-center gap-4">
                         TURNOS
                         <button
                             onClick={handleToggleQueue}
                             className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] transition-colors uppercase border rounded-none ${
                                 isQueueOpen 
-                                ? "bg-white text-black border-white hover:bg-[#ccc]" 
-                                : "bg-black text-[#888] border-[#888] hover:text-white hover:border-white"
+                                ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 border-white hover:bg-secondary" 
+                                : "bg-background text-foreground border-border hover:text-foreground hover:border-foreground"
                             }`}
                         >
                             {isQueueOpen ? <Power className="w-3.5 h-3.5" /> : <PowerOff className="w-3.5 h-3.5" />}
                             {isQueueOpen ? "ACTIVO" : "PAUSADO"}
                         </button>
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                         {new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(new Date())}
                     </p>
                 </div>
@@ -161,10 +164,10 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
             </div>
 
             {/* Bottom Actions */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#222222]">
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-white text-white hover:bg-white hover:text-black transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO TURNO MANUAL
@@ -172,7 +175,7 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
 
                 <button
                     onClick={handleReset}
-                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-[#888888] hover:text-white transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors"
                 >
                     <RotateCcw className="h-3.5 w-3.5" />
                     REINICIAR COLA

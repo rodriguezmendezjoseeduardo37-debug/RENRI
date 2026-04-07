@@ -25,9 +25,9 @@ interface HistorialClientProps {
 }
 
 const STATUS_MAP: Record<string, { label: string; icon: typeof CheckCircle; color: string }> = {
-    pending: { label: "PENDIENTE", icon: Clock, color: "text-[#888888]" },
-    confirmed: { label: "CONFIRMADA", icon: CheckCircle, color: "text-white" },
-    completed: { label: "COMPLETADA", icon: CheckCircle, color: "text-[#666666]" },
+    pending: { label: "PENDIENTE", icon: Clock, color: "text-muted-foreground" },
+    confirmed: { label: "CONFIRMADA", icon: CheckCircle, color: "text-foreground" },
+    completed: { label: "COMPLETADA", icon: CheckCircle, color: "text-muted-foreground" },
     cancelled: { label: "CANCELADA", icon: XCircle, color: "text-red-500" },
     no_show: { label: "NO ASISTIÓ", icon: AlertCircle, color: "text-red-500" },
 };
@@ -58,12 +58,12 @@ export function HistorialClient({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Tu email..."
-                    className="flex-1 bg-black border border-[#222222] text-white text-sm px-4 py-3 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors"
+                    className="flex-1 bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors"
                 />
                 <button
                     type="submit"
                     disabled={isLoading || !email}
-                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                     BUSCAR
@@ -72,8 +72,8 @@ export function HistorialClient({
 
             {/* Results */}
             {historyData && !historyData.client && (
-                <div className="border border-[#222222] p-8 text-center">
-                    <p className="text-sm font-mono text-[#666666]">
+                <div className="border border-border p-8 text-center">
+                    <p className="text-sm font-mono text-muted-foreground">
                         No se encontraron registros con ese email.
                     </p>
                 </div>
@@ -82,19 +82,19 @@ export function HistorialClient({
             {historyData?.client && (
                 <div className="space-y-6">
                     {/* Client info */}
-                    <div className="border border-[#222222] bg-[#111111] p-5">
-                        <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase block mb-1">
+                    <div className="border border-border bg-card p-5">
+                        <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase block mb-1">
                             BIENVENIDO/A
                         </span>
-                        <p className="text-lg font-bold text-white uppercase tracking-[0.05em]">
+                        <p className="text-lg font-bold text-foreground uppercase tracking-[0.05em]">
                             {historyData.client.name}
                         </p>
                     </div>
 
                     {/* Appointments */}
                     {historyData.appointments.length === 0 ? (
-                        <div className="border border-[#222222] p-8 text-center">
-                            <p className="text-sm font-mono text-[#666666]">
+                        <div className="border border-border p-8 text-center">
+                            <p className="text-sm font-mono text-muted-foreground">
                                 Sin historial de citas.
                             </p>
                         </div>
@@ -106,15 +106,15 @@ export function HistorialClient({
                                 return (
                                     <div
                                         key={apt.id}
-                                        className="bg-[#111111] p-4 flex items-center justify-between"
+                                        className="bg-card p-4 flex items-center justify-between"
                                     >
                                         <div className="flex items-center gap-4">
                                             <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
                                             <div>
-                                                <p className="text-xs font-bold text-white uppercase tracking-[0.05em]">
+                                                <p className="text-xs font-bold text-foreground uppercase tracking-[0.05em]">
                                                     {apt.serviceName}
                                                 </p>
-                                                <p className="text-[9px] text-[#888888] font-mono mt-0.5 flex items-center gap-2">
+                                                <p className="text-[9px] text-muted-foreground font-mono mt-0.5 flex items-center gap-2">
                                                     <Calendar className="w-2.5 h-2.5" />
                                                     {apt.date}
                                                     <Clock className="w-2.5 h-2.5 ml-1" />
@@ -127,7 +127,7 @@ export function HistorialClient({
                                                 {statusInfo.label}
                                             </span>
                                             {apt.amount && (
-                                                <p className="text-xs font-mono text-[#888888] mt-0.5">
+                                                <p className="text-xs font-mono text-muted-foreground mt-0.5">
                                                     ${Number(apt.amount).toFixed(2)}
                                                 </p>
                                             )}

@@ -35,13 +35,13 @@ export function OrderFilters() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar por cliente..."
-                className="bg-black border border-[#222222] text-white text-sm px-4 py-2.5 placeholder:text-[#888888] focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
+                className="bg-background border border-border text-foreground text-sm px-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
             />
             <select
                 name="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="bg-black border border-[#222222] text-white text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                className="bg-background border border-border text-foreground text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
             >
                 <option value="">TODOS</option>
                 {Object.entries(ORDER_STATUS_LABELS).map(([k, v]) => (
@@ -50,7 +50,7 @@ export function OrderFilters() {
             </select>
             <button
                 type="submit"
-                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#333333] text-[#888888] hover:border-white hover:text-white transition-colors"
+                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
             >
                 FILTRAR
             </button>

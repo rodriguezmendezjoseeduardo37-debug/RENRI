@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { encrypt, isEncrypted } from "@/lib/crypto";
 
 const clinicalSettingsSchema = z.object({
     defaultDuration: z.number().int().min(5).max(480).optional(),
@@ -28,6 +29,9 @@ const billingSettingsSchema = z.object({
     taxRate: z.number().min(0).max(1).optional(),
     currency: z.string().length(3).optional(),
 }).passthrough();
+
+// Fields that contain secrets and must be encrypted before storage
+const SENSITIVE_BILLING_FIELDS = ["stripeSecretKey", "stripeWebhookSecret", "stripePublicKey"];
 
 export async function updateTenantConfig(
     tenantId: string,
@@ -97,7 +101,17 @@ export async function updateTenantSettings(
 
     // Validate settings structure
     const schema = type === "clinical" ? clinicalSettingsSchema : billingSettingsSchema;
-    const validated = schema.parse(data);
+    const validated = schema.parse(data) as Record<string, unknown>;
+
+    // Encrypt sensitive fields for billing settings
+    if (type === "billing") {
+        for (const field of SENSITIVE_BILLING_FIELDS) {
+            const value = validated[field];
+            if (typeof value === "string" && value.length > 0 && !isEncrypted(value)) {
+                validated[field] = encrypt(value);
+            }
+        }
+    }
 
     await db.update(tenants)
         .set({

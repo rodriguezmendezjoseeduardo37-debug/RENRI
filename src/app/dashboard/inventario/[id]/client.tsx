@@ -45,18 +45,18 @@ export function ProductDetailClient({
             {/* Action Button */}
             <button
                 onClick={() => setAdjustOpen(true)}
-                className="w-full px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-white text-black hover:bg-[#cccccc] transition-colors"
+                className="w-full px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
             >
                 AJUSTAR STOCK
             </button>
 
             {/* Public Visibility Toggle */}
-            <div className="border border-[#222222] bg-[#050505] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="border border-border bg-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-white uppercase block mb-1">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-foreground uppercase block mb-1">
                         VISIBLE AL PÚBLICO
                     </span>
-                    <p className="text-[10px] text-[#888888] tracking-widest leading-relaxed">
+                    <p className="text-[10px] text-muted-foreground tracking-widest leading-relaxed">
                         Permitir que clientes vean y compren este producto en el portal.
                     </p>
                 </div>
@@ -66,15 +66,15 @@ export function ProductDetailClient({
                     disabled={isToggling}
                     className="relative inline-flex items-center cursor-pointer flex-shrink-0 disabled:opacity-50"
                 >
-                    <div className={`w-11 h-6 rounded-full transition-colors flex items-center justify-center ${isPublic ? "bg-white" : "bg-[#222222]"}`}>
+                    <div className={`w-11 h-6 rounded-full transition-colors flex items-center justify-center ${isPublic ? "bg-white" : "bg-popover"}`}>
                         {isToggling ? (
-                            <Loader2 className={`w-3.5 h-3.5 animate-spin ${isPublic ? "text-black" : "text-[#888888]"}`} />
+                            <Loader2 className={`w-3.5 h-3.5 animate-spin ${isPublic ? "text-primary-foreground" : "text-muted-foreground"}`} />
                         ) : (
                             <div 
-                                className={`absolute top-[2px] transition-all bg-[#555555] rounded-full h-5 w-5 ${
+                                className={`absolute top-[2px] transition-all bg-secondary rounded-full h-5 w-5 ${
                                     isPublic 
-                                    ? "bg-black translate-x-[10px] left-auto right-[2px]" 
-                                    : "bg-[#888888] translate-x-0 left-[2px]"
+                                    ? "bg-background translate-x-[10px] left-auto right-[2px]" 
+                                    : "bg-secondary translate-x-0 left-[2px]"
                                 }`} 
                             />
                         )}

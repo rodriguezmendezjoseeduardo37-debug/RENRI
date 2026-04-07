@@ -35,18 +35,18 @@ export default async function OrganizacionConfigPage() {
     return (
         <div className="max-w-3xl mx-auto space-y-10">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#222222] pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         ORGANIZACIÓN
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         AJUSTES GLOBALES DEL NEGOCIO
                     </p>
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase border border-[#222222] hover:text-white hover:border-white transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border hover:text-foreground hover:border-foreground transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -75,16 +75,16 @@ export default async function OrganizacionConfigPage() {
             />
 
             {/* Public Link */}
-            <div className="p-6 border border-[#222222] bg-[#050505] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-6 border border-border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-[11px] font-bold tracking-[0.2em] text-[#888888] uppercase">
+                    <h2 className="text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                         PORTAL PÚBLICO DE PACIENTES
                     </h2>
                     <a
                         href={`/portal/${tenant.slug}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-sm font-mono text-white mt-2 inline-block hover:underline"
+                        className="text-sm font-mono text-foreground mt-2 inline-block hover:underline"
                     >
                         {hostUrl}/portal/{tenant.slug}
                     </a>
@@ -93,7 +93,7 @@ export default async function OrganizacionConfigPage() {
                     href={`/portal/${tenant.slug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-center w-12 h-12 border border-[#222222] hover:bg-white hover:text-black transition-colors"
+                    className="flex items-center justify-center w-12 h-12 border border-border hover:bg-white hover:text-primary-foreground transition-colors"
                 >
                     <ExternalLink className="w-4 h-4" />
                 </a>

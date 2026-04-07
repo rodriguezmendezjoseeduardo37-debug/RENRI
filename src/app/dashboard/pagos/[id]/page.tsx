@@ -18,9 +18,9 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
 
     if (!payment) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 border border-[#222222] bg-[#0a0a0a]">
-                <p className="text-[#888888] font-mono uppercase tracking-widest text-sm">REFERENCIA NO ENCONTRADA</p>
-                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 border border-[#333333] hover:border-white text-white transition-colors text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
+            <div className="flex flex-col items-center justify-center h-64 border border-border bg-background">
+                <p className="text-muted-foreground font-mono uppercase tracking-widest text-sm">REFERENCIA NO ENCONTRADA</p>
+                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 border border-border hover:border-foreground text-foreground transition-colors text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
             </div>
         );
     }
@@ -31,15 +31,15 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
     return (
         <div className="max-w-4xl mx-auto space-y-10">
             {/* Header Nav */}
-            <div className="flex items-center gap-4 border-b border-[#222222] pb-6">
-                <Link href="/dashboard/pagos" className="text-[#888888] hover:text-white transition-colors">
+            <div className="flex items-center gap-4 border-b border-border pb-6">
+                <Link href="/dashboard/pagos" className="text-muted-foreground hover:text-foreground transition-colors">
                     <ArrowLeft className="w-5 h-5" />
                 </Link>
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold tracking-[0.1em] text-white font-mono uppercase">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-[0.1em] text-foreground font-mono uppercase">
                         #{payment.id.split("-")[0]}
                     </h1>
-                    <p className="mt-1 text-[10px] font-bold tracking-[0.3em] text-[#888888] uppercase">
+                    <p className="mt-1 text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                         DETALLE DE TRANSACCIÓN / {payment.referenceType}
                     </p>
                 </div>
@@ -48,49 +48,49 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left: Info Panel */}
                 <div className="space-y-6">
-                    <div className="bg-[#111111] border border-[#222222] p-6 space-y-6">
+                    <div className="bg-card border border-border p-6 space-y-6">
                         <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold tracking-[0.2em] text-[#888888] uppercase">MONTO A COBRAR</span>
-                            <span className="text-2xl font-bold font-mono text-white">
+                            <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">MONTO A COBRAR</span>
+                            <span className="text-2xl font-bold font-mono text-foreground">
                                 ${Number(payment.amount).toLocaleString("es-MX", { minimumFractionDigits: 2 })} {payment.currency}
                             </span>
                         </div>
 
-                        <div className="h-px bg-[#222222] w-full" />
+                        <div className="h-px bg-popover w-full" />
 
                         <div className="space-y-4">
                             <div className="flex flex-col">
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">ESTADO</span>
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">ESTADO</span>
                                 <div className="flex items-center gap-2 mt-1">
-                                    {payment.status === "completed" && <CheckCircle2 className="w-4 h-4 text-white" />}
-                                    {payment.status === "pending" && <Clock className="w-4 h-4 text-[#888888]" />}
+                                    {payment.status === "completed" && <CheckCircle2 className="w-4 h-4 text-foreground" />}
+                                    {payment.status === "pending" && <Clock className="w-4 h-4 text-muted-foreground" />}
                                     {payment.status === "failed" && <XCircle className="w-4 h-4 text-red-500" />}
-                                    <span className={`text-[11px] font-bold tracking-[0.2em] uppercase ${payment.status === "completed" ? "text-white" : "text-[#888888]"}`}>
+                                    <span className={`text-[11px] font-bold tracking-[0.2em] uppercase ${payment.status === "completed" ? "text-foreground" : "text-muted-foreground"}`}>
                                         {payment.status}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">CREACIÓN</span>
-                                <span className="text-sm font-mono text-white mt-1">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">CREACIÓN</span>
+                                <span className="text-sm font-mono text-foreground mt-1">
                                     {format(payment.createdAt, "dd MMM yyyy HH:mm", { locale: es }).toUpperCase()}
                                 </span>
                             </div>
 
                             <div className="flex flex-col">
-                                <span className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase">STRIPE ID</span>
-                                <span className="text-sm font-mono text-[#888888] mt-1 break-all">
+                                <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">STRIPE ID</span>
+                                <span className="text-sm font-mono text-muted-foreground mt-1 break-all">
                                     {payment.stripePaymentIntentId || "NO GENERADO / FUERA DE PLATAFORMA"}
                                 </span>
                             </div>
                         </div>
 
-                        <div className="h-px bg-[#222222] w-full" />
+                        <div className="h-px bg-popover w-full" />
 
                         <Link
                             href={`/dashboard/${payment.referenceType === "appointment" ? "citas" : "pedidos"}/${payment.referenceId}`}
-                            className="w-full flex items-center justify-center gap-2 py-3 border border-[#333333] text-[10px] font-bold tracking-[0.2em] text-[#888888] hover:border-white hover:text-white transition-colors uppercase"
+                            className="w-full flex items-center justify-center gap-2 py-3 border border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:border-foreground hover:text-foreground transition-colors uppercase"
                         >
                             <FileText className="w-3 h-3" />
                             VER REFERENCIA ASOCIADA
@@ -117,8 +117,8 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                             <StripeCheckoutWrapper paymentId={payment.id} />
 
                             <div className="flex items-center justify-center py-4">
-                                <div className="h-px bg-[#222222] w-full" />
-                                <span className="absolute bg-[#050505] px-4 text-[9px] font-bold tracking-[0.3em] text-[#666666]">
+                                <div className="h-px bg-popover w-full" />
+                                <span className="absolute bg-card px-4 text-[9px] font-bold tracking-[0.3em] text-muted-foreground">
                                     O ALTERNATIVAMENTE
                                 </span>
                             </div>
@@ -126,17 +126,17 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                             <ManualPaymentForm paymentId={payment.id} />
                         </>
                     ) : (
-                        <div className="h-full border border-[#222222] bg-[#111111] p-8 flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="h-full border border-border bg-card p-8 flex flex-col items-center justify-center text-center space-y-4">
                             <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
-                                <CheckCircle2 className="w-8 h-8 text-black" />
+                                <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
                             </div>
-                            <h3 className="text-xl font-bold tracking-[0.2em] text-white uppercase">
+                            <h3 className="text-xl font-bold tracking-[0.2em] text-foreground uppercase">
                                 PAGO COMPLETADO
                             </h3>
-                            <p className="text-[#888888] text-xs uppercase tracking-widest font-mono">
+                            <p className="text-muted-foreground text-xs uppercase tracking-widest font-mono">
                                 FECHA: {payment.paidAt ? format(payment.paidAt, "dd/MM/yyyy HH:mm") : "-"}
                             </p>
-                            <p className="text-[#666666] text-[10px] uppercase pt-4">
+                            <p className="text-muted-foreground text-[10px] uppercase pt-4">
                                 Esta cuenta ya fue completamente cubierta y asentada en los registros.
                             </p>
                         </div>

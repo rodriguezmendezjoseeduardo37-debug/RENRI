@@ -12,11 +12,11 @@ export default async function EnlazarNegocioPage() {
 
     return (
         <div className="space-y-8">
-            <div className="border-b border-[#222222] pb-6">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase">
+            <div className="border-b border-border pb-6">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                     MIS NEGOCIOS
                 </h1>
-                <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-[#888888] uppercase">
+                <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     CONECTA TU CUENTA CON TUS NEGOCIOS PARA VER TUS CITAS Y PAGOS
                 </p>
             </div>

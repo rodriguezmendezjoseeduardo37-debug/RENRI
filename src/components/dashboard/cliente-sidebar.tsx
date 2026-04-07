@@ -27,23 +27,23 @@ export function ClienteSidebar() {
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-[#222222] bg-black transition-all duration-300 ease-in-out hidden md:flex flex-col"
+            className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 ease-in-out hidden md:flex flex-col"
             style={{ width: expanded ? 240 : 64 }}
             onMouseEnter={() => setExpanded(true)}
             onMouseLeave={() => setExpanded(false)}
         >
-            <div className="flex h-16 items-center border-b border-[#222222] px-4">
+            <div className="flex h-16 items-center border-b border-border px-4">
                 <span
-                    className="text-white font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
+                    className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
                     style={{ opacity: expanded ? 1 : 0, width: expanded ? "auto" : 0 }}
                 >
                     RENRI
-                    <span className="ml-2 text-[8px] tracking-[0.2em] text-[#666666] font-medium">
+                    <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
                         CLIENTE
                     </span>
                 </span>
                 {!expanded && (
-                    <span className="text-white font-bold text-lg mx-auto">R</span>
+                    <span className="text-foreground font-bold text-lg mx-auto">R</span>
                 )}
             </div>
 
@@ -59,8 +59,8 @@ export function ClienteSidebar() {
                             href={item.href}
                             className={`flex items-center h-12 px-5 gap-4 transition-all duration-200 group relative ${
                                 isActive
-                                    ? "text-white bg-[#111111]"
-                                    : "text-[#888888] hover:text-white hover:bg-[#111111]"
+                                    ? "text-foreground bg-card"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-card"
                             }`}
                         >
                             {isActive && (
@@ -83,7 +83,7 @@ export function ClienteSidebar() {
 
             <button
                 onClick={() => setExpanded(!expanded)}
-                className="flex items-center justify-center h-12 border-t border-[#222222] text-[#888888] hover:text-white transition-colors"
+                className="flex items-center justify-center h-12 border-t border-border text-muted-foreground hover:text-foreground transition-colors"
             >
                 {expanded ? (
                     <ChevronLeft className="h-4 w-4" />

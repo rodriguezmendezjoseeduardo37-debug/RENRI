@@ -22,14 +22,14 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-[#222222] pb-4">
-                <h3 className="text-xl font-bold tracking-[0.1em] text-white uppercase">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+                <h3 className="text-xl font-bold tracking-[0.1em] text-foreground uppercase">
                     DISPONIBILIDAD: {staffName}
                 </h3>
                 <div className="flex gap-4 text-[10px] font-medium tracking-[0.2em] uppercase">
-                    <span className="text-white bg-white/10 px-2 py-1">{availableDays.length} días Disp</span>
+                    <span className="text-foreground bg-white/10 px-2 py-1">{availableDays.length} días Disp</span>
                     <span className="text-red-500 bg-red-500/10 px-2 py-1">{blockedDays.length} Bloqueados</span>
-                    <span className="text-[#888888] bg-[#222222] px-2 py-1">{noScheduleDays.length} Sin Asignar</span>
+                    <span className="text-muted-foreground bg-popover px-2 py-1">{noScheduleDays.length} Sin Asignar</span>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                         const hasSlots = day.slots.length > 0;
                         const availableSlots = day.slots.filter(s => s.isAvailable).length;
 
-                        let styleClass = "border-[#333333] text-[#888888] hover:border-[#666666]"; // Default/no sched
+                        let styleClass = "border-border text-muted-foreground hover:border-border"; // Default/no sched
                         let statusText = "SIN HORARIO";
 
                         if (day.isBlocked) {
@@ -49,10 +49,10 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                             statusText = "BLOQUEADO";
                         } else if (hasSlots) {
                             if (availableSlots === 0) {
-                                styleClass = "border-[#444444] text-white bg-[#222222]";
+                                styleClass = "border-border text-foreground bg-popover";
                                 statusText = "LLENO";
                             } else {
-                                styleClass = "border-white bg-[#111111] text-white";
+                                styleClass = "border-white bg-card text-foreground";
                                 statusText = `${availableSlots} LIBRES`;
                             }
                         }
@@ -75,31 +75,31 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                 </div>
 
                 {/* Right: Slot Render */}
-                <div className="flex-1 bg-[#111111] border border-[#222222] p-6 lg:p-8">
+                <div className="flex-1 bg-card border border-border p-6 lg:p-8">
                     {activeDay ? (
                         <>
-                            <h4 className="text-[12px] font-bold tracking-[0.3em] text-[#888888] uppercase mb-6 flex items-center justify-between">
+                            <h4 className="text-[12px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-6 flex items-center justify-between">
                                 TURNOS DEL {activeDay.date}
                                 {activeDay.isBlocked && (
-                                    <span className="px-2 py-1 bg-red-500 text-black">FECHA BLOQUEADA</span>
+                                    <span className="px-2 py-1 bg-red-500 text-primary-foreground">FECHA BLOQUEADA</span>
                                 )}
                             </h4>
 
                             {!activeDay.isBlocked && activeDay.slots.length === 0 && (
-                                <p className="text-sm font-mono text-[#666666] italic">No hay horario laboral asignado para este día.</p>
+                                <p className="text-sm font-mono text-muted-foreground italic">No hay horario laboral asignado para este día.</p>
                             )}
 
                             {!activeDay.isBlocked && activeDay.slots.length > 0 && (
                                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
                                     {activeDay.slots.map((slot, i) => {
                                         const bgClass = slot.isAvailable
-                                            ? "bg-white text-black hover:bg-[#cccccc]"
-                                            : "bg-[#222222] text-[#666666] line-through cursor-not-allowed";
+                                            ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-secondary"
+                                            : "bg-popover text-muted-foreground line-through cursor-not-allowed";
 
                                         return (
                                             <div
                                                 key={i}
-                                                className={`py-3 text-center border border-[#333333] transition-colors ${bgClass}`}
+                                                className={`py-3 text-center border border-border transition-colors ${bgClass}`}
                                                 title={!slot.isAvailable ? "Reservado" : "Libre"}
                                             >
                                                 <span className="text-[11px] font-mono font-bold">{slot.time}</span>
@@ -110,7 +110,7 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                             )}
                         </>
                     ) : (
-                        <p className="text-xs text-[#666666] uppercase tracking-[0.2em] text-center mt-10">
+                        <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center mt-10">
                             SELECCIONA UNA FECHA
                         </p>
                     )}

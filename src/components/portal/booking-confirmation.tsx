@@ -50,10 +50,10 @@ export function BookingConfirmation({
                 transition={{ delay: 0.3 }}
                 className="text-center"
             >
-                <h2 className="text-3xl font-bold tracking-[0.05em] text-white font-[family-name:var(--font-heading)] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                <h2 className="text-3xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
                     ¡CITA AGENDADA!
                 </h2>
-                <p className="mt-4 text-[11px] font-bold tracking-[0.2em] text-[#888888] uppercase">
+                <p className="mt-4 text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                     TE ESPERAMOS EN LA FECHA SELECCIONADA
                 </p>
             </motion.div>
@@ -68,41 +68,41 @@ export function BookingConfirmation({
                 {/* Subtle border glow */}
                 <div className="absolute -inset-[1px] bg-gradient-to-b from-white/20 to-transparent rounded-lg blur-[2px] pointer-events-none" />
                 
-                <div className="bg-black border border-white/10 rounded-lg p-8 relative overflow-hidden group">
+                <div className="bg-background border border-white/10 rounded-lg p-8 relative overflow-hidden group">
                     {/* Background noise/gradient */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl" />
 
                     <div className="space-y-6 relative z-10">
                         <div>
-                            <p className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase mb-1">
+                            <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
                                 SERVICIO
                             </p>
-                            <p className="text-sm font-bold tracking-widest text-white uppercase group-hover:text-white transition-colors">
+                            <p className="text-sm font-bold tracking-widest text-foreground uppercase group-hover:text-foreground transition-colors">
                                 {serviceName}
                             </p>
                         </div>
                         <div>
-                            <p className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase mb-1">
+                            <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
                                 PROFESIONAL
                             </p>
-                            <p className="text-sm font-bold tracking-widest text-white uppercase group-hover:text-white transition-colors">
+                            <p className="text-sm font-bold tracking-widest text-foreground uppercase group-hover:text-foreground transition-colors">
                                 {staffName}
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <p className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase mb-1">
+                                <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
                                     FECHA
                                 </p>
-                                <p className="text-sm font-mono text-white tracking-widest">
+                                <p className="text-sm font-mono text-foreground tracking-widest">
                                     {date}
                                 </p>
                             </div>
                             <div>
-                                <p className="text-[9px] font-bold tracking-[0.3em] text-[#666666] uppercase mb-1">
+                                <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
                                     HORA
                                 </p>
-                                <p className="text-sm font-mono text-white tracking-widest">
+                                <p className="text-sm font-mono text-foreground tracking-widest">
                                     {time}
                                 </p>
                             </div>
@@ -114,7 +114,7 @@ export function BookingConfirmation({
                 <div className="flex justify-center -mt-4 relative z-20">
                     <button
                         onClick={handleCopy}
-                        className="flex items-center gap-2 bg-black border border-white/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-[#888888] hover:text-white hover:border-white/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
+                        className="flex items-center gap-2 bg-background border border-white/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
                     >
                         <Copy className="w-3.5 h-3.5" />
                         COPIAR DETALLES
@@ -130,7 +130,7 @@ export function BookingConfirmation({
             >
                 <Link
                     href={`/portal/${tenantSlug}`}
-                    className="inline-block border-b border-[#444444] text-[10px] font-bold tracking-[0.2em] text-[#888888] pb-1 hover:text-white hover:border-white transition-colors uppercase"
+                    className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-foreground hover:border-foreground transition-colors uppercase"
                 >
                     Volver al Inicio
                 </Link>

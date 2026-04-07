@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createCancelToken } from "@/lib/tokens";
 
 function getResendClient() {
     if (!process.env.RESEND_API_KEY) {
@@ -18,7 +19,8 @@ export async function sendAppointmentConfirmation(data: {
     businessName: string;
     appointmentId: string;
 }) {
-    const cancelUrl = `${process.env.NEXTAUTH_URL}/portal/cancel/${data.appointmentId}`;
+    const token = createCancelToken(data.appointmentId);
+    const cancelUrl = `${process.env.NEXTAUTH_URL}/portal/cancel/${data.appointmentId}?token=${token}`;
 
     const resend = getResendClient();
     if (!resend) return;

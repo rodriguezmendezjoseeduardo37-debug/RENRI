@@ -1,268 +1,394 @@
 "use server";
 
 import { db } from "@/db";
-import { turns, tenants } from "@/db/schema";
-import { and, eq, sql, desc, asc, gte, lt } from "drizzle-orm";
+import { appointments, profiles, tenants, users } from "@/db/schema";
+import { and, eq, asc, sql } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import type { Turn, CreateTurnInput } from "@/types/turns";
+import { format } from "date-fns";
+import { signSignedToken, verifySignedToken } from "@/lib/signed-token";
 
-// ─── Helpers ───────────────────────────────────────────────
+type PublicTurnCancelPayload = {
+    kind: "public-turn-cancel";
+    appointmentId: string;
+    tenantId: string;
+};
 
-// Get the date range for "today" in local timezone or UTC depending on needs.
-// For simplicity, we use the server's midnight to midnight.
-function getTodayRange(dateStr?: string) {
-    const d = dateStr ? new Date(dateStr) : new Date();
-    d.setHours(0, 0, 0, 0);
-    const start = new Date(d);
-    d.setHours(23, 59, 59, 999);
-    const end = new Date(d);
-    return { start, end };
-}
-
-function mapTurn(row: typeof turns.$inferSelect): Turn {
+function mapRowToTurn(row: {
+    appointment: typeof appointments.$inferSelect;
+    client: { name: string } | null;
+}): Turn {
     return {
-        ...row,
-        createdAt: row.createdAt.toISOString(),
-        calledAt: row.calledAt?.toISOString() ?? null,
-        completedAt: row.completedAt?.toISOString() ?? null,
+        id: row.appointment.id,
+        tenantId: row.appointment.tenantId,
+        clientName: row.client?.name ?? "Cliente General",
+        clientPhone: null,
+        serviceName: row.appointment.serviceName,
+        number: row.appointment.startTime.substring(0, 5),
+        status: row.appointment.status as Turn["status"],
+        calledAt:
+            row.appointment.status === "in_progress"
+                ? row.appointment.updatedAt.toISOString()
+                : null,
+        completedAt:
+            row.appointment.status === "completed"
+                ? row.appointment.updatedAt.toISOString()
+                : null,
+        createdAt: row.appointment.createdAt.toISOString(),
     };
 }
 
-// ─── Get all turns for a tenant today ──────────────────────
+function getTurnTimeWindow() {
+    const now = new Date();
+    const startTime = `${now.getHours().toString().padStart(2, "0")}:${now
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}:00`;
 
-export async function getTurns(tenantId: string, dateStr?: string) {
-    const user = await requireAuth();
-    if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+    now.setMinutes(now.getMinutes() + 30);
+    const endTime = `${now.getHours().toString().padStart(2, "0")}:${now
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}:00`;
 
-    const { start, end } = getTodayRange(dateStr);
-
-    const rows = await db
-        .select()
-        .from(turns)
-        .where(
-            and(
-                eq(turns.tenantId, tenantId),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
-            )
-        )
-        .orderBy(desc(turns.createdAt));
-
-    return rows.map(mapTurn);
+    return { startTime, endTime };
 }
 
-// ─── Create a new turn ─────────────────────────────────────
+function signPublicTurnCancelToken(appointmentId: string, tenantId: string) {
+    return signSignedToken<PublicTurnCancelPayload>(
+        {
+            kind: "public-turn-cancel",
+            appointmentId,
+            tenantId,
+        },
+        60 * 60 * 12
+    );
+}
 
-export async function createTurn(data: CreateTurnInput) {
-    const user = await requireAuth();
-    if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN" && user.role !== "CLIENT") throw new Error("Unauthorized");
+function verifyPublicTurnCancelToken(token: string) {
+    const payload = verifySignedToken<PublicTurnCancelPayload>(token);
+    if (!payload || payload.kind !== "public-turn-cancel") {
+        return null;
+    }
 
+    return payload;
+}
+
+async function getTenantQueueState(tenantId: string) {
     const [tenantData] = await db
         .select({ isQueueOpen: tenants.isQueueOpen })
         .from(tenants)
-        .where(eq(tenants.id, data.tenantId));
+        .where(eq(tenants.id, tenantId));
 
+    return tenantData ?? null;
+}
+
+async function listTurnsForTenant(tenantId: string, dateStr?: string) {
+    const targetDate = dateStr ? dateStr : format(new Date(), "yyyy-MM-dd");
+
+    const rows = await db
+        .select({
+            appointment: appointments,
+            client: { name: users.name },
+        })
+        .from(appointments)
+        .leftJoin(users, eq(appointments.clientId, users.id))
+        .where(and(eq(appointments.tenantId, tenantId), eq(appointments.date, targetDate)))
+        .orderBy(asc(appointments.startTime));
+
+    return rows.map(mapRowToTurn);
+}
+
+export async function getTurns(tenantId: string, dateStr?: string) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    return listTurnsForTenant(tenantId, dateStr);
+}
+
+export async function getPublicTurns(tenantId: string, dateStr?: string) {
+    return listTurnsForTenant(tenantId, dateStr);
+}
+
+export async function createTurn(data: CreateTurnInput) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") {
+        throw new Error("Unauthorized");
+    }
+
+    const tenantData = await getTenantQueueState(data.tenantId);
     if (!tenantData || !tenantData.isQueueOpen) {
         throw new Error("La fila virtual se encuentra cerrada en este momento.");
     }
 
-    const { start, end } = getTodayRange();
+    const todayDate = format(new Date(), "yyyy-MM-dd");
+    const { startTime, endTime } = getTurnTimeWindow();
 
-    // Find the highest number today
-    const [maxRow] = await db
-        .select({ maxNumber: sql<number>`max(${turns.number})` })
-        .from(turns)
-        .where(
-            and(
-                eq(turns.tenantId, data.tenantId),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
-            )
-        );
-
-    const nextNumber = (maxRow?.maxNumber ?? 0) + 1;
-
-    const [newTurn] = await db
-        .insert(turns)
+    const [newAppointment] = await db
+        .insert(appointments)
         .values({
             tenantId: data.tenantId,
-            clientName: data.clientName,
-            clientPhone: data.clientPhone || null,
-            number: nextNumber,
+            clientId: user.id,
+            staffId: user.id,
+            serviceName: data.serviceName || "Turno Manual",
+            date: todayDate,
+            startTime,
+            endTime,
             status: "waiting",
         })
         .returning();
 
-    return mapTurn(newTurn);
+    return mapRowToTurn({ appointment: newAppointment, client: { name: data.clientName } });
 }
 
-// ─── Get Current Turn ──────────────────────────────────────
+export async function createPublicTurn(data: CreateTurnInput) {
+    const tenantData = await getTenantQueueState(data.tenantId);
+    if (!tenantData || !tenantData.isQueueOpen) {
+        throw new Error("La fila virtual se encuentra cerrada en este momento.");
+    }
+
+    const todayDate = format(new Date(), "yyyy-MM-dd");
+    const { startTime, endTime } = getTurnTimeWindow();
+
+    return db.transaction(async (tx) => {
+        const [staffUser] = await tx
+            .select({ id: users.id })
+            .from(users)
+            .where(
+                and(
+                    eq(users.tenantId, data.tenantId),
+                    sql`${users.role} IN ('OWNER', 'ADMIN', 'STAFF')`
+                )
+            )
+            .orderBy(asc(users.createdAt))
+            .limit(1);
+
+        const [clientUser] = await tx
+            .insert(users)
+            .values({
+                tenantId: data.tenantId,
+                email: `public-turn+${data.tenantId}+${crypto.randomUUID()}@renri.local`,
+                name: data.clientName,
+                role: "CLIENT",
+                isVerified: true,
+            })
+            .returning();
+
+        if (data.clientPhone) {
+            await tx.insert(profiles).values({
+                userId: clientUser.id,
+                phone: data.clientPhone,
+            });
+        }
+
+        const [newAppointment] = await tx
+            .insert(appointments)
+            .values({
+                tenantId: data.tenantId,
+                clientId: clientUser.id,
+                staffId: staffUser?.id ?? clientUser.id,
+                serviceName: data.serviceName || "Turno Publico",
+                date: todayDate,
+                startTime,
+                endTime,
+                status: "waiting",
+            })
+            .returning();
+
+        return {
+            turn: mapRowToTurn({ appointment: newAppointment, client: { name: data.clientName } }),
+            cancelToken: signPublicTurnCancelToken(newAppointment.id, data.tenantId),
+        };
+    });
+}
 
 export async function getCurrentTurn(tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const { start, end } = getTodayRange();
+    const todayDate = format(new Date(), "yyyy-MM-dd");
 
-    const [active] = await db
-        .select()
-        .from(turns)
+    const rows = await db
+        .select({
+            appointment: appointments,
+            client: { name: users.name }
+        })
+        .from(appointments)
+        .leftJoin(users, eq(appointments.clientId, users.id))
         .where(
             and(
-                eq(turns.tenantId, tenantId),
-                eq(turns.status, "in_progress"),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
+                eq(appointments.tenantId, tenantId),
+                eq(appointments.date, todayDate),
+                eq(appointments.status, "in_progress")
             )
         )
         .limit(1);
 
-    return active ? mapTurn(active) : null;
+    return rows.length > 0 ? mapRowToTurn(rows[0]) : null;
 }
 
-// ─── Get Queue Position ────────────────────────────────────
-
 export async function getQueuePosition(tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const { start, end } = getTodayRange();
+    const todayDate = format(new Date(), "yyyy-MM-dd");
 
     const [countRes] = await db
         .select({ count: sql<number>`count(*)` })
-        .from(turns)
+        .from(appointments)
         .where(
             and(
-                eq(turns.tenantId, tenantId),
-                eq(turns.status, "waiting"),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
+                eq(appointments.tenantId, tenantId),
+                eq(appointments.date, todayDate),
+                eq(appointments.status, "waiting")
             )
         );
 
     return Number(countRes?.count ?? 0);
 }
 
-// ─── Call Next Turn ────────────────────────────────────────
-
 export async function callNextTurn(tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const { start, end } = getTodayRange();
+    const todayDate = format(new Date(), "yyyy-MM-dd");
 
-    // 1. Find currently in_progress turn and mark completed
     await db
-        .update(turns)
-        .set({ status: "completed", completedAt: new Date() })
+        .update(appointments)
+        .set({ status: "completed", updatedAt: new Date() })
         .where(
             and(
-                eq(turns.tenantId, tenantId),
-                eq(turns.status, "in_progress"),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
+                eq(appointments.tenantId, tenantId),
+                eq(appointments.date, todayDate),
+                eq(appointments.status, "in_progress")
             )
         );
 
-    // 2. Find oldest waiting turn
-    const [nextTurn] = await db
-        .select()
-        .from(turns)
+    const rows = await db
+        .select({
+            appointment: appointments,
+            client: { name: users.name }
+        })
+        .from(appointments)
+        .leftJoin(users, eq(appointments.clientId, users.id))
         .where(
             and(
-                eq(turns.tenantId, tenantId),
-                eq(turns.status, "waiting"),
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
+                eq(appointments.tenantId, tenantId),
+                eq(appointments.date, todayDate),
+                sql`${appointments.status} IN ('waiting', 'pending', 'confirmed')`
             )
         )
-        .orderBy(asc(turns.createdAt))
+        .orderBy(asc(appointments.startTime))
         .limit(1);
 
-    if (!nextTurn) return null;
+    if (rows.length === 0) return null;
 
-    // 3. Mark it in_progress
+    const nextTurnRow = rows[0];
+
     const [updated] = await db
-        .update(turns)
-        .set({ status: "in_progress", calledAt: new Date() })
-        .where(eq(turns.id, nextTurn.id))
+        .update(appointments)
+        .set({ status: "in_progress", updatedAt: new Date() })
+        .where(eq(appointments.id, nextTurnRow.appointment.id))
         .returning();
 
-    return mapTurn(updated);
+    return mapRowToTurn({ appointment: updated, client: nextTurnRow.client });
 }
-
-// ─── Complete Turn ─────────────────────────────────────────
 
 export async function completeTurn(id: string, tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [updated] = await db
-        .update(turns)
-        .set({ status: "completed", completedAt: new Date() })
-        .where(and(eq(turns.id, id), eq(turns.tenantId, tenantId)))
+        .update(appointments)
+        .set({ status: "completed", updatedAt: new Date() })
+        .where(and(eq(appointments.id, id), eq(appointments.tenantId, tenantId)))
         .returning();
 
-    return updated ? mapTurn(updated) : null;
-}
+    if (!updated) return null;
 
-// ─── Skip Turn ─────────────────────────────────────────────
+    const [clientRow] = await db.select({ name: users.name }).from(users).where(eq(users.id, updated.clientId));
+    return mapRowToTurn({ appointment: updated, client: clientRow || null });
+}
 
 export async function skipTurn(id: string, tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
     const [updated] = await db
-        .update(turns)
-        .set({ status: "skipped" })
-        .where(and(eq(turns.id, id), eq(turns.tenantId, tenantId)))
+        .update(appointments)
+        .set({ status: "cancelled", updatedAt: new Date() })
+        .where(and(eq(appointments.id, id), eq(appointments.tenantId, tenantId)))
         .returning();
 
-    return updated ? mapTurn(updated) : null; // returns updated turn
-}
+    if (!updated) return null;
 
-// ─── Cancel Turn ───────────────────────────────────────────
+    const [clientRow] = await db.select({ name: users.name }).from(users).where(eq(users.id, updated.clientId));
+    return mapRowToTurn({ appointment: updated, client: clientRow || null });
+}
 
 export async function cancelTurn(id: string, tenantId: string) {
-    const user = await requireAuth();
-    if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN" && user.role !== "CLIENT") throw new Error("Unauthorized");
-
-    const [updated] = await db
-        .update(turns)
-        .set({ status: "cancelled" })
-        .where(and(eq(turns.id, id), eq(turns.tenantId, tenantId)))
-        .returning();
-
-    return updated ? mapTurn(updated) : null;
-}
-
-// ─── Reset Daily Turns ─────────────────────────────────────
-
-export async function resetDailyTurns(tenantId: string) {
-    const user = await requireAuth();
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const { start, end } = getTodayRange();
+    const [updated] = await db
+        .update(appointments)
+        .set({ status: "cancelled", updatedAt: new Date() })
+        .where(and(eq(appointments.id, id), eq(appointments.tenantId, tenantId)))
+        .returning();
 
-    // Mark all incomplete turns today as cancelled/skipped (decided skipped is safer so we have history)
-    await db
-        .update(turns)
-        .set({ status: "skipped" })
+    if (!updated) return null;
+    const [clientRow] = await db.select({ name: users.name }).from(users).where(eq(users.id, updated.clientId));
+    return mapRowToTurn({ appointment: updated, client: clientRow || null });
+}
+
+export async function cancelPublicTurn(cancelToken: string) {
+    const payload = verifyPublicTurnCancelToken(cancelToken);
+    if (!payload) {
+        throw new Error("Token de cancelacion invalido o expirado");
+    }
+
+    const [updated] = await db
+        .update(appointments)
+        .set({ status: "cancelled", updatedAt: new Date() })
         .where(
             and(
-                eq(turns.tenantId, tenantId),
-                sql`${turns.status} IN ('waiting', 'in_progress')`,
-                gte(turns.createdAt, start),
-                lt(turns.createdAt, end)
+                eq(appointments.id, payload.appointmentId),
+                eq(appointments.tenantId, payload.tenantId),
+                eq(appointments.status, "waiting")
+            )
+        )
+        .returning();
+
+    if (!updated) {
+        throw new Error("El turno ya no puede cancelarse");
+    }
+
+    return true;
+}
+
+export async function resetDailyTurns(tenantId: string) {
+    const user = await requireAuth(["SUPER_ADMIN", "OWNER", "ADMIN", "STAFF"]);
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    const todayDate = format(new Date(), "yyyy-MM-dd");
+
+    await db
+        .update(appointments)
+        .set({ status: "cancelled", updatedAt: new Date() })
+        .where(
+            and(
+                eq(appointments.tenantId, tenantId),
+                eq(appointments.date, todayDate),
+                sql`${appointments.status} IN ('waiting', 'in_progress', 'pending')`
             )
         );
 
