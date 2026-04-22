@@ -127,8 +127,8 @@ export default async function ProductDetailPage({
                                 </span>
                             </div>
                         ))}
-                        {/* Fill the empty 6th slot on md screens to prevent exposing the gap background */}
-                        <div className="bg-background hidden md:block"></div>
+                        {/* Fill the empty 6th slot to prevent exposing the gap background */}
+                        <div className="bg-background"></div>
                     </div>
 
                     {/* Stock Movement History */}

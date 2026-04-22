@@ -262,35 +262,37 @@ export function ProductForm({
                     <input type="hidden" {...register("imageUrl")} />
                     
                     {watch("imageUrl") ? (
-                        <div className="relative w-full sm:w-48 h-32 rounded-xl overflow-hidden border border-border group">
+                        <div className="relative w-full sm:w-48 h-40 sm:h-32 rounded-xl overflow-hidden border border-border group">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img 
                                 src={watch("imageUrl") || ""} 
                                 alt="Vista previa" 
                                 className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setValue("imageUrl", "")}
-                                    className="text-[10px] font-bold text-white tracking-[0.2em] uppercase border border-white/30 px-3 py-1 rounded-md hover:bg-white/10 transition-colors"
+                                    className="text-[10px] font-bold text-white tracking-[0.2em] uppercase border border-white/30 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors bg-black/20 backdrop-blur-sm"
                                 >
-                                    Eliminar
+                                    Eliminar Imagen
                                 </button>
                             </div>
                         </div>
                     ) : (
-                        <div className="w-full sm:w-48 h-32 rounded-xl border border-dashed border-border bg-popover flex items-center justify-center relative">
+                        <label className="w-full sm:w-48 h-40 sm:h-32 rounded-xl border-2 border-dashed border-border bg-popover/50 hover:bg-accent/50 hover:border-foreground/30 transition-all flex flex-col items-center justify-center cursor-pointer group active:scale-[0.98]">
                             <input 
                                 type="file" 
                                 accept="image/*"
-                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                className="sr-only"
                                 onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (!file) return;
 
                                     const formData = new FormData();
                                     formData.append("file", file);
+
+                                    const toastId = toast.loading("Subiendo imagen...");
 
                                     try {
                                         const res = await fetch("/api/upload", {
@@ -302,20 +304,22 @@ export function ProductForm({
 
                                         const data = await res.json();
                                         setValue("imageUrl", data.url, { shouldValidate: true });
-                                        toast.success("Imagen cargada con éxito");
+                                        toast.success("Imagen cargada con éxito", { id: toastId });
                                     } catch (error) {
                                         console.error(error);
-                                        toast.error("Error al subir la imagen");
+                                        toast.error("Error al subir la imagen", { id: toastId });
                                     }
                                 }}
                             />
-                            <div className="flex flex-col items-center gap-2 text-muted-foreground pointer-events-none">
-                                <span className="text-2xl">+</span>
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
+                                <div className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center mb-1 shadow-sm">
+                                    <span className="text-xl">+</span>
+                                </div>
                                 <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-center px-4">
                                     Subir Foto
                                 </span>
                             </div>
-                        </div>
+                        </label>
                     )}
                     
                     <div className="flex-1 flex flex-col justify-center">

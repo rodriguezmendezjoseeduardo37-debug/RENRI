@@ -112,7 +112,6 @@ export function StockAdjustModal({
                             onChange={(e) => setQuantity(e.target.value)}
                             placeholder="0"
                             className={inputClass}
-                            autoFocus
                         />
                     </div>
 
