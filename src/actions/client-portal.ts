@@ -1,6 +1,6 @@
 "use server";
 
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql, gte, lte } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
@@ -134,6 +134,18 @@ export async function getClientAppointments() {
         console.error("Error in appointment auto-sync:", e);
     }
 
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diffToMonday = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(diffToMonday);
+    const startStr = startOfWeek.toISOString().split("T")[0];
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    const endStr = endOfWeek.toISOString().split("T")[0];
+
     const rows = await db
         .select({
             appointment: appointments,
@@ -141,7 +153,13 @@ export async function getClientAppointments() {
         })
         .from(appointments)
         .leftJoin(staffUser, eq(appointments.staffId, staffUser.id))
-        .where(eq(appointments.clientId, user.id))
+        .where(
+            and(
+                eq(appointments.clientId, user.id),
+                gte(appointments.date, startStr),
+                lte(appointments.date, endStr)
+            )
+        )
         .orderBy(desc(appointments.date), desc(appointments.startTime));
 
     return rows.map(mapAppointmentRow);
@@ -345,6 +363,18 @@ export async function ensureClientPaymentForAppointment(appointmentId: string) {
 export async function getClientPayments() {
     const user = await requireBusinessLinkedUser();
 
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diffToMonday = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(diffToMonday);
+    const startStr = startOfWeek.toISOString().split("T")[0];
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    const endStr = endOfWeek.toISOString().split("T")[0];
+
     const rows = await db
         .select({
             payment: payments,
@@ -362,7 +392,13 @@ export async function getClientPayments() {
             )
         )
         .leftJoin(staffUser, eq(appointments.staffId, staffUser.id))
-        .where(eq(appointments.clientId, user.id))
+        .where(
+            and(
+                eq(appointments.clientId, user.id),
+                gte(appointments.date, startStr),
+                lte(appointments.date, endStr)
+            )
+        )
         .orderBy(desc(payments.createdAt));
 
     return rows.map((row) => ({

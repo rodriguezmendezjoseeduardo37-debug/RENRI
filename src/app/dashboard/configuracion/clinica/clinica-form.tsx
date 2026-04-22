@@ -86,7 +86,7 @@ export function ClinicaForm({ tenantId, settings }: ClinicaFormProps) {
                 <div className="flex items-center justify-between">
                     <div>
                         <h4 className="text-xs font-bold text-foreground tracking-widest uppercase">Habilitar Recetas Digitales</h4>
-                        <p className="text-[10px] text-muted-foreground mt-1">Permite la generación de archivos PDF para pacientes.</p>
+                        <p className="text-[10px] text-muted-foreground mt-1">Permite la generación de archivos PDF para clientes.</p>
                     </div>
                     <button 
                         onClick={() => setConfig({...config, allowPrescriptions: !config.allowPrescriptions})}

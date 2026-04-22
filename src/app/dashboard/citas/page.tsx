@@ -6,15 +6,33 @@ import { users } from "@/db/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import { CitasClient } from "./citas-client";
 
+// Helper: get Monday and Sunday of the current week as YYYY-MM-DD
+function getCurrentWeekBounds(): { dateFrom: string; dateTo: string } {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun, 1=Mon…6=Sat
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diffToMonday);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    const fmt = (d: Date) => d.toISOString().split("T")[0];
+    return { dateFrom: fmt(monday), dateTo: fmt(sunday) };
+}
+
 export default async function CitasPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const tenantId = user.tenantId;
 
-    // Fetch up to 100 recent/upcoming appointments for the initial view
-    // (In a full app, we'd handle pagination through searchParams)
-    const appointmentsResult = await getAppointments(tenantId, { limit: 100 });
+    // Only fetch appointments for the current week
+    const { dateFrom, dateTo } = getCurrentWeekBounds();
+    const appointmentsResult = await getAppointments(tenantId, {
+        dateFrom,
+        dateTo,
+        limit: 200,
+    });
     const initialAppointments = appointmentsResult.data;
 
     // Fetch staff (anyone with staff-level permissions or just specifically STAFF)

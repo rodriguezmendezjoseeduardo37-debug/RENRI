@@ -31,6 +31,7 @@ declare module "next-auth" {
             isVerified: boolean;
             accountType: "servicios" | "pyme" | "cliente";
             enabledModules: BusinessModule[];
+            plan: "starter" | "pro" | "business" | "enterprise";
         };
     }
 
@@ -42,6 +43,7 @@ declare module "next-auth" {
         isVerified?: boolean;
         accountType?: "servicios" | "pyme" | "cliente";
         enabledModules?: BusinessModule[];
+        plan?: "starter" | "pro" | "business" | "enterprise";
     }
 }
 
@@ -55,6 +57,7 @@ declare module "@auth/core/jwt" {
         isVerified: boolean;
         accountType: "servicios" | "pyme" | "cliente";
         enabledModules: BusinessModule[];
+        plan: "starter" | "pro" | "business" | "enterprise";
     }
 }
 
@@ -113,6 +116,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         tenant?.accountType ?? "servicios",
                         user.role
                     ),
+                    plan: tenant?.plan ?? "starter",
                 };
             },
         }),
@@ -188,6 +192,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         created.tenant.accountType,
                         created.user.role
                     );
+                    user.plan = created.tenant.plan;
                 } else {
                     const [existingTenant] = await db
                         .select()
@@ -244,6 +249,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         resolvedBusinessAccountType,
                         existingUser.role
                     );
+                    user.plan = existingTenant?.plan ?? "starter";
                 }
             }
             return true;

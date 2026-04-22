@@ -69,3 +69,8 @@ eslint_out.txt
 test-db.js
 test-signin.js
 build.log
+
+# testing artifacts
+test-results/
+playwright-report/
+blob-report/

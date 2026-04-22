@@ -58,6 +58,8 @@ export interface TimeSlot {
 
 export interface AppointmentFilters {
     date?: string;
+    dateFrom?: string;  // YYYY-MM-DD inclusive
+    dateTo?: string;    // YYYY-MM-DD inclusive
     staffId?: string;
     status?: AppointmentStatus;
     search?: string;

@@ -6,6 +6,7 @@ import { createProductSchema } from "@/types/products";
 import { z } from "zod";
 import { Loader2, Shuffle } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type FormValues = z.infer<typeof createProductSchema>;
 
@@ -253,14 +254,82 @@ export function ProductForm({
                 </div>
             )}
 
-            {/* Image URL (simplified for now) */}
+            {/* Image Upload */}
             <div>
-                <label className={labelClass}>URL DE IMAGEN</label>
-                <input
-                    {...register("imageUrl")}
-                    placeholder="https://..."
-                    className={inputClass}
-                />
+                <label className={labelClass}>IMAGEN DEL PRODUCTO</label>
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                    {/* Hidden input to keep form state */}
+                    <input type="hidden" {...register("imageUrl")} />
+                    
+                    {watch("imageUrl") ? (
+                        <div className="relative w-full sm:w-48 h-32 rounded-xl overflow-hidden border border-border group">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img 
+                                src={watch("imageUrl") || ""} 
+                                alt="Vista previa" 
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button
+                                    type="button"
+                                    onClick={() => setValue("imageUrl", "")}
+                                    className="text-[10px] font-bold text-white tracking-[0.2em] uppercase border border-white/30 px-3 py-1 rounded-md hover:bg-white/10 transition-colors"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="w-full sm:w-48 h-32 rounded-xl border border-dashed border-border bg-popover flex items-center justify-center relative">
+                            <input 
+                                type="file" 
+                                accept="image/*"
+                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+
+                                    const formData = new FormData();
+                                    formData.append("file", file);
+
+                                    try {
+                                        const res = await fetch("/api/upload", {
+                                            method: "POST",
+                                            body: formData,
+                                        });
+
+                                        if (!res.ok) throw new Error("Error al subir imagen");
+
+                                        const data = await res.json();
+                                        setValue("imageUrl", data.url, { shouldValidate: true });
+                                        toast.success("Imagen cargada con éxito");
+                                    } catch (error) {
+                                        console.error(error);
+                                        toast.error("Error al subir la imagen");
+                                    }
+                                }}
+                            />
+                            <div className="flex flex-col items-center gap-2 text-muted-foreground pointer-events-none">
+                                <span className="text-2xl">+</span>
+                                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-center px-4">
+                                    Subir Foto
+                                </span>
+                            </div>
+                        </div>
+                    )}
+                    
+                    <div className="flex-1 flex flex-col justify-center">
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-[0.1em] mb-2 block">
+                            O puedes ingresar una URL directamente:
+                        </span>
+                        <input
+                            value={watch("imageUrl") || ""}
+                            onChange={(e) => setValue("imageUrl", e.target.value, { shouldValidate: true })}
+                            placeholder="https://..."
+                            className={inputClass}
+                        />
+                    </div>
+                </div>
             </div>
 
             {/* Public visibility toggle */}

@@ -19,6 +19,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "RENRI — Gestión para Profesionistas",
   description: "Citas, turnos, pagos y clientes en una sola plataforma para profesionistas y PYMEs de México.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: 'RENRI — Gestión para Profesionistas',
     description: 'Citas, turnos, pagos y clientes en una sola plataforma.',

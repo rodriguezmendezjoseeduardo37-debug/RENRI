@@ -29,8 +29,8 @@ export default async function ClientesPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
-                        PACIENTES
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                        CLIENTES
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         DIRECTORIO DE USUARIOS REGISTRADOS
@@ -59,8 +59,8 @@ export default async function ClientesPage() {
                         <tbody>
                             {clientes.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-sm font-mono text-muted-foreground">
-                                        El directorio de pacientes está vacío.
+                                    <td colSpan={6} className="py-12 text-center text-muted-foreground text-[10px] tracking-widest uppercase">
+                                        El directorio de clientes está vacío.
                                     </td>
                                 </tr>
                             ) : (

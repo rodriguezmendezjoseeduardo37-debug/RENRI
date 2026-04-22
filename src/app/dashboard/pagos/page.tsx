@@ -10,6 +10,20 @@ import { db } from "@/db";
 import { eq, inArray } from "drizzle-orm";
 import { users, appointments, orders, tenants } from "@/db/schema";
 
+// Helper function to get Monday and Sunday of current week
+function getCurrentWeekBounds(): { from: Date; to: Date } {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun, 1=Mon...6=Sat
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diffToMonday);
+    
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    
+    return { from: monday, to: sunday };
+}
+
 export default async function PagosPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
@@ -39,8 +53,12 @@ export default async function PagosPage() {
     const weekStats = await getRevenueStats(tenantId, "week", paymentTypeFilter);
     const monthStats = await getRevenueStats(tenantId, "month", paymentTypeFilter);
 
-    // 2. Fetch Payments (filtered by reference type if PYME)
-    const paymentsData = await getPayments(tenantId, paymentTypeFilter ? { type: paymentTypeFilter } : undefined);
+    // 2. Fetch Payments (filtered by reference type if PYME, and by current week)
+    const weekBounds = getCurrentWeekBounds();
+    const paymentsData = await getPayments(tenantId, {
+        ...(paymentTypeFilter ? { type: paymentTypeFilter } : {}),
+        dateRange: weekBounds,
+    });
     const pendingCount = paymentsData.filter(p => p.status === "pending").length;
 
     // 3. Resolve Reference Data

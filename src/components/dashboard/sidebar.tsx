@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { switchAccountType } from "@/actions/account";
 import type { BusinessModule } from "@/lib/business";
+import { RenriMark } from "@/components/renri-mark";
 
 export interface NavItem {
     href: string;
@@ -116,18 +117,21 @@ export function Sidebar({
                 setShowModeSwitcher(false);
             }}
         >
-            <div className="flex h-16 items-center border-b border-border px-4">
-                <span
-                    className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden transition-all duration-300"
-                    style={{ opacity: expanded ? 1 : 0, width: expanded ? "auto" : 0 }}
-                >
-                    RENRI
-                    <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
-                        {currentMode.label}
-                    </span>
-                </span>
-                {!expanded && (
-                    <span className="text-foreground font-bold text-lg mx-auto">R</span>
+            <div className="flex h-16 items-center border-b border-border px-4 gap-3">
+                {expanded ? (
+                    <>
+                        <RenriMark size={28} className="flex-shrink-0" activeModule={accountType} />
+                        <span
+                            className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden"
+                        >
+                            RENRI
+                            <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
+                                {currentMode.label}
+                            </span>
+                        </span>
+                    </>
+                ) : (
+                    <RenriMark size={32} className="mx-auto" activeModule={accountType} />
                 )}
             </div>
 

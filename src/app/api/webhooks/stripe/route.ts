@@ -1,76 +1,100 @@
+import { headers } from "next/headers";
 import Stripe from "stripe";
-import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
-import { markPaymentAsPaidFromWebhook } from "@/actions/payments";
 import { db } from "@/db";
-import { payments } from "@/db/schema";
-import { stripeServer } from "@/lib/stripe";
+import { tenants, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export const dynamic = "force-dynamic";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
+    apiVersion: "2024-12-18.acacia",
+});
 
 export async function POST(req: Request) {
     const body = await req.text();
-    const signature = req.headers.get("Stripe-Signature") as string;
-    // Stripe-Connect sends a separate `stripe-account` header for connected account events
-    const connectedAccountId = req.headers.get("Stripe-Account");
+    const headersList = headers();
+    // Stripe SDK requires the signature as a string, handle Next.js headers API correctly
+    let signature = headersList.get("Stripe-Signature");
+    
+    // In Next.js 15, headers() is async but in < 15 it's sync. To be safe across versions, 
+    // if headersList is a Promise, we await it (if not, it works normally).
+    if (typeof headersList.get !== 'function') {
+        // Handle async headers in newer Next.js if needed
+        const resolvedHeaders = await headers();
+        signature = resolvedHeaders.get("Stripe-Signature");
+    }
+
+    if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) {
+        return new Response("Missing signature or webhook secret", { status: 400 });
+    }
 
     let event: Stripe.Event;
 
     try {
-        // Use the appropriate webhook secret
-        // For connect events use STRIPE_CONNECT_WEBHOOK_SECRET, else the platform secret
-        const webhookSecret = connectedAccountId
-            ? (process.env.STRIPE_CONNECT_WEBHOOK_SECRET ?? process.env.STRIPE_WEBHOOK_SECRET!)
-            : process.env.STRIPE_WEBHOOK_SECRET!;
-
-        event = stripeServer.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (error: unknown) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
-        console.error(`Webhook Error: ${errorMessage}`);
-        return new NextResponse(`Webhook Error: ${errorMessage}`, { status: 400 });
+        event = stripe.webhooks.constructEvent(
+            body,
+            signature,
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err: any) {
+        console.error(`❌ Webhook signature verification failed.`, err.message);
+        return new Response(`Webhook Error: ${err.message}`, { status: 400 });
     }
 
-    switch (event.type) {
-        case "payment_intent.succeeded": {
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
+    try {
+        switch (event.type) {
+            case "checkout.session.completed": {
+                const session = event.data.object as Stripe.Checkout.Session;
+                
+                // Obtener el ID del usuario que pasamos en metadata al crear la sesión
+                const userId = session.metadata?.userId;
+                
+                if (userId) {
+                    console.log(`✅ Pago completado para usuario ID: ${userId}. Actualizando a plan PRO.`);
+                    // Actualizar la base de datos
+                    const [user] = await db
+                        .select({ tenantId: users.tenantId })
+                        .from(users)
+                        .where(eq(users.id, userId))
+                        .limit(1);
 
-            if (paymentIntent.metadata?.paymentId) {
-                await markPaymentAsPaidFromWebhook(paymentIntent.metadata.paymentId, paymentIntent.id);
-            } else {
-                const dbPayment = await db.query.payments.findFirst({
-                    where: eq(payments.stripePaymentIntentId, paymentIntent.id),
-                });
-
-                if (dbPayment) {
-                    await markPaymentAsPaidFromWebhook(dbPayment.id, paymentIntent.id);
+                    if (user && user.tenantId) {
+                        await db.update(tenants)
+                            .set({ 
+                                plan: "pro", 
+                                stripeCustomerId: session.customer as string,
+                                stripeSubscriptionId: session.subscription as string,
+                                updatedAt: new Date()
+                            })
+                            .where(eq(tenants.id, user.tenantId));
+                    }
                 }
+                break;
             }
-            break;
+            case "invoice.payment_succeeded": {
+                // Manejar pagos recurrentes exitosos
+                break;
+            }
+            case "customer.subscription.deleted": {
+                // Manejar cancelaciones de suscripción (Volver a plan STARTER)
+                const subscription = event.data.object as Stripe.Subscription;
+                console.log(`Suscripción cancelada: ${subscription.id}`);
+                // Revertir plan en la base de datos
+                if (subscription.id) {
+                    await db.update(tenants)
+                        .set({ 
+                            plan: "starter",
+                            updatedAt: new Date()
+                        })
+                        .where(eq(tenants.stripeSubscriptionId, subscription.id));
+                }
+                break;
+            }
+            default:
+                console.log(`Evento no manejado: ${event.type}`);
         }
 
-        case "payment_intent.payment_failed": {
-            const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
-            const dbPayment = await db.query.payments.findFirst({
-                where: eq(payments.stripePaymentIntentId, paymentIntent.id),
-            });
-
-            if (dbPayment) {
-                await db
-                    .update(payments)
-                    .set({ status: "failed" })
-                    .where(eq(payments.id, dbPayment.id));
-            }
-            break;
-        }
-
-        case "customer.subscription.created":
-        case "customer.subscription.deleted":
-            break;
-
-        default:
-            console.log(`Unhandled event type ${event.type}`);
+        return new Response("Webhook processed", { status: 200 });
+    } catch (error) {
+        console.error("Error procesando webhook:", error);
+        return new Response("Webhook handler failed", { status: 500 });
     }
-
-    return new NextResponse("Webhook processed successfully", { status: 200 });
 }

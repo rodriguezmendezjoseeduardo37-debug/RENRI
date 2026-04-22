@@ -4,7 +4,7 @@ import { getOrders, getOrderStats } from "@/actions/orders";
 import { OrderKanban } from "@/components/dashboard/pedidos/order-kanban";
 import { OrderCard } from "@/components/dashboard/pedidos/order-card";
 import { OrderFilters } from "@/components/dashboard/pedidos/order-filters";
-import type { Order } from "@/types/orders";
+import type { OrderWithItems } from "@/types/orders";
 import Link from "next/link";
 import {
     Plus,
@@ -34,7 +34,7 @@ export default async function PedidosPage({
         getOrderStats(tenantId),
     ]);
 
-    const ordersList = ordersData as Order[];
+    const ordersList = ordersData as OrderWithItems[];
 
     return (
         <div className="space-y-8">

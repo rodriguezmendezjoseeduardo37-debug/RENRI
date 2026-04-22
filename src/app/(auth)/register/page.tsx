@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Chrome, Loader2 } from "lucide-react";
+import { RenriMark } from "@/components/renri-mark";
 
 const ACCOUNT_TYPES = [
     { value: "servicios", label: "Servicios", description: "Inicio en citas y horarios" },
@@ -113,13 +114,14 @@ export default function RegisterPage() {
         <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,3.9%)] px-4 py-8">
             <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
                 <CardHeader className="text-center space-y-2">
-                    <div className="mx-auto mb-2">
+                    <div className="mx-auto mb-2 flex flex-col items-center gap-3">
+                        <RenriMark size={48} theme="dark" />
                         <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
                             RENRI
                         </h1>
                     </div>
-                    <CardTitle className="text-xl text-foreground">Crear Cuenta</CardTitle>
-                    <CardDescription className="text-[hsl(0,0%,63.9%)]">
+                    <CardTitle className="text-xl text-white">Crear Cuenta</CardTitle>
+                    <CardDescription className="text-white/70">
                         {isClientRegistration
                             ? "Activa tu portal para consultar citas y pagos"
                             : "Empieza con un solo negocio vinculado para servicios y pyme"}
@@ -128,20 +130,20 @@ export default function RegisterPage() {
 
                 <CardContent className="space-y-6">
                     {isClientRegistration && (
-                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-[hsl(0,0%,63.9%)]">
+                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-white/70">
                             Si ya reservaste con este mismo correo, tu cuenta cliente se activara y veras tus citas y pagos en el dashboard. Tambien puedes validarte con Google.
                         </div>
                     )}
 
                     {!isClientRegistration && (
-                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-[hsl(0,0%,63.9%)]">
+                        <div className="rounded-md border border-white/10 bg-white/5 p-3 text-sm text-white/70">
                             Servicios y pyme quedan vinculados al mismo negocio. La opcion elegida solo define tu enfoque inicial dentro del dashboard.
                         </div>
                     )}
 
                     <Button
                         variant="outline"
-                        className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-foreground hover:bg-[hsl(0,0%,14.9%)] h-11"
+                        className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
                         onClick={handleGoogleSignIn}
                         disabled={isGoogleLoading}
                     >
@@ -157,7 +159,7 @@ export default function RegisterPage() {
 
                     <div className="relative">
                         <Separator className="bg-[hsl(0,0%,14.9%)]" />
-                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(0,0%,7%)] px-3 text-xs text-[hsl(0,0%,45.1%)]">
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(0,0%,7%)] px-3 text-xs text-white/50">
                             o con email
                         </span>
                     </div>
@@ -171,7 +173,7 @@ export default function RegisterPage() {
 
                         {/* Account type selector */}
                         <div className="space-y-2">
-                            <Label className="text-[hsl(0,0%,63.9%)]">Tipo de Cuenta</Label>
+                            <Label className="text-white/70">Tipo de Cuenta</Label>
                             <div className="grid grid-cols-3 gap-2">
                                 {ACCOUNT_TYPES.map((type) => (
                                     <button
@@ -182,8 +184,8 @@ export default function RegisterPage() {
                                             setValue("accountType", type.value);
                                         }}
                                         className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
-                                            ? "border-white bg-white/5 text-foreground"
-                                            : "border-[hsl(0,0%,14.9%)] text-[hsl(0,0%,45.1%)] hover:border-[hsl(0,0%,25%)]"
+                                            ? "border-white bg-white/5 text-white"
+                                            : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-white/25"
                                             }`}
                                     >
                                         <div className="text-xs font-medium">{type.label}</div>
@@ -196,13 +198,13 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="name" className="text-[hsl(0,0%,63.9%)]">
+                            <Label htmlFor="name" className="text-white/70">
                                 Nombre completo
                             </Label>
                             <Input
                                 id="name"
                                 placeholder="Juan Pérez"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                                 {...register("name", { required: true })}
                             />
                             {errors.name && (
@@ -211,14 +213,14 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-[hsl(0,0%,63.9%)]">
+                            <Label htmlFor="email" className="text-white/70">
                                 Correo electrónico
                             </Label>
                             <Input
                                 id="email"
                                 type="email"
                                 placeholder="tu@email.com"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                                 {...register("email", { required: true })}
                             />
                             {errors.email && (
@@ -227,14 +229,14 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="password" className="text-[hsl(0,0%,63.9%)]">
+                            <Label htmlFor="password" className="text-white/70">
                                 Contraseña
                             </Label>
                             <Input
                                 id="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                                 {...register("password", { required: true })}
                             />
                             {errors.password && (
@@ -245,14 +247,14 @@ export default function RegisterPage() {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="confirmPassword" className="text-[hsl(0,0%,63.9%)]">
+                            <Label htmlFor="confirmPassword" className="text-white/70">
                                 Confirmar Contraseña
                             </Label>
                             <Input
                                 id="confirmPassword"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                                className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                                 {...register("confirmPassword", { required: true })}
                             />
                             {errors.confirmPassword && (
@@ -274,11 +276,11 @@ export default function RegisterPage() {
                         </Button>
                     </form>
 
-                    <p className="text-center text-sm text-[hsl(0,0%,45.1%)]">
+                    <p className="text-center text-sm text-white/50">
                         ¿Ya tienes cuenta?{" "}
                         <Link
                             href="/login"
-                            className="text-foreground underline-offset-4 hover:underline"
+                            className="text-white underline-offset-4 hover:underline"
                         >
                             Inicia Sesión
                         </Link>

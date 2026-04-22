@@ -1,9 +1,9 @@
-import type { Order, OrderStatus } from "@/types/orders";
+import type { OrderWithItems, OrderStatus } from "@/types/orders";
 import { ORDER_STATUS_LABELS } from "@/types/orders";
 import { OrderCard } from "./order-card";
 
 interface OrderKanbanProps {
-    orders: Order[];
+    orders: OrderWithItems[];
 }
 
 const KANBAN_COLUMNS: OrderStatus[] = ["pending", "processing", "completed", "cancelled"];

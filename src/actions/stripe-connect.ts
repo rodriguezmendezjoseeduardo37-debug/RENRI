@@ -11,6 +11,7 @@ import {
     exchangeConnectCode,
     getConnectAccountStatus,
 } from "@/lib/stripe";
+import { canPerformAction } from "@/lib/plan-limits";
 
 // Commission rates are defined in @/lib/constants (COMMISSION_RATES)
 // They live there so they can be imported from non-server files too.
@@ -55,6 +56,10 @@ export async function getStripeConnectStatus() {
 export async function generateConnectOnboardingUrl() {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
     if (!user) throw new Error("Unauthorized");
+
+    if (!canPerformAction(user.plan, "stripeConnect")) {
+        throw new Error("PLAN_LIMIT_REACHED: Stripe Connect requiere el plan PRO.");
+    }
 
     const requestHeaders = await headers();
     const host = requestHeaders.get("host") ?? "localhost:3000";

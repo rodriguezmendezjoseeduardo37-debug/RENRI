@@ -78,7 +78,7 @@ export default async function OrganizacionConfigPage() {
             <div className="p-6 border border-border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                        PORTAL PÚBLICO DE PACIENTES
+                        PORTAL PÚBLICO DE CLIENTES
                     </h2>
                     <a
                         href={`/portal/${tenant.slug}`}

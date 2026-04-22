@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Chrome, Loader2 } from "lucide-react";
+import { RenriMark } from "@/components/renri-mark";
 
 const ACCOUNT_TYPES = [
     { value: "servicios", label: "Servicios", description: "Inicio en citas y horarios" },
@@ -100,20 +101,21 @@ function LoginForm() {
     return (
         <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
             <CardHeader className="text-center space-y-2">
-                <div className="mx-auto mb-2">
+                <div className="mx-auto mb-2 flex flex-col items-center gap-3">
+                    <RenriMark size={48} theme="dark" />
                     <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
                         RENRI
                     </h1>
                 </div>
-                <CardTitle className="text-xl text-foreground">Iniciar Sesión</CardTitle>
-                <CardDescription className="text-[hsl(0,0%,63.9%)]">
+                <CardTitle className="text-xl text-white">Iniciar Sesión</CardTitle>
+                <CardDescription className="text-white/70">
                     Ingresa a tu cuenta para continuar
                 </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
                 <div className="space-y-2">
-                    <Label className="text-[hsl(0,0%,63.9%)]">Módulo</Label>
+                    <Label className="text-white/70">Módulo</Label>
                     <div className="grid grid-cols-3 gap-2">
                         {ACCOUNT_TYPES.map((type) => (
                             <button
@@ -124,8 +126,8 @@ function LoginForm() {
                                     setValue("accountType", type.value);
                                 }}
                                 className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
-                                    ? "border-white bg-white/5 text-foreground"
-                                    : "border-[hsl(0,0%,14.9%)] text-[hsl(0,0%,45.1%)] hover:border-[hsl(0,0%,25%)]"
+                                    ? "border-white bg-white/5 text-white"
+                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-white/25"
                                     }`}
                             >
                                 <div className="text-xs font-medium">{type.label}</div>
@@ -139,7 +141,7 @@ function LoginForm() {
 
                 <Button
                     variant="outline"
-                    className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-foreground hover:bg-[hsl(0,0%,14.9%)] h-11"
+                    className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
                     onClick={handleGoogleSignIn}
                     disabled={isGoogleLoading}
                 >
@@ -153,7 +155,7 @@ function LoginForm() {
 
                 <div className="relative">
                     <Separator className="bg-[hsl(0,0%,14.9%)]" />
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(0,0%,7%)] px-3 text-xs text-[hsl(0,0%,45.1%)]">
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(0,0%,7%)] px-3 text-xs text-white/50">
                         o con email
                     </span>
                 </div>
@@ -166,14 +168,14 @@ function LoginForm() {
                     )}
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-[hsl(0,0%,63.9%)]">
+                        <Label htmlFor="email" className="text-white/70">
                             Correo electrónico
                         </Label>
                         <Input
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -182,14 +184,14 @@ function LoginForm() {
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="password" className="text-[hsl(0,0%,63.9%)]">
+                        <Label htmlFor="password" className="text-white/70">
                             Contraseña
                         </Label>
                         <Input
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-foreground placeholder:text-[hsl(0,0%,35%)] focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -211,11 +213,11 @@ function LoginForm() {
                     </Button>
                 </form>
 
-                <p className="text-center text-sm text-[hsl(0,0%,45.1%)]">
+                <p className="text-center text-sm text-white/50">
                     ¿No tienes cuenta?{" "}
                     <Link
                         href="/register"
-                        className="text-foreground underline-offset-4 hover:underline"
+                        className="text-white underline-offset-4 hover:underline"
                     >
                         Regístrate
                     </Link>
@@ -231,7 +233,8 @@ export default function LoginPage() {
             <Suspense fallback={
                 <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
                     <CardHeader className="text-center space-y-2">
-                        <div className="mx-auto mb-2">
+                        <div className="mx-auto mb-2 flex flex-col items-center gap-3">
+                            <RenriMark size={48} theme="dark" />
                             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
                                 RENRI
                             </h1>

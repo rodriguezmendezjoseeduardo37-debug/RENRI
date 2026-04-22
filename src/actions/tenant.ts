@@ -7,6 +7,7 @@ import { requireAuth } from "@/lib/auth-helpers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { encrypt, isEncrypted } from "@/lib/crypto";
+import { getPlanLimits, canPerformAction } from "@/lib/plan-limits";
 
 const clinicalSettingsSchema = z.object({
     defaultDuration: z.number().int().min(5).max(480).optional(),
@@ -102,6 +103,19 @@ export async function updateTenantSettings(
     // Validate settings structure
     const schema = type === "clinical" ? clinicalSettingsSchema : billingSettingsSchema;
     const validated = schema.parse(data) as Record<string, unknown>;
+
+    const limits = getPlanLimits(user.plan);
+    
+    if (type === "clinical") {
+        if (Array.isArray(validated.services) && validated.services.length > limits.maxServices) {
+            throw new Error(`PLAN_LIMIT_REACHED: Límite de ${limits.maxServices} servicios alcanzado. Actualiza al plan PRO.`);
+        }
+        
+        if (validated.allowOnlineBooking && !canPerformAction(user.plan, "onlineBooking")) {
+            validated.allowOnlineBooking = false; // Override silently or throw error. Let's throw:
+            throw new Error("PLAN_LIMIT_REACHED: Reservas en línea requiere el plan PRO.");
+        }
+    }
 
     // Encrypt sensitive fields for billing settings
     if (type === "billing") {

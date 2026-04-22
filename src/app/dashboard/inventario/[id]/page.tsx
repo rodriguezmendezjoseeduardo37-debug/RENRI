@@ -50,10 +50,18 @@ export default async function ProductDetailPage({
                 VOLVER AL INVENTARIO
             </Link>
 
-            {/* Product name */}
-            <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
-                {product.name}
-            </h1>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    {product.name}
+                </h1>
+                <Link
+                    href={`/dashboard/inventario/${id}/editar`}
+                    className="inline-flex items-center justify-center px-6 py-3 text-[10px] font-bold tracking-[0.2em] text-foreground border border-border hover:border-foreground uppercase transition-colors"
+                >
+                    EDITAR PRODUCTO
+                </Link>
+            </div>
 
             {/* Two-column layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -65,7 +73,18 @@ export default async function ProductDetailPage({
                         </p>
                     )}
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-[1px] bg-popover">
+                    {product.imageUrl && (
+                        <div className="rounded-xl overflow-hidden border border-border bg-card">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img 
+                                src={product.imageUrl} 
+                                alt={product.name} 
+                                className="w-full h-64 md:h-80 object-cover" 
+                            />
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-[1px] bg-popover border border-border">
                         {[
                             {
                                 label: "SKU",
@@ -108,6 +127,8 @@ export default async function ProductDetailPage({
                                 </span>
                             </div>
                         ))}
+                        {/* Fill the empty 6th slot on md screens to prevent exposing the gap background */}
+                        <div className="bg-background hidden md:block"></div>
                     </div>
 
                     {/* Stock Movement History */}

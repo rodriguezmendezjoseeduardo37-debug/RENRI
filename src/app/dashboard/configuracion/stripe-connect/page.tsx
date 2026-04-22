@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getStripeConnectStatus } from "@/actions/stripe-connect";
 import { StripeConnectUI } from "./connect-ui";
+import { UpgradeGate } from "@/components/upgrade-gate";
 
 export default async function StripeConnectPage({
     searchParams,
@@ -52,7 +53,9 @@ export default async function StripeConnectPage({
                 </div>
             )}
 
-            <StripeConnectUI status={connectStatus} />
+            <UpgradeGate feature="stripeConnect">
+                <StripeConnectUI status={connectStatus} />
+            </UpgradeGate>
 
             {/* Commission info */}
             <div className="border border-border bg-background p-6 space-y-4">

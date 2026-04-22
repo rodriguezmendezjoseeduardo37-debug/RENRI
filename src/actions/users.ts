@@ -2,8 +2,9 @@
 
 import { db } from "@/db";
 import { users, profiles } from "@/db/schema/users";
-import { eq } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
+import { getPlanLimits } from "@/lib/plan-limits";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -105,7 +106,23 @@ export async function createQuickClient(data: {
     phone?: string;
     tenantId: string;
 }) {
-    await requireClientManager(data.tenantId);
+    const manager = await requireClientManager(data.tenantId);
+
+    const limits = getPlanLimits(manager.plan);
+    const [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(users)
+        .where(
+            and(
+                eq(users.tenantId, data.tenantId),
+                eq(users.role, "CLIENT")
+            )
+        );
+
+    const currentClients = Number(countResult?.count ?? 0);
+    if (currentClients >= limits.maxClients) {
+        throw new Error("PLAN_LIMIT_REACHED: Límite de clientes alcanzado. Actualiza al plan PRO.");
+    }
 
     const newUserId = crypto.randomUUID();
 

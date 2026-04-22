@@ -48,6 +48,7 @@ export default {
                     ((user as Record<string, unknown>).enabledModules as
                         | BusinessModule[]
                         | undefined) ?? [];
+                token.plan = ((user as Record<string, unknown>).plan as string | undefined) ?? "starter";
             }
             if (trigger === "update" && session) {
                 token = { ...token, ...session };
@@ -67,6 +68,7 @@ export default {
                 token.accountType as "servicios" | "pyme" | "cliente" | undefined,
                 token.role as "SUPER_ADMIN" | "OWNER" | "ADMIN" | "STAFF" | "CLIENT" | undefined
             );
+            session.user.plan = (token.plan as "starter" | "pro" | "business" | "enterprise") ?? "starter";
             return session;
         },
     },

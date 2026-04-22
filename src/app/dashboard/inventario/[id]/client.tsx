@@ -66,15 +66,17 @@ export function ProductDetailClient({
                     disabled={isToggling}
                     className="relative inline-flex items-center cursor-pointer flex-shrink-0 disabled:opacity-50"
                 >
-                    <div className={`w-11 h-6 rounded-full transition-colors flex items-center justify-center ${isPublic ? "bg-white" : "bg-popover"}`}>
+                    <div className={`w-11 h-6 rounded-full transition-colors relative ${isPublic ? "bg-foreground" : "bg-popover border border-border"}`}>
                         {isToggling ? (
-                            <Loader2 className={`w-3.5 h-3.5 animate-spin ${isPublic ? "text-primary-foreground" : "text-muted-foreground"}`} />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Loader2 className={`w-3.5 h-3.5 animate-spin ${isPublic ? "text-background" : "text-muted-foreground"}`} />
+                            </div>
                         ) : (
                             <div 
-                                className={`absolute top-[2px] transition-all bg-secondary rounded-full h-5 w-5 ${
+                                className={`absolute top-[2px] h-5 w-5 rounded-full transition-all duration-200 ${
                                     isPublic 
-                                    ? "bg-background translate-x-[10px] left-auto right-[2px]" 
-                                    : "bg-secondary translate-x-0 left-[2px]"
+                                    ? "left-[22px] bg-background" 
+                                    : "left-[2px] bg-foreground/50"
                                 }`} 
                             />
                         )}

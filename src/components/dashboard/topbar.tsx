@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { NAV_SERVICIOS, NAV_PYME } from "./sidebar";
 import { NAV_USUARIO } from "./cliente-sidebar";
 import type { BusinessModule } from "@/lib/business";
+import { RenriMark } from "@/components/renri-mark";
 
 interface TopbarProps {
     tenantName: string;
@@ -69,9 +70,12 @@ export function Topbar({
                     {/* Slide-out Menu */}
                     <div className="relative flex w-64 max-w-[80vw] flex-col bg-background border-r border-border shadow-2xl overflow-y-auto">
                         <div className="flex items-center justify-between px-4 h-16 border-b border-border">
-                            <span className="text-foreground font-bold tracking-[0.3em] text-sm uppercase">
-                                RENRI
-                            </span>
+                            <div className="flex items-center gap-2.5">
+                                <RenriMark size={24} activeModule={accountType} />
+                                <span className="text-foreground font-bold tracking-[0.3em] text-sm uppercase">
+                                    RENRI
+                                </span>
+                            </div>
                             <button 
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="text-muted-foreground hover:text-foreground"

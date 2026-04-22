@@ -5,7 +5,7 @@ const PLANS = [
     {
         name: "STARTER",
         price: "Gratis",
-        desc: "PARA PROFESIONISTAS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
+        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
         features: [
             "Gestión de hasta 50 pacientes",
             "Portal público básico",
@@ -17,8 +17,8 @@ const PLANS = [
     },
     {
         name: "PRO",
-        price: ["$499", "MXN / mes"],
-        desc: "PARA CLÍNICAS Y PROFESIONISTAS ESTABLECIDOS CON VOLUMEN.",
+        price: ["$210", "MXN / mes"],
+        desc: "PARA SERVICIOS Y NEGOCIOS ESTABLECIDOS CON VOLUMEN.",
         features: [
             "Pacientes ilimitados",
             "Portal público personalizado",

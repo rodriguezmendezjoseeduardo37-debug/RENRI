@@ -55,7 +55,7 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
             setIsLoading(true);
             const nextTurn = await callNextTurn(tenantId);
             if (!nextTurn) {
-                toast("No hay pacientes en espera", { description: "La cola está vacía." });
+                toast("No hay clientes en espera", { description: "La cola está vacía." });
             }
         } catch {
             toast.error("Error al llamar el turno");

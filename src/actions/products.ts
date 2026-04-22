@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { createProductSchema } from "@/types/products";
 import type { CreateProductInput, UpdateProductInput } from "@/types/products";
 import { escapeLikePattern } from "@/lib/time-utils";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 // ─── Get Products ────────────────────────────────────────
 export async function getProducts(
@@ -67,6 +68,17 @@ export async function createProduct(data: CreateProductInput) {
     const user = await requireAuth();
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== data.tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    const limits = getPlanLimits(user.plan);
+    const [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(products)
+        .where(eq(products.tenantId, data.tenantId));
+
+    const currentProducts = Number(countResult?.count ?? 0);
+    if (currentProducts >= limits.maxProducts) {
+        throw new Error("PLAN_LIMIT_REACHED: Límite de productos alcanzado. Actualiza al plan PRO.");
+    }
 
     // Runtime validation
     const validated = createProductSchema.parse(data);

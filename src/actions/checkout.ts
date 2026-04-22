@@ -3,7 +3,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { orders, orderItems, payments, products } from "@/db/schema";
+import { orders, orderItems, payments, products, users, tenants, clientBusinesses } from "@/db/schema";
 import { TAX_RATE, COMMISSION_RATES } from "@/lib/constants";
 import { createPaymentIntent as stripeCreatePaymentIntent } from "@/lib/stripe";
 import { getTenantStripeAccountId } from "@/actions/stripe-connect";
@@ -61,12 +61,87 @@ export async function createProductCheckout(input: CheckoutInput) {
 
     // Create order, order items, payment, and deduct stock — all in a transaction
     const result = await db.transaction(async (tx) => {
+        // 0. Resolve/Create Client and Link
+        let client;
+
+        if (clientId) {
+            client = await tx.query.users.findFirst({
+                where: eq(users.id, clientId),
+            });
+        }
+
+        if (!client) {
+            client = await tx.query.users.findFirst({
+                where: and(eq(users.email, clientEmail), eq(users.tenantId, businessId)),
+            });
+        }
+
+        if (!client) {
+            const [standaloneClient] = await tx
+                .select({ user: users })
+                .from(users)
+                .innerJoin(tenants, eq(users.tenantId, tenants.id))
+                .where(
+                    and(
+                        eq(users.email, clientEmail),
+                        eq(users.role, "CLIENT"),
+                        eq(tenants.accountType, "cliente")
+                    )
+                )
+                .limit(1);
+
+            if (standaloneClient?.user) {
+                await tx
+                    .update(users)
+                    .set({
+                        linkedBusinessId: businessId,
+                        name: clientName,
+                        updatedAt: new Date(),
+                    })
+                    .where(eq(users.id, standaloneClient.user.id));
+
+                await tx
+                    .insert(clientBusinesses)
+                    .values({
+                        clientId: standaloneClient.user.id,
+                        tenantId: businessId,
+                    })
+                    .onConflictDoNothing();
+
+                client = {
+                    ...standaloneClient.user,
+                    linkedBusinessId: businessId,
+                    name: clientName,
+                };
+            } else {
+                const [newClient] = await tx
+                    .insert(users)
+                    .values({
+                        tenantId: businessId,
+                        email: clientEmail,
+                        name: clientName,
+                        role: "CLIENT",
+                    })
+                    .returning();
+
+                await tx
+                    .insert(clientBusinesses)
+                    .values({
+                        clientId: newClient.id,
+                        tenantId: businessId,
+                    })
+                    .onConflictDoNothing();
+
+                client = newClient;
+            }
+        }
+
         // 1. Create order
         const [newOrder] = await tx
             .insert(orders)
             .values({
                 tenantId: businessId,
-                clientId: clientId ?? null,
+                clientId: client.id,
                 clientName,
                 clientEmail,
                 notes: `Compra: ${product.name} x${quantity}${product.passFeeToClient ? " (Comisión Stripe incluída)" : ""}`,

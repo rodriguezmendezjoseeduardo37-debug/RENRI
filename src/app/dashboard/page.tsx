@@ -12,6 +12,7 @@ import {
     type BusinessModule,
 } from "@/lib/business";
 import { getCurrentUser } from "@/lib/auth-helpers";
+import { PlanUsageMeters } from "@/components/dashboard/plan-usage-meters";
 
 function getGreeting(): string {
     const hour = new Date().getHours();
@@ -63,6 +64,8 @@ export default async function DashboardPage() {
                     RESUMEN DEL DIA · {formatDate()}
                 </p>
             </div>
+
+            <PlanUsageMeters tenantId={user.tenantId} plan={user.plan} />
 
             <BusinessDashboard
                 businessId={user.businessId ?? user.tenantId}

@@ -35,16 +35,27 @@ export async function getOrders(
         conditions.push(lte(orders.createdAt, new Date(filters.dateTo)));
     }
 
-    const rows = await db
-        .select()
-        .from(orders)
-        .where(and(...conditions))
-        .orderBy(desc(orders.createdAt));
+    const rows = await db.query.orders.findMany({
+        where: and(...conditions),
+        orderBy: [desc(orders.createdAt)],
+        with: {
+            items: {
+                with: {
+                    product: true,
+                },
+            },
+        },
+    });
 
     return rows.map((row) => ({
         ...row,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString(),
+        items: row.items.map(item => ({
+            ...item,
+            productName: item.product?.name,
+            productImage: item.product?.imageUrl,
+        }))
     }));
 }
 

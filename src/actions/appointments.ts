@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { appointments, schedules, users } from "@/db/schema";
-import { and, eq, sql, asc, ilike, or } from "drizzle-orm";
+import { and, eq, sql, asc, ilike, or, gte, lte } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth-helpers";
 import { CreateAppointmentSchema } from "@/lib/schemas";
 import type {
@@ -13,6 +13,7 @@ import type {
     Appointment,
 } from "@/types/appointments";
 import { timeToMinutes, minutesToTime } from "@/lib/time-utils";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 // ─── Helpers ───────────────────────────────────────────────
 function mapRow(row: {
@@ -54,7 +55,7 @@ export async function getAppointments(
     if (!user) throw new Error("Unauthorized");
     if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
 
-    const { date, staffId, status, search, page = 1, limit = 20 } = filters;
+    const { date, dateFrom, dateTo, staffId, status, search, page = 1, limit = 20 } = filters;
 
     const conditions = [eq(appointments.tenantId, tenantId)];
 
@@ -63,6 +64,8 @@ export async function getAppointments(
     }
 
     if (date) conditions.push(eq(appointments.date, date));
+    if (dateFrom) conditions.push(gte(appointments.date, dateFrom));
+    if (dateTo) conditions.push(lte(appointments.date, dateTo));
     if (staffId) conditions.push(eq(appointments.staffId, staffId));
     if (status) conditions.push(eq(appointments.status, status));
 
@@ -154,6 +157,27 @@ export async function createAppointment(data: CreateAppointmentInput) {
         notes: data.notes,
         amount: data.amount,
     });
+
+    const limits = getPlanLimits(user.plan);
+    
+    // Check monthly limit
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    
+    const [countResult] = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(appointments)
+        .where(
+            and(
+                eq(appointments.tenantId, data.tenantId),
+                sql`${appointments.createdAt} >= ${startOfMonth}::timestamp`
+            )
+        );
+
+    const currentMonthlyAppointments = Number(countResult?.count ?? 0);
+    if (currentMonthlyAppointments >= limits.maxAppointmentsPerMonth) {
+        throw new Error("PLAN_LIMIT_REACHED: Límite de citas por mes alcanzado. Actualiza al plan PRO.");
+    }
 
     const [row] = await db
         .insert(appointments)

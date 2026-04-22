@@ -8,9 +8,9 @@ const PLANS = [
     {
         name: "STARTER",
         price: "Gratis",
-        desc: "PARA PROFESIONISTAS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
+        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
         features: [
-            "Gestión de hasta 50 pacientes",
+            "Gestión de hasta 50 clientes",
             "Portal público básico",
             "Agendamiento manual",
             "Soporte por correo electrónico",
@@ -19,10 +19,10 @@ const PLANS = [
     },
     {
         name: "PRO",
-        price: "$499 MXN / mes",
-        desc: "PARA CLÍNICAS Y PROFESIONISTAS ESTABLECIDOS CON VOLUMEN.",
+        price: "$210 MXN / mes",
+        desc: "PARA SERVICIOS Y NEGOCIOS ESTABLECIDOS CON VOLUMEN.",
         features: [
-            "Pacientes ilimitados",
+            "Clientes ilimitados",
             "Portal público personalizado",
             "Agendamiento en línea automático",
             "Recordatorios por WhatsApp",
@@ -34,12 +34,28 @@ const PLANS = [
     },
 ];
 
-export default async function PlanesPage() {
+import { SessionUpdater } from "@/components/dashboard/session-updater";
+
+export default async function PlanesPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ success?: string; canceled?: string }>;
+}) {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
+    const params = await searchParams;
+    const isSuccess = params.success === "true";
+    const isCanceled = params.canceled === "true";
+    
+    // Leer el plan actual de la sesión del usuario
+    const sessionPlan = user.plan ? user.plan.toUpperCase() : "STARTER";
+    // Si viene de stripe con success, mostramos PRO optimísticamente hasta que el JWT expire/actualice
+    const currentPlan = isSuccess ? "PRO" : sessionPlan;
+
     return (
         <div className="max-w-5xl mx-auto space-y-10">
+            {isSuccess && <SessionUpdater planToUpdate="pro" />}
             <div className="border-b border-border pb-6">
                 <Link
                     href="/dashboard/configuracion"
@@ -56,46 +72,75 @@ export default async function PlanesPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
-                {PLANS.map((plan) => (
-                    <div
-                        key={plan.name}
-                        className={`border ${plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative`}
-                    >
-                        {plan.recommended && (
-                            <div className="absolute top-0 right-0 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
-                                RECOMENDADO
-                            </div>
-                        )}
-                        <h2 className="text-[18px] font-bold tracking-[0.3em] uppercase text-foreground mb-2">
-                            {plan.name}
-                        </h2>
-                        <p className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase mb-8">
-                            {plan.desc}
-                        </p>
-
-                        <div className="flex items-end gap-2 mb-10">
-                            <span className="text-3xl font-bold font-mono text-foreground tracking-tighter">
-                                {plan.price}
-                            </span>
-                        </div>
-
-                        <ul className="space-y-4 mb-12 flex-grow">
-                            {plan.features.map((feature) => (
-                                <li key={feature} className="flex items-start gap-3">
-                                    <Check className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
-                                    <span className="text-xs text-muted-foreground leading-relaxed uppercase tracking-wide">{feature}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <PlansActions
-                            planName={plan.name}
-                            buttonText={plan.buttonText}
-                            recommended={!!plan.recommended}
-                        />
+            {isSuccess && (
+                <div className="bg-[#3A7D44]/10 border border-[#3A7D44]/30 text-[#3A7D44] px-4 py-3 rounded-lg flex items-center gap-3">
+                    <Check className="w-5 h-5" />
+                    <div>
+                        <p className="text-sm font-bold tracking-wide">¡PAGO REALIZADO CON ÉXITO!</p>
+                        <p className="text-xs opacity-80 mt-0.5">Tu cuenta ha sido actualizada al plan PRO. Ya tienes acceso a todas las funcionalidades.</p>
                     </div>
-                ))}
+                </div>
+            )}
+
+            {isCanceled && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg flex items-center gap-3">
+                    <div>
+                        <p className="text-sm font-bold tracking-wide">PAGO CANCELADO</p>
+                        <p className="text-xs opacity-80 mt-0.5">El proceso de pago fue interrumpido. No se te ha cobrado nada.</p>
+                    </div>
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+                {PLANS.map((plan) => {
+                    const isCurrentPlan = plan.name === currentPlan;
+
+                    return (
+                        <div
+                            key={plan.name}
+                            className={`border ${isCurrentPlan ? "border-[#3A7D44]" : plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative transition-colors`}
+                        >
+                            {plan.recommended && !isCurrentPlan && (
+                                <div className="absolute top-0 right-0 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
+                                    RECOMENDADO
+                                </div>
+                            )}
+                            {isCurrentPlan && (
+                                <div className="absolute top-0 right-0 bg-[#3A7D44] text-white rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
+                                    PLAN ACTUAL
+                                </div>
+                            )}
+                            <h2 className="text-[18px] font-bold tracking-[0.3em] uppercase text-foreground mb-2">
+                                {plan.name}
+                            </h2>
+                            <p className="text-[10px] font-medium tracking-[0.1em] text-muted-foreground uppercase mb-8">
+                                {plan.desc}
+                            </p>
+
+                            <div className="flex items-end gap-2 mb-10">
+                                <span className="text-3xl font-bold font-mono text-foreground tracking-tighter">
+                                    {plan.price}
+                                </span>
+                            </div>
+
+                            <ul className="space-y-4 mb-12 flex-grow">
+                                {plan.features.map((feature) => (
+                                    <li key={feature} className="flex items-start gap-3">
+                                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isCurrentPlan ? "text-[#3A7D44]" : "text-foreground"}`} />
+                                        <span className="text-xs text-muted-foreground leading-relaxed uppercase tracking-wide">{feature}</span>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <PlansActions
+                                planName={plan.name}
+                                buttonText={plan.buttonText}
+                                recommended={!!plan.recommended}
+                                isCurrentPlan={isCurrentPlan}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

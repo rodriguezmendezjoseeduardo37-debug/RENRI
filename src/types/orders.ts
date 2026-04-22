@@ -21,6 +21,7 @@ export interface OrderItem {
     orderId: string;
     productId: string;
     productName?: string | null;
+    productImage?: string | null;
     quantity: number;
     unitPrice: string;
     subtotal: string;
