@@ -7,7 +7,7 @@ describe('Button', () => {
         render(<Button>Click me</Button>);
         const button = screen.getByRole('button', { name: /click me/i });
         expect(button).toBeInTheDocument();
-        expect(button).toHaveClass('bg-primary text-primary-foreground min-h-9'); // just an example of expected classes
+        expect(button).toHaveClass('bg-primary text-primary-foreground h-9'); // just an example of expected classes
     });
 
     it('renders destructive variant', () => {

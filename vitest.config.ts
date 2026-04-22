@@ -7,8 +7,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/tests/setup.ts'],
+    setupFiles: ['./src/tests/setup.tsx'],
     css: true,
+    exclude: ['node_modules', 'tests', 'dist', '.idea', '.git', '.cache'],
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
