@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 
 // Inicializa Stripe solo si hay una key, sino usa un valor vacío para evitar crashear en build.
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-    apiVersion: "2024-12-18.acacia", // Current stripe api version or default
+    apiVersion: "2026-02-25.clover", // Current stripe api version or default
 });
 
 export async function createCheckoutSession(planName: string) {

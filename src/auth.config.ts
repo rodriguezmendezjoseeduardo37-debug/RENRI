@@ -48,7 +48,7 @@ export default {
                     ((user as Record<string, unknown>).enabledModules as
                         | BusinessModule[]
                         | undefined) ?? [];
-                token.plan = ((user as Record<string, unknown>).plan as string | undefined) ?? "starter";
+                token.plan = ((user as Record<string, unknown>).plan as "starter" | "pro" | "business" | "enterprise" | undefined) ?? "starter";
             }
             if (trigger === "update" && session) {
                 token = { ...token, ...session };

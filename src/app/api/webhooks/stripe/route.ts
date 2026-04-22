@@ -5,22 +5,13 @@ import { tenants, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-    apiVersion: "2024-12-18.acacia",
+    apiVersion: "2026-02-25.clover",
 });
 
 export async function POST(req: Request) {
     const body = await req.text();
-    const headersList = headers();
-    // Stripe SDK requires the signature as a string, handle Next.js headers API correctly
-    let signature = headersList.get("Stripe-Signature");
-    
-    // In Next.js 15, headers() is async but in < 15 it's sync. To be safe across versions, 
-    // if headersList is a Promise, we await it (if not, it works normally).
-    if (typeof headersList.get !== 'function') {
-        // Handle async headers in newer Next.js if needed
-        const resolvedHeaders = await headers();
-        signature = resolvedHeaders.get("Stripe-Signature");
-    }
+    const headersList = await headers();
+    const signature = headersList.get("Stripe-Signature");
 
     if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) {
         return new Response("Missing signature or webhook secret", { status: 400 });
