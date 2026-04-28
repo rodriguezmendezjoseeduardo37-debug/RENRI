@@ -146,7 +146,7 @@ async function completePayment(
                                 { paymentId: payment.id, transferGroup: payment.id }
                             );
                         } catch (e) {
-                            logger.logAction("completePayment", "transfer_error", { paymentId: payment.id }, e as Error);
+                            logger.logAction("completePayment", "error", { paymentId: payment.id }, e as Error);
                             // We don't fail the whole transaction if transfer fails, 
                             // but we should log it for manual retry.
                         }
