@@ -1,5 +1,6 @@
 import type { Product } from "@/types/products";
 import Link from "next/link";
+import Image from "next/image";
 import { Package, AlertTriangle } from "lucide-react";
 
 interface ProductCardProps {
@@ -20,17 +21,18 @@ export function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/dashboard/inventario/${product.id}`}
-            className="border border-border bg-card p-5 flex flex-col justify-between group hover:border-foreground transition-all min-h-[220px]"
+            className="border border-border rounded-2xl shadow-sm bg-card p-5 flex flex-col justify-between group hover:border-[#bec092] hover:shadow-md transition-all min-h-[220px]"
         >
             {/* Image or placeholder */}
             <div className="flex items-center justify-between mb-4">
                 {product.imageUrl ? (
-                    <div className="w-12 h-12 bg-popover overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                    <div className="relative w-12 h-12 bg-popover overflow-hidden rounded-md">
+                        <Image
                             src={product.imageUrl}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="48px"
+                            className="object-cover"
                         />
                     </div>
                 ) : (

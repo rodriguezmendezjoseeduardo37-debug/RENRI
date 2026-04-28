@@ -28,7 +28,11 @@ export default {
         signIn: "/login",
         error: "/auth/error",
     },
-    session: { strategy: "jwt" },
+    session: { 
+        strategy: "jwt",
+        maxAge: 30 * 60, // 30 mins 
+        updateAge: 5 * 60, // Update JWT every 5 mins
+    },
     callbacks: {
         async jwt({ token, user, trigger, session }) {
             if (user) {

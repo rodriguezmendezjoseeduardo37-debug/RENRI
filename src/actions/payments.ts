@@ -16,6 +16,7 @@ import {
 import {
     createPaymentIntent as stripeCreatePaymentIntent,
     refundPayment as stripeRefundPayment,
+    createTransfer as stripeCreateTransfer,
 } from "@/lib/stripe";
 import {
     getTenantStripeAccountId,
@@ -117,6 +118,47 @@ async function completePayment(
                         eq(appointments.tenantId, payment.tenantId)
                     )
                 );
+
+            // ─── Trigger Transfers (Separate Transfers) ───
+            // If the payment used a transfer_group, we handle the distribution here.
+            // (In a real app, this might be better in a background job or webhook)
+            if (payment.status !== "completed") { // Only for first-time completion
+                 const appointment = await tx.query.appointments.findFirst({
+                    where: eq(appointments.id, payment.referenceId),
+                });
+
+                if (appointment) {
+                    const tenant = await tx.query.tenants.findFirst({
+                        where: eq(tenants.id, payment.tenantId),
+                    });
+
+                    if (tenant?.stripeConnectAccountId) {
+                        // Transfer to Business
+                        // For now, we transfer the full amount minus platform fee
+                        const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
+                        const transferAmount = Number(payment.amount) - platformFee;
+
+                        if (transferAmount > 0) {
+                            try {
+                                await stripeCreateTransfer(
+                                    transferAmount,
+                                    tenant.stripeConnectAccountId,
+                                    `Payment for appointment ${appointment.id}`,
+                                    { paymentId: payment.id, transferGroup: payment.id }
+                                );
+                            } catch (e) {
+                                logger.logAction("completePayment", "transfer_error", { paymentId: payment.id }, e as Error);
+                                // We don't fail the whole transaction if transfer fails, 
+                                // but we should log it for manual retry.
+                            }
+                        }
+                    }
+
+                    // TODO: Logic for Staff transfer if they have an account
+                    // const staff = await tx.query.users.findFirst({ where: eq(users.id, appointment.staffId) });
+                    // if (staff?.stripeConnectAccountId) { ... }
+                }
+            }
         }
 
         return updatedPayment;
@@ -324,6 +366,25 @@ export async function processPayment(paymentId: string) {
             throw new ActionError("Payment already completed", "ALREADY_COMPLETED");
         }
 
+        // ─── Redistribution Logic ───
+        // 1. Get tenant details (commission rate and account id)
+        const tenant = await db.query.tenants.findFirst({
+            where: eq(tenants.id, payment.tenantId),
+            columns: {
+                stripeConnectAccountId: true,
+                commissionRate: true,
+            },
+        });
+
+        const connectAccountId = tenant?.stripeConnectAccountId;
+        const tenantCommissionRate = Number(tenant?.commissionRate || 0);
+        
+        // 2. Calculate platform fee
+        // We use the higher of the platform constant or the tenant-specific rate
+        const baseRate = COMMISSION_RATES[payment.referenceType as keyof typeof COMMISSION_RATES] ?? 0;
+        const effectiveRate = Math.max(baseRate, tenantCommissionRate);
+        const applicationFeeAmount = Math.round(Number(payment.amount) * 100 * effectiveRate);
+
         const intent = await stripeCreatePaymentIntent(
             Number(payment.amount),
             payment.currency,
@@ -333,10 +394,10 @@ export async function processPayment(paymentId: string) {
                 referenceId: payment.referenceId,
                 referenceType: payment.referenceType,
             },
-            // Route to the business's connected Stripe account
-            await getTenantStripeAccountId(payment.tenantId),
-            // Commission: 0% for appointments, 0.5% for orders
-            Math.round(Number(payment.amount) * 100 * (COMMISSION_RATES[payment.referenceType as keyof typeof COMMISSION_RATES] ?? 0))
+            connectAccountId,
+            applicationFeeAmount,
+            // Use paymentId as transfer group for appointments to allow multi-party splits later
+            payment.referenceType === "appointment" ? payment.id : undefined
         );
 
         const [updated] = await db

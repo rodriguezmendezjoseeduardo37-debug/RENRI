@@ -23,7 +23,7 @@ import { RenriMark } from "@/components/renri-mark";
 
 const ACCOUNT_TYPES = [
     { value: "servicios", label: "Servicios", description: "Inicio en citas y horarios" },
-    { value: "pyme", label: "PYME", description: "Inicio en inventario y ventas" },
+    { value: "pyme", label: "NEGOCIO", description: "Inicio en inventario y ventas" },
     { value: "cliente", label: "Cliente", description: "Agendar citas y comprar" },
 ] as const;
 
@@ -125,9 +125,9 @@ function LoginForm() {
                                     setSelectedType(type.value);
                                     setValue("accountType", type.value);
                                 }}
-                                className={`rounded-lg border p-3 text-left transition-all ${selectedType === type.value
-                                    ? "border-white bg-white/5 text-white"
-                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-white/25"
+                                className={`rounded-xl border p-3 text-left transition-all ${selectedType === type.value
+                                    ? "border-[#bec092] bg-[#bec092]/10 text-white"
+                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-[#bec092]/30"
                                     }`}
                             >
                                 <div className="text-xs font-medium">{type.label}</div>
@@ -175,7 +175,7 @@ function LoginForm() {
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#bec092]/50 h-11"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -191,7 +191,7 @@ function LoginForm() {
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-white/30 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#bec092]/50 h-11"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -201,11 +201,11 @@ function LoginForm() {
                         )}
                     </div>
 
-                    <Button
-                        type="submit"
-                        className="w-full h-11 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-white/90 font-medium"
-                        disabled={isSubmitting}
-                    >
+                        <Button
+                            type="submit"
+                            className="w-full h-11 bg-[#bec092] text-[#0a0a0a] rounded-xl shadow-sm hover:opacity-90 font-bold"
+                            disabled={isSubmitting}
+                        >
                         {isSubmitting ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}

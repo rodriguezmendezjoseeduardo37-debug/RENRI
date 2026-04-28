@@ -33,7 +33,7 @@ export default function TerminosPage() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-4">1. Aceptación de los Términos</h2>
               <p>
-                Al acceder y utilizar <strong>RENRI</strong> ("la Plataforma", "Nosotros"), usted ("el Usuario", "el Profesional", "la PyME") acepta estar legalmente sujeto a estos Términos y Condiciones, los cuales cumplen con las disposiciones de la legislación aplicable en los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección al Consumidor (PROFECO).
+                Al acceder y utilizar <strong>RENRI</strong> ("la Plataforma", "Nosotros"), usted ("el Usuario", "el Profesional", "el Negocio") acepta estar legalmente sujeto a estos Términos y Condiciones, los cuales cumplen con las disposiciones de la legislación aplicable en los Estados Unidos Mexicanos, incluyendo la Ley Federal de Protección al Consumidor (PROFECO).
               </p>
               <p className="mt-2">
                 Si no está de acuerdo con estos términos, le solicitamos que no utilice nuestros servicios.
@@ -43,7 +43,7 @@ export default function TerminosPage() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-4">2. Descripción del Servicio</h2>
               <p>
-                RENRI proporciona herramientas digitales (Software as a Service) para la gestión de citas, inventario, reportes y cobros dirigidas a profesionistas independientes y Pequeñas y Medianas Empresas (PyMEs) en México. RENRI actúa exclusivamente como proveedor de infraestructura tecnológica y no como un prestador directo de los servicios profesionales que los usuarios ofrezcan a sus respectivos clientes finales.
+                RENRI proporciona herramientas digitales (Software as a Service) para la gestión de citas, inventario, reportes y cobros dirigidas a profesionistas independientes y negocios en México. RENRI actúa exclusivamente como proveedor de infraestructura tecnológica y no como un prestador directo de los servicios profesionales que los usuarios ofrezcan a sus respectivos clientes finales.
               </p>
             </div>
 

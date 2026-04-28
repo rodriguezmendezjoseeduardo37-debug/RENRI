@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RENRI - Análisis Visual del Proyecto</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .diagram-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease-out;
+            overflow: auto;
+            max-height: 800px;
+        }
+
+        .diagram-card:nth-child(1) { animation-delay: 0.1s; }
+        .diagram-card:nth-child(2) { animation-delay: 0.2s; }
+        .diagram-card:nth-child(3) { animation-delay: 0.3s; }
+        .diagram-card:nth-child(4) { animation-delay: 0.4s; }
+        .diagram-card:nth-child(5) { animation-delay: 0.5s; }
+        .diagram-card:nth-child(6) { animation-delay: 0.6s; }
+        .diagram-card:nth-child(7) { animation-delay: 0.7s; }
+        .diagram-card:nth-child(8) { animation-delay: 0.8s; }
+
+        .diagram-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .diagram-desc {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .legend {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .legend h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .legend-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid rgba(255,255,255,0.5);
+        }
+
+        .legend-item strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            margin-top: 60px;
+            opacity: 0.8;
+        }
+
+        .scroll-hint {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.95em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            
+            .diagram-card {
+                max-height: 600px;
+            }
+
+            .legend-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Estilos para Mermaid */
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 RENRI - Análisis Visual Completo</h1>
+            <p class="tagline">Plataforma de Gestión para Profesionales y PYMEs</p>
+        </header>
+
+        <div class="legend">
+            <h2>📋 Leyenda de Colores</h2>
+            <div class="legend-grid">
+                <div class="legend-item">
+                    <strong style="color: #4f46e5;">🟣 Púrpura</strong>
+                    Marca, inicio, elementos principales
+                </div>
+                <div class="legend-item">
+                    <strong style="color: #10b981;">🟢 Verde</strong>
+                    Dashboard empresario, acciones positivas
+                </div>
+                <div class="legend-item">
+                    <strong style="color: #3b82f6;">🔵 Azul</strong>
+                    Portal cliente, información
+                </div>
+                <div class="legend-item">
+                    <strong style="color: #f59e0b;">🟠 Naranja</strong>
+                    Sistema público, exploración
+                </div>
+                <div class="legend-item">
+                    <strong style="color: #ef4444;">🔴 Rojo</strong>
+                    Errores, cancelaciones
+                </div>
+                <div class="legend-item">
+                    <strong style="color: #8b5cf6;">🟣 Morado</strong>
+                    Integraciones técnicas
+                </div>
+            </div>
+        </div>
+
+        <div class="diagram-grid">
+            <!-- Diagrama 1 -->
+            <div class="diagram-card">
+                <div class="diagram-title">1. Flujo General de Navegación</div>
+                <div class="diagram-desc">
+                    Entrada del usuario a la plataforma, autenticación y redirección según rol.
+                </div>
+                <div class="mermaid">
+graph TD
+    START["🌐 Inicio: renri.vercel.app"] -->|Usuario No Logueado| HOME["Home / Landing"]
+    START -->|Acceso Directo| PUBLIC{{"Rutas Públicas"}}
+    
+    HOME -->|Click Ingresar| LOGIN["📝 Login"]
+    LOGIN -->|Crear Cuenta| REGISTER["✍️ Register"]
+    LOGIN -->|Éxito| REDIRECT{{"¿Rol?"}}
+    REGISTER -->|Éxito| REDIRECT
+    
+    REDIRECT -->|Empresario| DASHBOARD["🏢 Dashboard Principal"]
+    REDIRECT -->|Cliente| CLIENTE_PORTAL["👥 Portal Cliente"]
+    
+    PUBLIC -->|Pricing| PRICING["💰 Pricing"]
+    PUBLIC -->|Legal| LEGAL["📋 Privacidad / Términos"]
+    PUBLIC -->|Reservas| PORTAL_TURNO["🗓️ Portal Público Turnos"]
+    
+    style START fill:#4f46e5,stroke:#000,color:#fff
+    style DASHBOARD fill:#10b981,stroke:#000,color:#fff
+    style CLIENTE_PORTAL fill:#3b82f6,stroke:#000,color:#fff
+    style PORTAL_TURNO fill:#f59e0b,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 2 -->
+            <div class="diagram-card">
+                <div class="diagram-title">2. Dashboard del Empresario</div>
+                <div class="diagram-desc">
+                    Todas las opciones disponibles en el panel principal de gestión empresarial.
+                </div>
+                <div class="mermaid">
+graph TD
+    DB["🏢 Dashboard Principal"]
+    
+    DB -->|Gestión de Agenda| CITAS["📅 Citas"]
+    DB -->|Datos Clientes| CLIENTES["👤 Clientes"]
+    DB -->|Cobros| PAGOS["💳 Pagos"]
+    DB -->|Órdenes| PEDIDOS["📦 Pedidos"]
+    DB -->|Servicios Ofrecidos| SERVICIOS["🛠️ Servicios"]
+    DB -->|Horarios Trabajo| HORARIOS["⏰ Horarios"]
+    DB -->|Cambios/Turnos| TURNOS["🔄 Turnos"]
+    DB -->|Stock| INVENTARIO["📊 Inventario"]
+    DB -->|Panel Admin| ADMIN["⚙️ Admin"]
+    DB -->|Preferencias| CONFIG["⚙️ Configuración"]
+    
+    CITAS -->|Ver detalles| CITA_DETAIL["Ver cita específica"]
+    CLIENTES -->|Gestionar| CLIENTE_DETAIL["Info cliente"]
+    PAGOS -->|Integración| STRIPE["🔗 Stripe Connect"]
+    PAGOS -->|Reportes| PAYOUT["💰 Payouts"]
+    SERVICIOS -->|CRUD| SERV_DETAIL["Crear/Editar"]
+    
+    style DB fill:#10b981,stroke:#000,color:#fff,stroke-width:3px
+    style CITAS fill:#3b82f6,stroke:#000,color:#fff
+    style CLIENTES fill:#3b82f6,stroke:#000,color:#fff
+    style PAGOS fill:#ec4899,stroke:#000,color:#fff
+    style CONFIG fill:#6b7280,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 3 -->
+            <div class="diagram-card">
+                <div class="diagram-title">3. Portal del Cliente</div>
+                <div class="diagram-desc">
+                    Experiencia completa del cliente: citas, pagos, perfil y más.
+                </div>
+                <div class="mermaid">
+graph TD
+    CLIENTE["👥 Portal Cliente"]
+    
+    CLIENTE -->|Ver mis citas| MIS_CITAS["📅 Mis Citas"]
+    CLIENTE -->|Historial pagos| MIS_PAGOS["💳 Mis Pagos"]
+    CLIENTE -->|Mi perfil| PERFIL["👤 Mi Perfil"]
+    CLIENTE -->|Disponibilidad| DISP["📆 Disponibilidad"]
+    CLIENTE -->|Conectar negocio| ENLAZAR["🔗 Enlazar Negocio"]
+    
+    MIS_CITAS -->|Agendar| BOOK["Reservar Cita"]
+    MIS_CITAS -->|Cancelar| CANCEL["Cancelar Cita"]
+    MIS_PAGOS -->|Ver detalle| PAY_DETAIL["Detalles Transacción"]
+    PERFIL -->|Editar| EDIT_PROF["Actualizar Datos"]
+    ENLAZAR -->|Vincular| LINK_BUS["Conectar Negocio"]
+    
+    style CLIENTE fill:#3b82f6,stroke:#000,color:#fff,stroke-width:3px
+    style MIS_CITAS fill:#10b981,stroke:#000,color:#fff
+    style MIS_PAGOS fill:#ec4899,stroke:#000,color:#fff
+    style PERFIL fill:#f59e0b,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 4 -->
+            <div class="diagram-card">
+                <div class="diagram-title">4. Sistema Público de Reservas</div>
+                <div class="diagram-desc">
+                    Flujo completo para que clientes no autenticados realicen reservas.
+                </div>
+                <div class="mermaid">
+graph TD
+    PUBLIC_PORTAL["🗓️ Portal Público de Turnos"]
+    
+    PUBLIC_PORTAL -->|Acceder| TENANT["Seleccionar Negocio"]
+    TENANT -->|Ver disponibilidad| SLOTS["📆 Horarios Disponibles"]
+    SLOTS -->|Reservar| BOOKING["Agendar Cita"]
+    BOOKING -->|Completar datos| FORM["Formulario Cita"]
+    FORM -->|Confirmar| PAYMENT["💳 Pago Opcional"]
+    PAYMENT -->|Éxito| CONFIRM["✅ Confirmación"]
+    
+    CONFIRM -->|Desistir| CANCEL_TURNO["Cancelar Turno"]
+    CANCEL_TURNO -->|Ir a| CANCEL_PAGE["Página Cancelación"]
+    CANCEL_PAGE -->|Confirmar| CANCELLED["❌ Turno Cancelado"]
+    
+    style PUBLIC_PORTAL fill:#f59e0b,stroke:#000,color:#fff,stroke-width:3px
+    style BOOKING fill:#10b981,stroke:#000,color:#fff
+    style CONFIRM fill:#10b981,stroke:#000,color:#fff
+    style CANCELLED fill:#ef4444,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 5 -->
+            <div class="diagram-card">
+                <div class="diagram-title">5. Arquitectura Técnica e Integraciones</div>
+                <div class="diagram-desc">
+                    Stack completo: tecnologías, integraciones con servicios externos.
+                </div>
+                <div class="mermaid">
+graph TD
+    RENRI["🏢 RENRI Platform"]
+    
+    RENRI -->|Sistema de Pagos| STRIPE["🔌 Stripe Integration"]
+    STRIPE -->|Connect| STRIPE_CONNECT["Stripe Connect Account"]
+    STRIPE -->|Checkout| CHECKOUT["Checkout Page"]
+    STRIPE_CONNECT -->|Payouts| PAYOUTS["Retirar Ganancias"]
+    CHECKOUT -->|Procesar| PAYMENT["Procesar Pago"]
+    PAYMENT -->|Webhook| UPDATE_ORDER["Actualizar Estado Orden"]
+    
+    RENRI -->|Autenticación| AUTH["🔐 NextAuth"]
+    AUTH -->|Provider| GITHUB["GitHub"]
+    AUTH -->|Provider| GOOGLE["Google"]
+    AUTH -->|Roles| ROLES["Roles: Empresario | Cliente"]
+    
+    RENRI -->|Base de Datos| DB["🗄️ Supabase"]
+    DB -->|RLS| RLS_POL["Row Level Security Policies"]
+    DB -->|Migrations| DRIZZLE["Drizzle ORM"]
+    
+    RENRI -->|Frontend| NEXT["Next.js 15"]
+    NEXT -->|Styling| TAILWIND["Tailwind CSS"]
+    NEXT -->|UI Components| RADIX["Radix UI"]
+    
+    style RENRI fill:#4f46e5,stroke:#000,color:#fff,stroke-width:3px
+    style STRIPE fill:#635bff,stroke:#000,color:#fff
+    style AUTH fill:#6b7280,stroke:#000,color:#fff
+    style DB fill:#3b82f6,stroke:#000,color:#fff
+    style NEXT fill:#000,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 6 -->
+            <div class="diagram-card">
+                <div class="diagram-title">6. Flujo Completo del Usuario</div>
+                <div class="diagram-desc">
+                    Jornada completa: desde el inicio hasta la confirmación de transacción.
+                </div>
+                <div class="mermaid">
+graph TD
+    A["🌐 Usuario Llega a renri.vercel.app"]
+    A -->|Sin Login| B["📄 Página de Inicio<br/>Landing Page"]
+    A -->|Acceso Directo| C["🔑 Autenticación<br/>Login/Register"]
+    
+    B -->|Click Precios| B1["💰 Página Pricing"]
+    B -->|Click Info Legal| B2["📋 Privacidad/Términos"]
+    B -->|Click Reservar| B3["🗓️ Portal Público"]
+    B -->|Click Ingresar| C
+    
+    C -->|Éxito Login| D{{¿Qué Rol?}}
+    D -->|Empresario/Profesional| E["🏢 DASHBOARD"]
+    D -->|Cliente| F["👥 PORTAL CLIENTE"]
+    
+    E -->|Gestiona su Negocio| E1["📅 Citas | 👤 Clientes<br/>💳 Pagos | 📦 Pedidos"]
+    E1 -->|Configura| E2["⏰ Horarios | 🛠️ Servicios<br/>📊 Inventario"]
+    E2 -->|Recibe Pagos| E3["💰 Stripe Connect Payout"]
+    
+    B3 -->|Cliente del Negocio| B4["🗓️ Selecciona Horario"]
+    B4 -->|Completa Formulario| B5["📝 Datos Cita"]
+    B5 -->|Paga| B6["💳 Checkout"]
+    B6 -->|Confirmación| B7["✅ Cita Agendada"]
+    
+    F -->|Gestiona su Experiencia| F1["📅 Mis Citas | 💳 Mis Pagos<br/>👤 Perfil"]
+    F1 -->|Puede| F2["Agendar Nuevas Citas<br/>Cancelar Citas<br/>Ver Historial"]
+    
+    style A fill:#4f46e5,stroke:#000,color:#fff,stroke-width:2px
+    style E fill:#10b981,stroke:#000,color:#fff
+    style F fill:#3b82f6,stroke:#000,color:#fff
+    style B3 fill:#f59e0b,stroke:#000,color:#fff
+    style B7 fill:#10b981,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 7 -->
+            <div class="diagram-card">
+                <div class="diagram-title">7. Estructura General del Proyecto</div>
+                <div class="diagram-desc">
+                    Visión de 30,000 pies del proyecto completo con todas sus áreas.
+                </div>
+                <div class="mermaid">
+graph TB
+    CORE["🎯 RENRI - Plataforma de Gestión para Profesionales"]
+    
+    CORE --> PUBLIC["📢 Área Pública"]
+    CORE --> BUSINESS["🏢 Área Empresario"]
+    CORE --> CLIENT["👥 Área Cliente"]
+    CORE --> INTEGRATION["🔗 Integraciones"]
+    
+    PUBLIC -->|Sin autenticación| HOME["Inicio / Landing"]
+    PUBLIC -->|Info| PRICING["Precios"]
+    PUBLIC -->|Legal| LEGAL["Términos y Privacidad"]
+    PUBLIC -->|Reservas| BOOKING_PUBLIC["Sistema Turnos Público"]
+    
+    BUSINESS -->|Login Requerido| DASH_MAIN["Dashboard Principal"]
+    DASH_MAIN -->|Operaciones| OPS["Citas, Clientes<br/>Pedidos, Servicios"]
+    DASH_MAIN -->|Configuración| CONFIG["Horarios, Inventario<br/>Admin, Configuración"]
+    DASH_MAIN -->|Finanzas| FIN["Pagos, Payouts<br/>Reportes"]
+    
+    CLIENT -->|Login Requerido| PORTAL["Mi Portal"]
+    PORTAL -->|Actividad| ACT["Mis Citas, Mis Pagos"]
+    PORTAL -->|Gestión| MANAGE["Perfil, Disponibilidad<br/>Enlazar Negocio"]
+    
+    INTEGRATION -->|Autenticación| NEXTAUTH["NextAuth<br/>GitHub/Google"]
+    INTEGRATION -->|Base de Datos| SUPABASE["Supabase + RLS<br/>Seguridad"]
+    INTEGRATION -->|Pagos| STRIPE["Stripe + Connect<br/>Checkout & Payouts"]
+    INTEGRATION -->|Frontend| STACK["Next.js 15<br/>Tailwind + Radix UI"]
+    
+    style CORE fill:#4f46e5,stroke:#000,color:#fff,stroke-width:3px
+    style PUBLIC fill:#f59e0b,stroke:#000,color:#fff
+    style BUSINESS fill:#10b981,stroke:#000,color:#fff
+    style CLIENT fill:#3b82f6,stroke:#000,color:#fff
+    style INTEGRATION fill:#8b5cf6,stroke:#000,color:#fff
+                </div>
+            </div>
+
+            <!-- Diagrama 8 -->
+            <div class="diagram-card">
+                <div class="diagram-title">8. Flujo de Datos: Empresario ↔ Clientes</div>
+                <div class="diagram-desc">
+                    Cómo se conectan y sincronizan datos entre empresarios y sus clientes a través de Stripe.
+                </div>
+                <div class="mermaid">
+graph LR
+    subgraph EMPRESARIO["🏢 EMPRESARIO/PROFESIONAL"]
+        D["Dashboard"]
+        D -->|Crea| SVC["✏️ Servicios"]
+        D -->|Define| HOR["⏰ Horarios"]
+        D -->|Configura| PREC["💰 Precios"]
+        D -->|Gestiona| CITAS_E["📅 Citas"]
+    end
+    
+    subgraph PUBLICO["🗓️ SISTEMA PÚBLICO"]
+        PORT["Portal Turnos<br/>Público"]
+        PORT -->|Lee| SVC
+        PORT -->|Lee| HOR
+        PORT -->|Lee| PREC
+        PORT -->|Crea| NUEVA_CITA["Nueva Cita"]
+    end
+    
+    subgraph CLIENTE["👥 CLIENTE"]
+        C["Mi Portal"]
+        C -->|Ve| MIS_CITAS["Mi Cita"]
+        MIS_CITAS -->|Puede| CANCEL["Cancelar"]
+        C -->|Ve| PAGO["💳 Mi Pago"]
+    end
+    
+    NUEVA_CITA -->|Se vincula a| CITAS_E
+    CITAS_E -->|Se refleja en| MIS_CITAS
+    PREC -->|Genera| PAGO
+    
+    PAGO -->|Pago a| STRIPE["💳 Stripe<br/>Connect"]
+    STRIPE -->|Deposita| EMPRESARIO
+    
+    style EMPRESARIO fill:#10b981,stroke:#000,color:#fff,stroke-width:2px
+    style PUBLICO fill:#f59e0b,stroke:#000,color:#fff,stroke-width:2px
+    style CLIENTE fill:#3b82f6,stroke:#000,color:#fff,stroke-width:2px
+    style STRIPE fill:#635bff,stroke:#000,color:#fff
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-hint">
+            ↓ Desplázate para ver todos los diagramas ↓
+        </div>
+
+        <footer>
+            <p>🚀 RENRI - Gestión para Profesionistas | Plataforma Completa</p>
+            <p>Análisis Visual - Abril 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+        mermaid.contentLoaded();
+    </script>
+</body>
+</html>

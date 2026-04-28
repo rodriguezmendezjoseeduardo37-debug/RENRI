@@ -34,10 +34,10 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
     }
 
     return (
-        <div className="p-6 border border-border bg-card">
+        <div className="p-6 border border-border bg-card rounded-2xl">
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 border border-border flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 border border-border flex items-center justify-center flex-shrink-0 rounded-xl">
                         <ShoppingBag className="w-4 h-4 text-foreground" />
                     </div>
                     <div>
@@ -64,7 +64,7 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
                         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                     ) : (
                         <div
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? "bg-white" : "bg-popover"
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? "bg-[#bec092]" : "bg-popover"
                                 }`}
                         >
                             <span
@@ -80,7 +80,7 @@ export function PublicSalesToggle({ tenantId, initialEnabled }: PublicSalesToggl
 
             {enabled && (
                 <div className="mt-4 pt-4 border-t border-border">
-                    <p className="text-[10px] font-bold tracking-[0.2em] text-green-400 uppercase">
+                    <p className="text-[10px] font-bold tracking-[0.2em] text-[#bec092] uppercase">
                         ● TIENDA PÚBLICA ACTIVA
                     </p>
                     <p className="text-[10px] text-muted-foreground mt-1">

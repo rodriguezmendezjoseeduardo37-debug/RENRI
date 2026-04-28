@@ -65,7 +65,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
     };
 
     const inputClass =
-        "w-full bg-card border border-border text-foreground text-sm px-4 py-3 placeholder:text-foreground focus:outline-none focus:border-white transition-colors";
+        "w-full bg-card border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-foreground focus:outline-none focus:border-[#bec092] transition-colors";
     const labelClass =
         "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
@@ -90,7 +90,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
             {/* Public Slug */}
             <div>
                 <label className={labelClass}>ENLACE DEL PORTAL PÚBLICO (SLUG)</label>
-                <div className="flex bg-card border border-border focus-within:border-white transition-colors">
+                <div className="flex bg-card border border-border rounded-xl overflow-hidden focus-within:border-[#bec092] transition-colors">
                     <span className="text-muted-foreground text-sm px-4 py-3 border-r border-border bg-card font-mono select-none">
                         {hostUrl.replace(/^https?:\/\//, "")}/portal/
                     </span>
@@ -192,7 +192,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                 <button
                     type="submit"
                     disabled={isLoading || !name.trim() || !slug.trim()}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR CAMBIOS"}

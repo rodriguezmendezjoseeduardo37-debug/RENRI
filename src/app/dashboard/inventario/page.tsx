@@ -53,7 +53,7 @@ export default async function InventarioPage({
                 </div>
                 <Link
                     href="/dashboard/inventario/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PRODUCTO
@@ -62,16 +62,16 @@ export default async function InventarioPage({
 
             {/* Low stock alert */}
             {lowStockProducts.length > 0 && (
-                <div className="flex items-center gap-3 px-5 py-4 bg-card border-l-2 border-white">
-                    <AlertTriangle className="w-4 h-4 text-foreground flex-shrink-0" />
-                    <span className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
+                <div className="flex items-center gap-3 px-5 py-4 bg-card border-l-4 border-[#bec092] rounded-r-xl">
+                    <AlertTriangle className="w-4 h-4 text-[#bec092] flex-shrink-0" />
+                    <span className="text-[11px] font-bold tracking-[0.2em] text-[#bec092] uppercase">
                         ⚠ {lowStockProducts.length} PRODUCTO{lowStockProducts.length !== 1 ? "S" : ""} CON STOCK BAJO
                     </span>
                 </div>
             )}
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-popover">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-border rounded-2xl overflow-hidden border border-border">
                 {[
                     {
                         label: "TOTAL PRODUCTOS",
@@ -97,16 +97,16 @@ export default async function InventarioPage({
                 ].map((stat) => (
                     <div
                         key={stat.label}
-                        className="bg-background p-5 flex flex-col"
+                        className="bg-card p-5 flex flex-col"
                     >
                         <div className="flex items-center gap-2 mb-3">
-                            <stat.icon className="w-3.5 h-3.5 text-muted-foreground" />
+                            <stat.icon className={`w-3.5 h-3.5 ${stat.highlight ? "text-[#bec092]" : "text-muted-foreground"}`} />
                             <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                                 {stat.label}
                             </span>
                         </div>
                         <span
-                            className={`text-xl font-bold font-mono ${stat.highlight ? "text-red-500" : "text-foreground"
+                            className={`text-xl font-bold font-mono ${stat.highlight ? "text-[#bec092]" : "text-foreground"
                                 }`}
                         >
                             {stat.value}
@@ -120,14 +120,14 @@ export default async function InventarioPage({
 
             {/* Content */}
             {productsList.length === 0 ? (
-                <div className="border border-border p-16 text-center">
+                <div className="border border-border p-16 text-center rounded-2xl">
                     <Package className="w-8 h-8 text-foreground mx-auto mb-4" />
                     <p className="text-sm font-mono text-muted-foreground">
                         No se encontraron productos.
                     </p>
                     <Link
                         href="/dashboard/inventario/nuevo"
-                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                     >
                         CREAR PRIMER PRODUCTO
                     </Link>
@@ -139,7 +139,7 @@ export default async function InventarioPage({
                     ))}
                 </div>
             ) : (
-                <div className="border border-border overflow-x-auto bg-background">
+                <div className="border border-border rounded-2xl overflow-hidden bg-background">
                     <table className="w-full text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>

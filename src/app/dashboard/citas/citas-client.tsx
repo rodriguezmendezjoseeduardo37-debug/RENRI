@@ -137,10 +137,16 @@ export function CitasClient({
         }
     };
 
-    const handleCancel = async (id: string) => {
-        if (!confirm("¿Seguro que deseas cancelar esta cita?")) return;
+    const [confirmingCancelId, setConfirmingCancelId] = useState<string | null>(null);
+
+    const handleCancelRequest = (id: string) => {
+        setConfirmingCancelId(id);
+    };
+
+    const handleCancelConfirm = async (id: string) => {
         try {
             setIsPending(true);
+            setConfirmingCancelId(null);
             await cancelAppointment(id, tenantId);
             toast.success("Cita cancelada");
             router.refresh();
@@ -151,16 +157,25 @@ export function CitasClient({
         }
     };
 
+    const handleCancelDismiss = () => {
+        setConfirmingCancelId(null);
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-end justify-between">
-                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)]">
-                    CITAS
-                </h1>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                        CITAS
+                    </h1>
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                        GESTIONA LAS RESERVAS Y CITAS
+                    </p>
+                </div>
                 <button
                     onClick={() => setFormOpen(true)}
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVA CITA
@@ -232,7 +247,10 @@ export function CitasClient({
                                 key={apt.id}
                                 appointment={apt}
                                 onConfirm={() => handleConfirm(apt.id)}
-                                onCancel={() => handleCancel(apt.id)}
+                                onCancel={() => handleCancelRequest(apt.id)}
+                                confirmingCancel={confirmingCancelId === apt.id}
+                                onCancelConfirm={() => handleCancelConfirm(apt.id)}
+                                onCancelDismiss={handleCancelDismiss}
                             />
                         ))
                     ) : (

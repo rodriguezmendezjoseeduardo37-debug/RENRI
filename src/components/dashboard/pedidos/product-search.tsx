@@ -28,21 +28,21 @@ export function ProductSearch({ products, onAddItem }: ProductSearchProps) {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Buscar por nombre o SKU..."
-                    className="w-full bg-background border border-border text-foreground text-sm pl-10 pr-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-background border border-border text-foreground text-sm pl-10 pr-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#bec092] transition-colors"
                 />
             </div>
 
-            <div className="space-y-[1px] max-h-[50vh] overflow-y-auto">
+            <div className="space-y-[1px] max-h-[50vh] overflow-y-auto border border-border rounded-2xl overflow-hidden">
                 {filtered.length > 0 ? (
                     filtered.map((product) => (
                         <button
                             key={product.id}
                             onClick={() => onAddItem(product.id, product)}
                             disabled={product.stock <= 0}
-                            className="w-full flex items-center justify-between p-3 bg-card hover:bg-popover text-left transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
+                            className="w-full flex items-center justify-between p-3 bg-card hover:bg-[#bec092]/5 text-left transition-colors disabled:opacity-30 disabled:cursor-not-allowed group border-b border-border last:border-b-0"
                         >
                             <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-8 h-8 bg-popover flex items-center justify-center flex-shrink-0">
+                                <div className="w-8 h-8 bg-popover flex items-center justify-center flex-shrink-0 rounded-lg">
                                     <Package className="w-3.5 h-3.5 text-foreground" />
                                 </div>
                                 <div className="min-w-0">

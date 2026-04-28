@@ -38,6 +38,8 @@ export const users = pgTable(
         passwordHash: varchar("password_hash", { length: 255 }),
         role: userRoleEnum("role").default("CLIENT").notNull(),
         isVerified: boolean("is_verified").default(false).notNull(),
+        stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
+        stripeConnectEnabled: boolean("stripe_connect_enabled").default(false).notNull(),
         createdAt: timestamp("created_at", { withTimezone: true })
             .defaultNow()
             .notNull(),

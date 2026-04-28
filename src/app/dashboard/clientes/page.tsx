@@ -37,15 +37,15 @@ export default async function ClientesPage() {
                     </p>
                 </div>
                 <div>
-                    <div className="px-4 py-3 bg-card border border-border text-[10px] font-mono tracking-[0.2em] text-muted-foreground uppercase">
-                        TOTAL: <span className="text-foreground font-bold ml-2">{clientes.length}</span>
+                    <div className="px-4 py-3 bg-card border border-border text-[10px] font-mono tracking-[0.2em] text-muted-foreground uppercase rounded-xl">
+                        TOTAL: <span className="text-[#bec092] font-bold ml-2">{clientes.length}</span>
                     </div>
                 </div>
             </div>
 
             {/* Table */}
             <div>
-                <div className="border border-border overflow-x-auto bg-background">
+                <div className="border border-border rounded-2xl overflow-hidden bg-background">
                     <table className="w-full text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>
@@ -81,7 +81,7 @@ export default async function ClientesPage() {
                                             {format(cliente.createdAt, "dd MMM yyyy", { locale: es }).toUpperCase()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-[9px] tracking-[0.2em] uppercase font-bold border ${cliente.isVerified ? "border-border text-muted-foreground" : "border-transparent bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80"}`}>
+                                            <span className={`px-2 py-1 text-[9px] tracking-[0.2em] uppercase font-bold border ${cliente.isVerified ? "border-border text-muted-foreground rounded-lg" : "border-transparent bg-[#bec092] text-black rounded-lg shadow-sm"}`}>
                                                 {cliente.isVerified ? "VERIFICADO" : "PENDIENTE"}
                                             </span>
                                         </td>
@@ -92,7 +92,7 @@ export default async function ClientesPage() {
                                                         <form action={verifyClient.bind(null, cliente.id)}>
                                                             <button
                                                                 type="submit"
-                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-white text-primary-foreground bg-white hover:bg-gray-200 transition-colors"
+                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-lg shadow-sm hover:opacity-90 hover:shadow transition-all"
                                                             >
                                                                 ACEPTAR
                                                             </button>

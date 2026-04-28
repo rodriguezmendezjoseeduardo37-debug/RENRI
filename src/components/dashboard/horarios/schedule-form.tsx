@@ -112,7 +112,7 @@ export function ScheduleFormModal({
                                 <select
                                     {...form.register("dayOfWeek", { valueAsNumber: true })}
                                     disabled={!!initialData}
-                                    className="w-full bg-card border border-border p-3 text-sm text-foreground focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
+                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
                                 >
                                     {DAYS.map((day, i) => (
                                         <option key={i} value={i}>{day.toUpperCase()}</option>
@@ -134,7 +134,7 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("startTime")}
-                                    className="w-full bg-card border border-border p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
                                 />
                                 {form.formState.errors.startTime && (
                                     <p className="text-[11px] text-red-500">{form.formState.errors.startTime.message}</p>
@@ -148,7 +148,7 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("endTime")}
-                                    className="w-full bg-card border border-border p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
                                 />
                                 {form.formState.errors.endTime && (
                                     <p className="text-[11px] text-red-500">{form.formState.errors.endTime.message}</p>
@@ -164,7 +164,7 @@ export function ScheduleFormModal({
                                 </label>
                                 <select
                                     {...form.register("slotDurationMinutes", { valueAsNumber: true })}
-                                    className="w-full bg-card border border-border p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
+                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
                                 >
                                     <option value={15}>15 min</option>
                                     <option value={20}>20 min</option>

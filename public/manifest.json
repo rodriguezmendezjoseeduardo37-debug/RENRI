@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "RENRI - Sistema de Gestión de Servicios",
+  "short_name": "RENRI",
+  "description": "Plataforma moderna para gestionar negocios de servicios, citas y pagos",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0066ff",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/icons/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard - Vista Escritorio"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard - Vista Móvil"
+    },
+    {
+      "src": "/screenshots/mobile-2.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Citas - Vista Móvil"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mis Citas",
+      "short_name": "Citas",
+      "description": "Ver y gestionar mis citas",
+      "url": "/dashboard/citas",
+      "icons": [
+        {
+          "src": "/icons/shortcut-citas.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Crear Cita",
+      "short_name": "Nueva Cita",
+      "description": "Agendar una nueva cita",
+      "url": "/dashboard/citas/nueva",
+      "icons": [
+        {
+          "src": "/icons/shortcut-nueva-cita.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Pagos",
+      "short_name": "Pagos",
+      "description": "Ver historial de pagos",
+      "url": "/dashboard/pagos",
+      "icons": [
+        {
+          "src": "/icons/shortcut-pagos.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

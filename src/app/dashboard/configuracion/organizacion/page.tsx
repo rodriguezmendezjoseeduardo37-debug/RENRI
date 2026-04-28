@@ -46,7 +46,7 @@ export default async function OrganizacionConfigPage() {
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border hover:text-foreground hover:border-foreground transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#bec092] transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -75,7 +75,7 @@ export default async function OrganizacionConfigPage() {
             />
 
             {/* Public Link */}
-            <div className="p-6 border border-border bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-6 border border-border bg-card rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-[11px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                         PORTAL PÚBLICO DE CLIENTES
@@ -93,7 +93,7 @@ export default async function OrganizacionConfigPage() {
                     href={`/portal/${tenant.slug}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center justify-center w-12 h-12 border border-border hover:bg-white hover:text-primary-foreground transition-colors"
+                    className="flex items-center justify-center w-12 h-12 border border-border rounded-xl hover:bg-[#bec092] hover:text-black hover:border-[#bec092] transition-colors"
                 >
                     <ExternalLink className="w-4 h-4" />
                 </a>

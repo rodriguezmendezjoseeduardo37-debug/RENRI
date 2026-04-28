@@ -11,7 +11,7 @@ import {
 import { processOrderPayment } from "@/actions/checkout";
 import { toast } from "sonner";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 
 function CheckoutForm() {
@@ -55,7 +55,7 @@ function CheckoutForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="border border-border bg-background p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="border border-[#bec092]/20 bg-background p-6 space-y-6 rounded-2xl">
             <h3 className="text-[14px] font-bold tracking-[0.2em] text-foreground uppercase border-b border-border pb-4 mb-6">
                 PAGAR CON TARJETA
             </h3>
@@ -71,11 +71,11 @@ function CheckoutForm() {
                     onChange={(e) => setCardholderName(e.target.value)}
                     required
                     placeholder="Como aparece en la tarjeta"
-                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-white focus:outline-none transition-colors"
+                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#bec092] focus:outline-none transition-colors rounded-xl"
                 />
             </div>
 
-            <div className="bg-background p-4 border border-border">
+            <div className="bg-background p-4 border border-border rounded-xl">
                 <PaymentElement
                     options={{
                         layout: "tabs",
@@ -86,13 +86,14 @@ function CheckoutForm() {
             <button
                 type="submit"
                 disabled={isLoading || !stripe || !elements}
-                className="w-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl shadow-sm hover:shadow bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-all disabled:opacity-50"
+                className="w-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl bg-[#bec092] text-black hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {isLoading ? "PROCESANDO..." : "PAGAR AHORA"}
             </button>
 
             <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground tracking-[0.1em]">
-                <ShieldCheck className="w-3.5 h-3.5" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#bec092]" />
                 PAGO SEGURO PROCESADO POR STRIPE
             </div>
         </form>
@@ -132,7 +133,7 @@ export function CheckoutClient({ paymentId, businessId }: CheckoutClientProps) {
 
     if (!clientSecret) {
         return (
-            <div className="border border-border bg-background p-8 flex flex-col items-center justify-center space-y-6">
+            <div className="border border-[#bec092]/20 bg-background p-8 flex flex-col items-center justify-center space-y-6 rounded-2xl">
                 <div className="text-center space-y-2">
                     <h3 className="text-sm font-bold tracking-[0.2em] text-foreground uppercase">
                         PAGO EN LÍNEA
@@ -145,14 +146,15 @@ export function CheckoutClient({ paymentId, businessId }: CheckoutClientProps) {
                 <button
                     onClick={initializePayment}
                     disabled={isInitializing}
-                    className="px-8 py-4 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors disabled:opacity-50"
+                    className="px-8 py-4 bg-[#bec092] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
                 >
+                    {isInitializing && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isInitializing ? "CONECTANDO STRIPE..." : "PROCEDER AL PAGO"}
                 </button>
 
                 <Link
                     href={`/negocio/${businessId}/tienda`}
-                    className="inline-flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.15em] hover:text-foreground transition-colors uppercase"
+                    className="inline-flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.15em] hover:text-[#bec092] transition-colors uppercase"
                 >
                     <ArrowLeft className="w-3 h-3" />
                     VOLVER A LA TIENDA
@@ -167,9 +169,9 @@ export function CheckoutClient({ paymentId, businessId }: CheckoutClientProps) {
             fontFamily: "monospace",
             colorBackground: isDark ? "#0A0A0A" : "#FFFFFF",
             colorText: isDark ? "#ffffff" : "#0A0A0A",
-            colorPrimary: isDark ? "#ffffff" : "#0A0A0A",
+            colorPrimary: "#bec092",
             colorDanger: "#DC2626",
-            borderRadius: "4px",
+            borderRadius: "12px",
         },
     };
 

@@ -144,7 +144,7 @@ export default async function PagosPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         {isPyme ? "VENTAS & INGRESOS" : "PAGOS & INGRESOS"}
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
@@ -180,7 +180,7 @@ export default async function PagosPage() {
                     </h2>
                 </div>
 
-                <div className="border border-border overflow-x-auto bg-background">
+                <div className="border border-border rounded-2xl overflow-hidden bg-background">
                     <table className="w-full text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>

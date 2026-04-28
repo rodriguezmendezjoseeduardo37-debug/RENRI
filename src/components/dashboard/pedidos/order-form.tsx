@@ -113,7 +113,7 @@ export function OrderForm({ products }: OrderFormProps) {
     };
 
     const inputClass =
-        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#bec092] transition-colors";
     const labelClass =
         "text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
@@ -156,7 +156,7 @@ export function OrderForm({ products }: OrderFormProps) {
                 </div>
 
                 {/* Cart items */}
-                <div className="border border-border bg-background">
+                <div className="border border-border bg-background rounded-2xl overflow-hidden">
                     {items.length === 0 ? (
                         <div className="p-8 text-center">
                             <p className="text-[10px] text-muted-foreground font-mono">
@@ -183,7 +183,7 @@ export function OrderForm({ products }: OrderFormProps) {
                                         <button
                                             onClick={() => updateQuantity(item.productId, -1)}
                                             aria-label="Disminuir cantidad"
-                                            className="w-6 h-6 flex items-center justify-center bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                                            className="w-6 h-6 flex items-center justify-center bg-[#bec092] text-black rounded-lg hover:opacity-80 transition-all"
                                         >
                                             <Minus className="w-3 h-3" />
                                         </button>
@@ -193,7 +193,7 @@ export function OrderForm({ products }: OrderFormProps) {
                                         <button
                                             onClick={() => updateQuantity(item.productId, 1)}
                                             aria-label="Aumentar cantidad"
-                                            className="w-6 h-6 flex items-center justify-center bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                                            className="w-6 h-6 flex items-center justify-center bg-[#bec092] text-black rounded-lg hover:opacity-80 transition-all"
                                         >
                                             <Plus className="w-3 h-3" />
                                         </button>
@@ -217,7 +217,7 @@ export function OrderForm({ products }: OrderFormProps) {
 
                 {/* Totals */}
                 {items.length > 0 && (
-                    <div className="border border-border bg-card p-4 space-y-2">
+                    <div className="border border-border bg-card p-4 space-y-2 rounded-2xl">
                         <div className="flex justify-between text-xs text-muted-foreground">
                             <span>SUBTOTAL</span>
                             <span className="font-mono">${subtotal.toFixed(2)}</span>
@@ -251,7 +251,7 @@ export function OrderForm({ products }: OrderFormProps) {
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting || items.length === 0}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                     {isSubmitting && (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

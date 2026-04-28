@@ -49,12 +49,12 @@ export function TimeSlotPicker({
                             }
                             onSelect(slot.startTime);
                         }}
-                        className={`flex items-center justify-center gap-2 py-4 px-3 border transition-all duration-300 relative group overflow-hidden ${
+                        className={`flex items-center justify-center gap-2 py-4 px-3 border transition-all duration-300 relative group overflow-hidden rounded-xl ${
                             !slot.available
                                 ? "border-border bg-muted/50 text-muted-foreground/50 cursor-not-allowed"
                                 : isSelected
-                                    ? "border-transparent bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 font-bold scale-[1.02]"
-                                    : "border-border bg-card text-foreground hover:border-foreground/30 hover:bg-muted active:scale-95"
+                                    ? "border-[#bec092] bg-[#bec092] text-black font-bold scale-[1.02]"
+                                    : "border-border bg-card text-foreground hover:border-[#bec092]/30 hover:bg-muted active:scale-95"
                         }`}
                         title={!slot.available ? "Horario Ocupado" : "Seleccionar Horario"}
                     >

@@ -31,7 +31,7 @@ export default async function DisponibilidadPage() {
                     <Link
                         href={`/portal/${availability.tenantSlug}/agendar`}
                         target="_blank"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all"
                     >
                         AGENDAR AHORA
                     </Link>

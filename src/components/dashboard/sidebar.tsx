@@ -66,7 +66,7 @@ export const MODE_OPTIONS = [
     },
     {
         value: "pyme",
-        label: "PYME",
+        label: "NEGOCIO",
         icon: Store,
         description: "Inventario · Pedidos · Ventas",
     },
@@ -78,7 +78,6 @@ export function Sidebar({
     enabledModules = [],
     userRole,
 }: SidebarProps) {
-    const [expanded, setExpanded] = useState(false);
     const [showModeSwitcher, setShowModeSwitcher] = useState(false);
     const [isPending, startTransition] = useTransition();
     const pathname = usePathname();
@@ -109,30 +108,20 @@ export function Sidebar({
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 ease-in-out hidden md:flex flex-col"
-            style={{ width: expanded ? 240 : 64 }}
-            onMouseEnter={() => setExpanded(true)}
-            onMouseLeave={() => {
-                setExpanded(false);
-                setShowModeSwitcher(false);
-            }}
+            className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 ease-in-out hidden md:flex flex-col w-60"
         >
             <div className="flex h-16 items-center border-b border-border px-4 gap-3">
-                {expanded ? (
-                    <>
-                        <RenriMark size={28} className="flex-shrink-0" activeModule={accountType} />
-                        <span
-                            className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden"
-                        >
-                            RENRI
-                            <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
-                                {currentMode.label}
-                            </span>
+                <>
+                    <RenriMark size={28} className="flex-shrink-0" activeModule={accountType} />
+                    <span
+                        className="text-foreground font-bold tracking-[0.3em] text-sm whitespace-nowrap overflow-hidden"
+                    >
+                        RENRI
+                        <span className="ml-2 text-[8px] tracking-[0.2em] text-muted-foreground font-medium">
+                            {currentMode.label}
                         </span>
-                    </>
-                ) : (
-                    <RenriMark size={32} className="mx-auto" activeModule={accountType} />
-                )}
+                    </span>
+                </>
             </div>
 
 
@@ -150,18 +139,14 @@ export function Sidebar({
                             strokeWidth={1.5}
                         />
                         <span
-                            className="text-[10px] font-bold tracking-[0.2em] whitespace-nowrap overflow-hidden transition-all duration-300 uppercase"
-                            style={{
-                                opacity: expanded ? 1 : 0,
-                                width: expanded ? "auto" : 0,
-                            }}
+                            className="text-[10px] font-bold tracking-[0.2em] whitespace-nowrap overflow-hidden uppercase"
                         >
                             CAMBIAR MODULO
                         </span>
                     </button>
 
-                    {showModeSwitcher && expanded && (
-                        <div className="absolute left-0 right-0 bg-popover border-b border-border z-50">
+                    {showModeSwitcher && (
+                        <div className="absolute left-0 right-0 bg-[#bec092] border-b border-[#a9aa83] z-50 text-black shadow-md">
                             {MODE_OPTIONS.map((mode) => {
                                 const isActive = mode.value === accountType;
                                 const ModeIcon = mode.icon;
@@ -172,8 +157,8 @@ export function Sidebar({
                                         onClick={() => handleModeSwitch(mode.value)}
                                         disabled={isPending || isActive}
                                         className={`flex items-center w-full gap-3 px-5 py-3 transition-all duration-150 ${isActive
-                                            ? "bg-primary text-primary-foreground"
-                                            : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                            ? "bg-black/10 text-black"
+                                            : "text-black/70 hover:text-black hover:bg-black/5"
                                             } ${isPending ? "opacity-50" : ""}`}
                                     >
                                         <ModeIcon
@@ -185,7 +170,7 @@ export function Sidebar({
                                                 {mode.label}
                                             </div>
                                             <div
-                                                className={`text-[8px] tracking-[0.15em] ${isActive ? "text-primary-foreground/60" : "text-muted-foreground/70"
+                                                className={`text-[8px] tracking-[0.15em] ${isActive ? "text-black/60" : "text-black/50"
                                                     }`}
                                             >
                                                 {mode.description}
@@ -209,21 +194,17 @@ export function Sidebar({
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`flex items-center h-12 px-5 gap-4 transition-all duration-200 group relative ${isActive
-                                ? "text-foreground bg-accent"
+                            className={`flex items-center h-11 px-4 mx-3 mb-1 gap-4 rounded-xl transition-all duration-200 group relative ${isActive
+                                ? "text-primary-foreground bg-primary shadow-sm"
                                 : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                 }`}
                         >
                             {isActive && (
-                                <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-foreground" />
+                                <div className="absolute left-[-12px] top-1 bottom-1 w-[4px] rounded-r-full bg-primary" />
                             )}
                             <item.icon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
                             <span
-                                className="text-[11px] font-medium tracking-[0.2em] whitespace-nowrap overflow-hidden transition-all duration-300"
-                                style={{
-                                    opacity: expanded ? 1 : 0,
-                                    width: expanded ? "auto" : 0,
-                                }}
+                                className="text-[11px] font-medium tracking-[0.2em] whitespace-nowrap overflow-hidden"
                             >
                                 {item.label}
                             </span>
@@ -232,18 +213,6 @@ export function Sidebar({
                 })}
             </nav>
 
-            <button
-                onClick={() => setExpanded(!expanded)}
-                aria-label={expanded ? "Colapsar menú" : "Expandir menú"}
-                aria-expanded={expanded}
-                className="flex items-center justify-center h-12 border-t border-border text-muted-foreground hover:text-foreground transition-colors"
-            >
-                {expanded ? (
-                    <ChevronLeft className="h-4 w-4" />
-                ) : (
-                    <ChevronRight className="h-4 w-4" />
-                )}
-            </button>
         </aside>
     );
 }

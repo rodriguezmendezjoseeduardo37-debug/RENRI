@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getStripeConnectStatus } from "@/actions/stripe-connect";
 import { StripeConnectUI } from "./connect-ui";
+import { ClabeForm } from "./clabe-form";
 import { UpgradeGate } from "@/components/upgrade-gate";
 
 export default async function StripeConnectPage({
@@ -54,7 +55,20 @@ export default async function StripeConnectPage({
             )}
 
             <UpgradeGate feature="stripeConnect">
-                <StripeConnectUI status={connectStatus} />
+                <div className="space-y-10">
+                    <StripeConnectUI status={connectStatus} />
+                    
+                    {!connectStatus.enabled && (
+                        <div className="space-y-6">
+                            <div className="flex items-center gap-2">
+                                <div className="h-px flex-1 bg-border" />
+                                <span className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase">O CONFIGURACIÓN RÁPIDA</span>
+                                <div className="h-px flex-1 bg-border" />
+                            </div>
+                            <ClabeForm tenantId={user.tenantId} currentAccountId={connectStatus.accountId} />
+                        </div>
+                    )}
+                </div>
             </UpgradeGate>
 
             {/* Commission info */}

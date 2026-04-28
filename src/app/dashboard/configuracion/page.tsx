@@ -49,7 +49,7 @@ export default async function ConfiguracionPage() {
                         <Link
                             href={section.href}
                             key={section.href}
-                            className="border border-border bg-card p-6 flex flex-col justify-between h-48 group hover:border-foreground transition-all cursor-pointer"
+                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#bec092] hover:shadow-md transition-all cursor-pointer"
                         >
                             <section.icon className="w-6 h-6 text-foreground mb-4 group-hover:scale-110 transition-transform origin-left" />
                             <div>
@@ -75,12 +75,6 @@ export default async function ConfiguracionPage() {
             href: "/dashboard/configuracion/perfil",
         },
         {
-            title: "DATOS CLINICOS",
-            desc: "Configura permisos de visualizacion de plantillas, diagnosticos predefinidos y recetas.",
-            icon: MonitorSmartphone,
-            href: "/dashboard/configuracion/clinica",
-        },
-        {
             title: "ORGANIZACION",
             desc: "Ajustes de infraestructura, logotipo global, politicas de horarios y alta de sucursales.",
             icon: Building2,
@@ -95,26 +89,19 @@ export default async function ConfiguracionPage() {
             restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role),
         },
         {
-            title: "APIS Y WEBHOOKS",
-            desc: "Configura integracion con Stripe y webhooks externos para tu plataforma.",
-            icon: Key,
-            href: "/dashboard/configuracion/apis",
-            restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role),
-        },
-        {
-            title: "STRIPE CONNECT",
-            desc: "Conecta tu cuenta de Stripe para recibir pagos directamente. Gestionado de forma segura.",
+            title: "COBROS CON TARJETA",
+            desc: "Habilita la recepción de pagos con tarjeta de forma automática. Sin configuraciones técnicas.",
             icon: CreditCard,
-            href: "/dashboard/configuracion/stripe-connect",
-            restricted: !["SUPER_ADMIN", "OWNER"].includes(user.role),
+            href: "/dashboard/configuracion/metodo-cobro",
+            restricted: user.plan !== "pro",
         },
     ];
 
     return (
-        <div className="max-w-5xl mx-auto space-y-10">
+        <div className="max-w-4xl mx-auto space-y-10">
             <div className="border-b border-border pb-6">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
-                    CONFIGURACION DEL SISTEMA
+                    CONFIGURACIÓN
                 </h1>
                 <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                     PARAMETROS DEL ENTORNO DE TRABAJO
@@ -122,17 +109,12 @@ export default async function ConfiguracionPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {SETTINGS_SECTIONS.filter((section) => {
-                    if (currentModule === "pyme" && section.title === "DATOS CLINICOS") {
-                        return false;
-                    }
-                    return true;
-                }).map((section, idx) => {
+                {SETTINGS_SECTIONS.map((section, idx) => {
                     if (section.restricted) {
                         return (
                             <div
                                 key={idx}
-                                className="border border-border bg-card p-6 opacity-40 cursor-not-allowed flex flex-col justify-between h-48 relative overflow-hidden group"
+                                className="border border-border bg-card rounded-2xl p-6 opacity-40 cursor-not-allowed flex flex-col justify-between h-48 relative overflow-hidden group"
                             >
                                 <div className="absolute top-4 right-4 text-[9px] font-bold tracking-[0.2em] text-foreground border border-border px-2 py-1">
                                     ACCESO RESTRINGIDO
@@ -154,7 +136,7 @@ export default async function ConfiguracionPage() {
                         <Link
                             href={section.href}
                             key={idx}
-                            className="border border-border bg-card p-6 flex flex-col justify-between h-48 group hover:border-foreground transition-all cursor-pointer"
+                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#bec092] hover:shadow-md transition-all cursor-pointer"
                         >
                             <section.icon className="w-6 h-6 text-foreground mb-4 group-hover:scale-110 transition-transform origin-left" />
                             <div>

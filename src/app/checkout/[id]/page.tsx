@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Package, CheckCircle } from "lucide-react";
+import { ArrowLeft, Package, CheckCircle2 } from "lucide-react";
 import { getCheckoutDetails } from "@/actions/checkout";
 import { CheckoutClient } from "./client";
 
@@ -25,7 +25,7 @@ export default async function CheckoutPage({ params }: Props) {
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
                     <Link
                         href={`/negocio/${businessId}/tienda`}
-                        className="w-10 h-10 border border-border flex items-center justify-center hover:bg-white hover:text-primary-foreground transition-colors rounded-full"
+                        className="w-10 h-10 border border-border flex items-center justify-center hover:bg-[#bec092] hover:text-black hover:border-[#bec092] transition-colors rounded-xl"
                     >
                         <ArrowLeft className="w-4 h-4" />
                     </Link>
@@ -42,9 +42,12 @@ export default async function CheckoutPage({ params }: Props) {
 
             <main className="max-w-3xl mx-auto px-4 py-10">
                 {isCompleted ? (
-                    <div className="border border-border bg-background p-10 text-center space-y-4">
-                        <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
-                        <h2 className="text-2xl font-bold tracking-[0.1em] text-foreground uppercase">
+                    <div className="border border-[#bec092]/20 bg-background p-10 text-center space-y-4 rounded-2xl">
+                        <div className="relative inline-block">
+                            <div className="absolute inset-0 bg-[#bec092]/20 blur-xl rounded-full" />
+                            <CheckCircle2 className="w-14 h-14 text-[#bec092] relative z-10 mx-auto" />
+                        </div>
+                        <h2 className="text-2xl font-bold tracking-[0.1em] text-foreground uppercase font-[family-name:var(--font-heading)]">
                             ¡PAGO VALIDADO!
                         </h2>
                         <p className="text-sm text-muted-foreground max-w-md mx-auto">
@@ -52,7 +55,7 @@ export default async function CheckoutPage({ params }: Props) {
                         </p>
                         <Link
                             href={`/negocio/${businessId}/tienda`}
-                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-foreground hover:border-foreground transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#bec092]/30 text-[#bec092] hover:bg-[#bec092] hover:text-black transition-colors rounded-xl"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" />
                             VOLVER A LA TIENDA
@@ -61,7 +64,7 @@ export default async function CheckoutPage({ params }: Props) {
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-8">
                         {/* Order Summary */}
-                        <div className="border border-border bg-background p-6 space-y-6">
+                        <div className="border border-border bg-background p-6 space-y-6 rounded-2xl">
                             <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase border-b border-border pb-4">
                                 RESUMEN DEL PEDIDO
                             </h2>
@@ -69,7 +72,7 @@ export default async function CheckoutPage({ params }: Props) {
                             <div className="space-y-4">
                                 {items.map((item) => (
                                     <div key={item.id} className="flex gap-4 items-start">
-                                        <div className="w-14 h-14 bg-card border border-border flex-shrink-0 flex items-center justify-center overflow-hidden">
+                                        <div className="w-14 h-14 bg-card border border-border flex-shrink-0 flex items-center justify-center overflow-hidden rounded-xl">
                                             {item.imageUrl ? (
                                                 <Image
                                                     src={item.imageUrl}
@@ -109,7 +112,7 @@ export default async function CheckoutPage({ params }: Props) {
                                 </div>
                                 <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
                                     <span className="tracking-[0.15em] uppercase">Total</span>
-                                    <span className="font-mono text-lg">${order.total} MXN</span>
+                                    <span className="font-mono text-lg text-[#bec092]">${order.total} MXN</span>
                                 </div>
                             </div>
 

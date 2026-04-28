@@ -8,6 +8,7 @@ import {
     index,
     uniqueIndex,
     jsonb,
+    numeric,
 } from "drizzle-orm/pg-core";
 import { pgEnum } from "drizzle-orm/pg-core";
 
@@ -39,6 +40,7 @@ export const tenants = pgTable(
         // ─── Stripe Connect (per-tenant payments) ────────────────
         stripeConnectAccountId: varchar("stripe_connect_account_id", { length: 255 }),
         stripeConnectEnabled: boolean("stripe_connect_enabled").default(false).notNull(),
+        commissionRate: numeric("commission_rate", { precision: 5, scale: 2 }).default("0.00").notNull(),
         logoUrl: varchar("logo_url", { length: 2048 }),
         description: text("description"),
         address: varchar("address", { length: 500 }),

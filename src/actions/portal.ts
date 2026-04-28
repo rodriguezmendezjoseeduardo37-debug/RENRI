@@ -357,3 +357,92 @@ export async function getUpcomingAppointmentsForReminderJob(hoursAhead: number =
 
     return rows;
 }
+
+// ─── Create Stripe Checkout Session for online payment ───────
+export async function createCheckoutSession(data: {
+    tenantId: string;
+    tenantSlug: string;
+    appointmentId: string;
+    serviceName: string;
+    amount: number; // in MXN (pesos)
+    clientEmail: string;
+}) {
+    const { stripeServer: stripe } = await import("@/lib/stripe");
+
+    // Get tenant to verify they have Stripe Connect active
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, data.tenantId),
+    });
+
+    if (!tenant) throw new Error("Negocio no encontrado");
+    if (tenant.plan === "starter") throw new Error("El negocio no tiene plan PRO activo");
+    if (!tenant.stripeConnectEnabled || !tenant.stripeConnectAccountId) {
+        throw new Error("El negocio no tiene cobros en línea configurados");
+    }
+
+    const { COMMISSION_RATES } = await import("@/lib/constants");
+    const amountInCents = Math.round(data.amount * 100);
+    const applicationFee = Math.round(amountInCents * COMMISSION_RATES.appointment);
+
+    // Mock mode
+    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "sk_test_placeholder") {
+        console.warn("⚠️ STRIPE_SECRET_KEY no configurada. Mock checkout URL.");
+        // Update the payment status to simulate a successful payment
+        await db
+            .update(payments)
+            .set({ status: "paid", updatedAt: new Date() })
+            .where(
+                and(
+                    eq(payments.referenceId, data.appointmentId),
+                    eq(payments.tenantId, data.tenantId)
+                )
+            );
+        return { url: `/portal/${data.tenantSlug}?payment=success` };
+    }
+
+    // Real Stripe Checkout Session with Destination Charges
+    const { headers: getHeaders } = await import("next/headers");
+    const requestHeaders = await getHeaders();
+    const host = requestHeaders.get("host") ?? "localhost:3000";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const baseUrl = `${protocol}://${host}`;
+
+    const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        payment_method_types: ["card"],
+        customer_email: data.clientEmail,
+        line_items: [
+            {
+                price_data: {
+                    currency: "mxn",
+                    product_data: {
+                        name: data.serviceName,
+                        description: `Pago de cita — ${tenant.name}`,
+                    },
+                    unit_amount: amountInCents,
+                },
+                quantity: 1,
+            },
+        ],
+        payment_intent_data: {
+            application_fee_amount: applicationFee > 0 ? applicationFee : undefined,
+            transfer_data: {
+                destination: tenant.stripeConnectAccountId,
+            },
+            metadata: {
+                appointmentId: data.appointmentId,
+                tenantId: data.tenantId,
+                platform: "renri",
+            },
+        },
+        success_url: `${baseUrl}/portal/${data.tenantSlug}?payment=success`,
+        cancel_url: `${baseUrl}/portal/${data.tenantSlug}/agendar?payment=cancelled`,
+        metadata: {
+            appointmentId: data.appointmentId,
+            tenantId: data.tenantId,
+        },
+    });
+
+    return { url: session.url };
+}
+

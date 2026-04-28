@@ -38,22 +38,23 @@ export default async function SchedulesPage({
             columns: { id: true, name: true },
         });
 
+
         const targetUser = allStaff.find(s => s.id === targetStaffId);
         if (targetUser) staffName = targetUser.name;
     }
 
     return (
         <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         HORARIOS
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
                         BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · {staffName}
                     </p>
-                    <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-card border border-border rounded-full shadow-sm">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                         <span className="text-[9px] font-bold tracking-[0.2em] text-foreground uppercase">Horario Semanal Recurrente Automático</span>
                     </div>
                 </div>
@@ -65,7 +66,7 @@ export default async function SchedulesPage({
 
                     <Link
                         href="/dashboard/horarios/configuracion"
-                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                        className="flex items-center justify-center px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all"
                     >
                         CONFIGURAR
                     </Link>

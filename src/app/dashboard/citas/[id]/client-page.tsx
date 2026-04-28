@@ -121,7 +121,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
 
                         {payment ? (
                             /* Pago existente */
-                            <div className="bg-card border border-border p-6">
+                            <div className="bg-card border border-border rounded-2xl shadow-sm p-6">
                                 <span className="text-[11px] text-muted-foreground block uppercase tracking-widest">MONTO</span>
                                 <span className="text-3xl font-bold text-foreground mt-1 block">
                                     ${payment.amount ?? "0.00"}
@@ -158,7 +158,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                             </div>
                         ) : cobroOpen ? (
                             /* Formulario de cobro presencial */
-                            <div className="bg-card border border-border p-5 space-y-4">
+                            <div className="bg-card border border-border rounded-2xl shadow-sm p-5 space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block">MONTO</label>
                                     <div className="relative">
@@ -252,7 +252,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                             </div>
                         ) : (
                             /* Sin pago — botón para registrar cobro */
-                            <div className="bg-card border border-border p-6 text-center space-y-3">
+                            <div className="bg-card border border-border rounded-2xl shadow-sm p-6 text-center space-y-3">
                                 <p className="text-[11px] text-muted-foreground uppercase tracking-widest">
                                     SIN PAGO REGISTRADO
                                 </p>

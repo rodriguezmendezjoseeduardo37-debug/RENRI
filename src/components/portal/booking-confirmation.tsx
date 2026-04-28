@@ -1,9 +1,11 @@
 "use client";
 
-import { CheckCircle2, Copy } from "lucide-react";
+import { useState, useTransition } from "react";
+import { CheckCircle2, Copy, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { createCheckoutSession } from "@/actions/portal";
 
 interface BookingConfirmationProps {
     serviceName: string;
@@ -11,6 +13,11 @@ interface BookingConfirmationProps {
     date: string;
     time: string;
     tenantSlug: string;
+    tenantId: string;
+    appointmentId: string | null;
+    amount: number | null;
+    clientEmail: string;
+    canPayOnline: boolean;
 }
 
 export function BookingConfirmation({
@@ -19,12 +26,48 @@ export function BookingConfirmation({
     date,
     time,
     tenantSlug,
+    tenantId,
+    appointmentId,
+    amount,
+    clientEmail,
+    canPayOnline,
 }: BookingConfirmationProps) {
+    const [isPaying, startPayment] = useTransition();
+    const [paymentError, setPaymentError] = useState<string | null>(null);
+
     const handleCopy = () => {
         const text = `Cita confirmada:\nServicio: ${serviceName}\nCon: ${staffName}\nFecha: ${date}\nHora: ${time}`;
         navigator.clipboard.writeText(text);
         toast.success("Detalles copiados al portapapeles");
     };
+
+    const handlePayOnline = () => {
+        if (!appointmentId || !amount) return;
+        setPaymentError(null);
+
+        startPayment(async () => {
+            try {
+                const result = await createCheckoutSession({
+                    tenantId,
+                    tenantSlug,
+                    appointmentId,
+                    serviceName,
+                    amount,
+                    clientEmail,
+                });
+
+                if (result.url) {
+                    window.location.href = result.url;
+                }
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : "Error al crear sesión de pago";
+                setPaymentError(msg);
+                toast.error(msg);
+            }
+        });
+    };
+
+    const showPayButton = canPayOnline && amount && amount > 0 && appointmentId;
 
     return (
         <div className="flex flex-col items-center justify-center py-12 px-4 space-y-10">
@@ -40,8 +83,8 @@ export function BookingConfirmation({
                 }}
                 className="relative"
             >
-                <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full" />
-                <CheckCircle2 className="w-24 h-24 text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.5)] relative z-10" />
+                <div className="absolute inset-0 bg-[#bec092]/20 blur-xl rounded-full" />
+                <CheckCircle2 className="w-24 h-24 text-[#bec092] drop-shadow-[0_0_15px_rgba(190,192,146,0.5)] relative z-10" />
             </motion.div>
 
             <motion.div
@@ -66,9 +109,9 @@ export function BookingConfirmation({
                 className="w-full max-w-sm mt-8 relative"
             >
                 {/* Subtle border glow */}
-                <div className="absolute -inset-[1px] bg-gradient-to-b from-white/20 to-transparent rounded-lg blur-[2px] pointer-events-none" />
+                <div className="absolute -inset-[1px] bg-gradient-to-b from-[#bec092]/20 to-transparent rounded-2xl blur-[2px] pointer-events-none" />
                 
-                <div className="bg-background border border-white/10 rounded-lg p-8 relative overflow-hidden group">
+                <div className="bg-background border border-[#bec092]/10 rounded-2xl p-8 relative overflow-hidden group">
                     {/* Background noise/gradient */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl" />
 
@@ -107,6 +150,18 @@ export function BookingConfirmation({
                                 </p>
                             </div>
                         </div>
+
+                        {/* Amount */}
+                        {amount && amount > 0 && (
+                            <div className="pt-4 border-t border-border">
+                                <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
+                                    TOTAL
+                                </p>
+                                <p className="text-lg font-bold font-mono text-[#bec092]">
+                                    ${amount.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -114,13 +169,42 @@ export function BookingConfirmation({
                 <div className="flex justify-center -mt-4 relative z-20">
                     <button
                         onClick={handleCopy}
-                        className="flex items-center gap-2 bg-background border border-white/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
+                        className="flex items-center gap-2 bg-background border border-[#bec092]/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-muted-foreground hover:text-[#bec092] hover:border-[#bec092]/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
                     >
                         <Copy className="w-3.5 h-3.5" />
                         COPIAR DETALLES
                     </button>
                 </div>
             </motion.div>
+
+            {/* Pay Online Button */}
+            {showPayButton && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="w-full max-w-sm space-y-3"
+                >
+                    <button
+                        onClick={handlePayOnline}
+                        disabled={isPaying}
+                        className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#bec092] text-black text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
+                    >
+                        {isPaying ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                            <CreditCard className="w-4 h-4" />
+                        )}
+                        {isPaying ? "REDIRIGIENDO..." : "PAGAR ONLINE"}
+                    </button>
+                    <p className="text-center text-[9px] tracking-[0.2em] text-muted-foreground uppercase">
+                        PAGO SEGURO CON TARJETA VÍA STRIPE
+                    </p>
+                    {paymentError && (
+                        <p className="text-center text-[10px] text-red-400">{paymentError}</p>
+                    )}
+                </motion.div>
+            )}
 
             <motion.div 
                 initial={{ opacity: 0 }}
@@ -130,7 +214,7 @@ export function BookingConfirmation({
             >
                 <Link
                     href={`/portal/${tenantSlug}`}
-                    className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-foreground hover:border-foreground transition-colors uppercase"
+                    className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-[#bec092] hover:border-[#bec092] transition-colors uppercase"
                 >
                     Volver al Inicio
                 </Link>

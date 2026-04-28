@@ -177,3 +177,39 @@ export async function updateQueueOpenStatus(
     revalidatePath("/dashboard/turnos");
     return { success: true };
 }
+
+/**
+ * Super Admin: Get all tenants to manage platform-wide settings.
+ */
+export async function getAllTenants() {
+    const user = await requireAuth(["SUPER_ADMIN"]);
+    if (!user) throw new Error("Unauthorized");
+
+    return db.query.tenants.findMany({
+        orderBy: (tenants, { desc }) => [desc(tenants.createdAt)],
+    });
+}
+
+/**
+ * Super Admin: Update a tenant's platform commission rate.
+ */
+export async function updateTenantCommission(tenantId: string, commissionRate: string) {
+    const user = await requireAuth(["SUPER_ADMIN"]);
+    if (!user) throw new Error("Unauthorized");
+
+    const rate = parseFloat(commissionRate);
+    if (isNaN(rate) || rate < 0 || rate > 1) {
+        throw new Error("La comisión debe ser un número entre 0 y 1 (ej. 0.10 para 10%).");
+    }
+
+    await db
+        .update(tenants)
+        .set({
+            commissionRate: rate.toString(),
+            updatedAt: new Date(),
+        })
+        .where(eq(tenants.id, tenantId));
+
+    revalidatePath("/dashboard/admin/comisiones");
+    return { success: true };
+}

@@ -130,3 +130,13 @@ export async function getTenantStripeAccountId(tenantId: string) {
 
     return tenant?.stripeConnectAccountId ?? null;
 }
+
+// ─── Sync Stripe Balances ─────────────────────────────────
+export async function syncStripeBalances() {
+    // Esta función debería ser llamada diariamente por un cron
+    console.log("Sincronizando saldos de cuentas conectadas de Stripe...");
+    // 1. Obtener todos los tenants con stripeConnectAccountId
+    // 2. Iterar e invocar stripe.balance.retrieve({ stripeAccount: accId })
+    // 3. Guardar el resultado en la tabla balances
+    return { success: true };
+}

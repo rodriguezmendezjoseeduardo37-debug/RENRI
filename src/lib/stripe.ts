@@ -21,29 +21,48 @@ export async function createPaymentIntent(
     currency: string = "mxn",
     metadata: Record<string, string> = {},
     stripeConnectAccountId?: string | null,
-    applicationFeeAmount?: number
+    applicationFeeAmount?: number,
+    transferGroup?: string
 ) {
     const amountInCents = Math.round(amount * 100);
 
-    if (stripeConnectAccountId) {
-        const params: Stripe.PaymentIntentCreateParams = {
-            amount: amountInCents,
-            currency: currency.toLowerCase(),
-            metadata,
+    const params: Stripe.PaymentIntentCreateParams = {
+        amount: amountInCents,
+        currency: currency.toLowerCase(),
+        metadata,
+    };
+
+    if (transferGroup) {
+        params.transfer_group = transferGroup;
+    } else if (stripeConnectAccountId) {
+        // If only one account is provided and no group, use Destination Charges
+        params.transfer_data = {
+            destination: stripeConnectAccountId,
         };
 
         if (applicationFeeAmount && applicationFeeAmount > 0) {
             params.application_fee_amount = Math.round(applicationFeeAmount);
         }
-
-        return stripeServer.paymentIntents.create(params, {
-            stripeAccount: stripeConnectAccountId,
-        });
     }
 
-    return stripeServer.paymentIntents.create({
-        amount: amountInCents,
-        currency: currency.toLowerCase(),
+    return stripeServer.paymentIntents.create(params);
+}
+
+/**
+ * Creates a manual transfer from the platform balance to a connected account.
+ * Useful for complex splits (e.g. paying staff/service providers separately).
+ */
+export async function createTransfer(
+    amount: number,
+    destinationAccountId: string,
+    description?: string,
+    metadata?: Record<string, string>
+) {
+    return stripeServer.transfers.create({
+        amount: Math.round(amount * 100),
+        currency: "mxn",
+        destination: destinationAccountId,
+        description,
         metadata,
     });
 }

@@ -1,5 +1,6 @@
 import type { OrderWithItems } from "@/types/orders";
 import Link from "next/link";
+import Image from "next/image";
 import { ORDER_STATUS_LABELS } from "@/types/orders";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -16,7 +17,7 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
     });
 
     const statusColors: Record<string, string> = {
-        pending: "border-l-white",
+        pending: "border-l-[#bec092]",
         processing: "border-l-[#888888]",
         completed: "border-l-[#444444]",
         cancelled: "border-l-red-500",
@@ -29,17 +30,18 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
     return (
         <Link
             href={`/dashboard/pedidos/${order.id}`}
-            className={`block border border-border bg-card hover:border-border transition-all border-l-2 ${statusColors[order.status] || "border-l-white"} ${compact ? "p-3" : "p-4"}`}
+            className={`block border border-border bg-card rounded-2xl shadow-sm hover:shadow-md hover:border-[#bec092] transition-all border-l-[3px] overflow-hidden ${statusColors[order.status] || "border-l-[#bec092]"} ${compact ? "p-4" : "p-5"}`}
         >
             <div className="flex items-start gap-3">
                 {/* Thumbnail */}
-                <div className="w-10 h-10 bg-popover rounded border border-border overflow-hidden shrink-0">
+                <div className="relative w-12 h-12 bg-popover rounded-xl border border-border overflow-hidden shrink-0">
                     {firstItem?.productImage ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img 
+                        <Image 
                             src={firstItem.productImage} 
                             alt={firstItem.productName || "Producto"} 
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="48px"
+                            className="object-cover"
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground font-mono">

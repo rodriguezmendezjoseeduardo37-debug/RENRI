@@ -11,3 +11,4 @@ export * from "./orders";
 export * from "./payments";
 export * from "./client_businesses";
 export * from "./relations";
+export * from "./emails";

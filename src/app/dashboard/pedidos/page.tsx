@@ -50,7 +50,7 @@ export default async function PedidosPage({
                 </div>
                 <Link
                     href="/dashboard/pedidos/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PEDIDO
@@ -58,7 +58,7 @@ export default async function PedidosPage({
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-[1px] bg-popover">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-[1px] bg-border rounded-2xl overflow-hidden border border-border">
                 {[
                     { label: "TOTAL", value: stats.total, icon: ShoppingCart },
                     { label: "PENDIENTES", value: stats.pending, icon: Clock },
@@ -66,7 +66,7 @@ export default async function PedidosPage({
                     { label: "COMPLETADOS", value: stats.completed, icon: CheckCircle },
                     { label: "CANCELADOS", value: stats.cancelled, icon: XCircle },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-background p-4 flex flex-col">
+                    <div key={stat.label} className="bg-card p-4 flex flex-col">
                         <div className="flex items-center gap-2 mb-2">
                             <stat.icon className="w-3 h-3 text-muted-foreground" />
                             <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
@@ -85,13 +85,13 @@ export default async function PedidosPage({
                 <div className="flex gap-[1px]">
                     <Link
                         href={`?view=kanban`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "bg-[#bec092] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         KANBAN
                     </Link>
                     <Link
                         href={`?view=list`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-[#bec092] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         LISTA
                     </Link>
@@ -104,14 +104,14 @@ export default async function PedidosPage({
 
             {/* Content */}
             {ordersList.length === 0 ? (
-                <div className="border border-border p-16 text-center">
+                <div className="border border-border p-16 text-center rounded-2xl">
                     <ShoppingCart className="w-8 h-8 text-foreground mx-auto mb-4" />
                     <p className="text-sm font-mono text-muted-foreground">
                         No se encontraron pedidos.
                     </p>
                     <Link
                         href="/dashboard/pedidos/nuevo"
-                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                     >
                         CREAR PRIMER PEDIDO
                     </Link>
@@ -119,7 +119,7 @@ export default async function PedidosPage({
             ) : viewMode === "kanban" ? (
                 <OrderKanban orders={ordersList} />
             ) : (
-                <div className="space-y-[1px] bg-popover">
+                <div className="space-y-[1px] bg-border border border-border rounded-2xl overflow-hidden">
                     {ordersList.map((order) => (
                         <OrderCard key={order.id} order={order} />
                     ))}

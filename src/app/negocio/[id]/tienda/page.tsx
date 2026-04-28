@@ -29,7 +29,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                     <div className="flex items-center gap-3">
                         <Link
                             href={`/negocio/${business.id}`}
-                            className="w-11 h-11 border border-border flex items-center justify-center hover:bg-white hover:text-primary-foreground transition-colors rounded-full mr-2"
+                            className="w-11 h-11 border border-border flex items-center justify-center hover:bg-[#bec092] hover:text-black hover:border-[#bec092] transition-colors rounded-xl mr-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
@@ -39,11 +39,11 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                                 alt={business.name}
                                 width={40}
                                 height={40}
-                                className="w-10 h-10 rounded-full object-cover border border-border"
+                                className="w-10 h-10 rounded-xl object-cover border border-border"
                                 unoptimized
                             />
                         ) : (
-                            <div className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-xl bg-[#bec092]/10 border border-[#bec092]/20 flex items-center justify-center">
                                 <span className="text-base font-bold text-foreground uppercase">
                                     {business.name.charAt(0)}
                                 </span>
@@ -71,7 +71,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                     </div>
 
                     {products.items.length === 0 ? (
-                        <div className="border border-border bg-card p-10 text-center">
+                        <div className="border border-border bg-card p-10 text-center rounded-2xl">
                             <Package className="w-10 h-10 text-foreground mx-auto mb-4" />
                             <p className="text-muted-foreground text-sm tracking-wide">
                                 Aún no hay productos públicos.
@@ -82,10 +82,10 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                             {products.items.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="border border-border bg-card flex flex-col overflow-hidden hover:border-border transition-colors group"
+                                    className="border border-border bg-card flex flex-col overflow-hidden hover:border-[#bec092]/30 transition-colors group rounded-2xl"
                                 >
                                     {product.imageUrl ? (
-                                            <div className="aspect-square bg-background overflow-hidden">
+                                            <div className="aspect-square bg-background overflow-hidden rounded-t-2xl">
                                             <Image
                                                 src={product.imageUrl}
                                                 alt={product.name}
@@ -96,7 +96,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="aspect-square bg-background flex items-center justify-center">
+                                        <div className="aspect-square bg-background flex items-center justify-center rounded-t-2xl">
                                             <Package className="w-10 h-10 text-foreground" />
                                         </div>
                                     )}
@@ -124,11 +124,11 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                                                 </span>
                                             </div>
                                             {product.stock > 0 ? (
-                                                <span className="px-2 py-1 bg-accent border border-border text-[9px] text-green-400 font-bold tracking-[0.15em] uppercase">
+                                                <span className="px-2 py-1 bg-[#bec092]/10 border border-[#bec092]/20 text-[9px] text-[#bec092] font-bold tracking-[0.15em] uppercase rounded-lg">
                                                     EN STOCK
                                                 </span>
                                             ) : (
-                                                <span className="px-2 py-1 bg-popover border border-border text-[9px] text-red-400 font-bold tracking-[0.15em] uppercase">
+                                                <span className="px-2 py-1 bg-red-500/10 border border-red-500/20 text-[9px] text-red-400 font-bold tracking-[0.15em] uppercase rounded-lg">
                                                     AGOTADO
                                                 </span>
                                             )}

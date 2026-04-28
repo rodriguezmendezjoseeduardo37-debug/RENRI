@@ -3,10 +3,24 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
+import { MobileNavigation } from "@/components/mobile-navigation";
 import localFont from "next/font/local";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import {
+    Home,
+    Calendar,
+    Users,
+    Clock,
+    CreditCard,
+    Settings,
+    ListOrdered,
+    Package,
+    ShoppingCart,
+    Briefcase,
+} from "lucide-react";
+import { RenriMark } from "@/components/renri-mark";
 
 const spaceGrotesk = localFont({
     src: "../fonts/GeistMonoVF.woff",
@@ -19,6 +33,26 @@ const inter = localFont({
     variable: "--font-body",
     weight: "100 900",
 });
+
+const MOBILE_NAV_SERVICIOS = [
+    { href: "/dashboard", label: "INICIO", icon: <Home className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/servicios", label: "SERVICIOS", icon: <Briefcase className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/citas", label: "CITAS", icon: <Calendar className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/turnos", label: "TURNOS", icon: <ListOrdered className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/horarios", label: "HORARIOS", icon: <Clock className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/pagos", label: "PAGOS", icon: <CreditCard className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/clientes", label: "CLIENTES", icon: <Users className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/configuracion", label: "CONFIGURACION", icon: <Settings className="w-5 h-5" strokeWidth={1.5} /> },
+];
+
+const MOBILE_NAV_PYME = [
+    { href: "/dashboard", label: "INICIO", icon: <Home className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/inventario", label: "INVENTARIO", icon: <Package className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/pedidos", label: "PEDIDOS", icon: <ShoppingCart className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/pagos", label: "PAGOS", icon: <CreditCard className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/clientes", label: "CLIENTES", icon: <Users className="w-5 h-5" strokeWidth={1.5} /> },
+    { href: "/dashboard/configuracion", label: "CONFIGURACION", icon: <Settings className="w-5 h-5" strokeWidth={1.5} /> },
+];
 
 export default async function DashboardLayout({
     children,
@@ -67,16 +101,31 @@ export default async function DashboardLayout({
             />
 
             {/* Main content area — offset by sidebar width on desktop */}
-            <div className="md:ml-16 min-h-screen flex flex-col">
-                <Topbar
-                    tenantName={tenant?.name ?? "RENRI"}
-                    userName={user.name ?? "User"}
+            <div className="md:ml-60 min-h-screen flex flex-col">
+                <div className="hidden md:block">
+                    <Topbar
+                        tenantName={tenant?.name ?? "RENRI"}
+                        userName={user.name ?? "User"}
+                        accountType={accountType}
+                        businessId={user.businessId ?? tenant?.id}
+                        enabledModules={user.enabledModules}
+                        userRole={user.role}
+                    />
+                </div>
+                <main className="flex-1 p-4 md:p-8 pt-20 md:pt-8">{children}</main>
+            </div>
+            
+            <div className="md:hidden">
+                <MobileNavigation 
+                    items={accountType === "pyme" ? MOBILE_NAV_PYME : MOBILE_NAV_SERVICIOS} 
                     accountType={accountType}
-                    businessId={user.businessId ?? tenant?.id}
-                    enabledModules={user.enabledModules}
-                    userRole={user.role}
+                    brand={
+                        <div className="flex items-center gap-2">
+                            <RenriMark size={20} activeModule={accountType} />
+                            <span className="font-bold tracking-[0.3em] text-foreground text-sm">RENRI</span>
+                        </div>
+                    }
                 />
-                <main className="flex-1 p-4 md:p-8">{children}</main>
             </div>
         </div>
     );

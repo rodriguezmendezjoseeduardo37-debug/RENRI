@@ -119,24 +119,26 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
     return (
         <div className="flex flex-col h-[calc(100vh-8rem)]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6 mb-8">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] flex items-center gap-4">
-                        TURNOS
+                    <div className="flex items-center gap-4">
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                            TURNOS
+                        </h1>
                         <button
                             onClick={handleToggleQueue}
-                            className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] transition-colors uppercase border rounded-none ${
+                            className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] transition-colors uppercase border rounded-xl shadow-sm ${
                                 isQueueOpen 
-                                ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 border-white hover:bg-secondary" 
+                                ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90" 
                                 : "bg-background text-foreground border-border hover:text-foreground hover:border-foreground"
                             }`}
                         >
                             {isQueueOpen ? <Power className="w-3.5 h-3.5" /> : <PowerOff className="w-3.5 h-3.5" />}
                             {isQueueOpen ? "ACTIVO" : "PAUSADO"}
                         </button>
-                    </h1>
+                    </div>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
-                        {new Intl.DateTimeFormat("es-MX", { dateStyle: "long" }).format(new Date())}
+                        GESTIONA LA FILA VIRTUAL Y ESPERAS
                     </p>
                 </div>
                 <RealtimeIndicator isConnected={isConnected} />
@@ -167,7 +169,7 @@ export function TurnosClient({ tenantId, initialIsQueueOpen }: TurnosClientProps
             <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO TURNO MANUAL

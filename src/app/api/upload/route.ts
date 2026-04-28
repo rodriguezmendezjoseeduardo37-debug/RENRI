@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { getCurrentUser } from "@/lib/auth-helpers";
+import { auth } from "@/auth";
+import { requireTenantAccess } from "@/lib/rls-middleware";
 
 export async function POST(req: NextRequest) {
     try {
-        const user = await getCurrentUser();
-        if (!user) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const session = await auth();
+        if (!session?.user?.id || !session?.user?.tenantId) {
+            return NextResponse.json({ error: "Unauthorized or missing tenant" }, { status: 401 });
         }
 
+        const { tenantId } = await requireTenantAccess(session.user.tenantId);
+        
         const formData = await req.formData();
         const file = formData.get("file") as File;
 

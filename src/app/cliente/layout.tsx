@@ -34,7 +34,7 @@ export default async function ClienteLayout({
             <ClienteSidebar />
 
             {/* Main content area — offset by sidebar width on desktop */}
-            <div className="md:ml-16 min-h-screen flex flex-col">
+            <div className="md:ml-[220px] min-h-screen flex flex-col">
                 <Topbar
                     tenantName="PORTAL DE USUARIO"
                     userName={user.name ?? "Usuario"}

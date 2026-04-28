@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
+import { SkipLinks } from "@/components/skip-links";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,7 +19,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "RENRI — Gestión para Profesionistas",
-  description: "Citas, turnos, pagos y clientes en una sola plataforma para profesionistas y PYMEs de México.",
+  description: "Citas, turnos, pagos y clientes en una sola plataforma para profesionistas y negocios de México.",
   icons: {
     icon: "/icon.svg",
     apple: "/icon.svg",
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'RENRI',
-    description: 'Gestión para profesionistas y PYMEs de México.',
+    description: 'Gestión para profesionistas y negocios de México.',
   },
 };
 
@@ -52,6 +53,7 @@ export default function RootLayout({
         )}
       >
         <Providers>
+          <SkipLinks />
           {children}
           <Toaster richColors position="top-right" />
         </Providers>

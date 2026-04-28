@@ -61,7 +61,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="flex-1 bg-card border border-border p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all invert-0"
+                    className="flex-1 bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all invert-0"
                     style={{ colorScheme: "dark" }}
                 />
                 <input
@@ -69,7 +69,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Motivo (opcional)"
-                    className="flex-[2] bg-card border border-border p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
+                    className="flex-[2] bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
                 />
                 <button
                     type="submit"

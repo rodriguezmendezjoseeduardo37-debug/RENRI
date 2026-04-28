@@ -46,8 +46,8 @@ export async function PlanUsageMeters({ tenantId, plan }: { tenantId: string, pl
     ]);
 
     return (
-        <div className="bg-popover border border-border p-5 rounded-2xl space-y-4">
-            <h3 className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
+        <div className="bg-primary text-primary-foreground border border-primary/20 p-5 rounded-2xl space-y-4 shadow-sm">
+            <h3 className="text-[11px] font-bold tracking-[0.2em] text-primary-foreground uppercase">
                 USO DEL PLAN {plan.toUpperCase()}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -27,7 +27,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-background border border-white p-3 shadow-2xl">
+            <div className="bg-background border border-[#bec092] p-3 shadow-2xl rounded-xl">
                 <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">{label}</p>
                 <p className="text-sm font-mono text-foreground font-bold">
                     ${payload[0].value.toLocaleString("es-MX")} MXN
@@ -50,8 +50,8 @@ export function RevenueChart({ data }: RevenueChartProps) {
     }
 
     return (
-        <div className="w-full h-[300px] border border-border bg-background p-4 pt-8">
-            <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full h-[300px] border border-border bg-card p-4 pt-8 rounded-2xl overflow-hidden shadow-sm">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} />
                     <XAxis
@@ -76,10 +76,10 @@ export function RevenueChart({ data }: RevenueChartProps) {
                     <Line
                         type="step" // blocky non-rounded aesthetic
                         dataKey="amount"
-                        stroke="#ffffff"
+                        stroke="#bec092"
                         strokeWidth={2}
                         dot={{ r: 0 }}
-                        activeDot={{ r: 4, fill: "white", stroke: "black", strokeWidth: 2 }}
+                        activeDot={{ r: 4, fill: "#bec092", stroke: "black", strokeWidth: 2 }}
                     />
                 </LineChart>
             </ResponsiveContainer>

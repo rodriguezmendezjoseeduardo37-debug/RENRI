@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Loader2, Shuffle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 type FormValues = z.infer<typeof createProductSchema>;
 
@@ -74,9 +75,9 @@ export function ProductForm({
     };
 
     const inputClass =
-        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
+        "w-full bg-background border border-border rounded-lg text-foreground text-base px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring transition-colors shadow-sm";
     const labelClass =
-        "text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-2";
+        "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form
@@ -122,9 +123,9 @@ export function ProductForm({
                     <button
                         type="button"
                         onClick={generateSKU}
-                        className="px-4 py-3 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap"
+                        className="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg shadow-sm hover:bg-secondary/80 hover:shadow transition-all flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase whitespace-nowrap"
                     >
-                        <Shuffle className="w-3.5 h-3.5" />
+                        <Shuffle className="w-4 h-4" />
                         AUTO
                     </button>
                 </div>
@@ -262,12 +263,13 @@ export function ProductForm({
                     <input type="hidden" {...register("imageUrl")} />
                     
                     {watch("imageUrl") ? (
-                        <div className="relative w-full sm:w-48 h-40 sm:h-32 rounded-xl overflow-hidden border border-border group">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img 
+                        <div className="relative w-full sm:w-48 h-40 sm:h-32 rounded-2xl overflow-hidden border border-border group shadow-sm">
+                            <Image 
                                 src={watch("imageUrl") || ""} 
                                 alt="Vista previa" 
-                                className="w-full h-full object-cover"
+                                fill
+                                sizes="(max-width: 640px) 100vw, 192px"
+                                className="object-cover"
                             />
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                                 <button
@@ -280,7 +282,7 @@ export function ProductForm({
                             </div>
                         </div>
                     ) : (
-                        <label className="w-full sm:w-48 h-40 sm:h-32 rounded-xl border-2 border-dashed border-border bg-popover/50 hover:bg-accent/50 hover:border-foreground/30 transition-all flex flex-col items-center justify-center cursor-pointer group active:scale-[0.98]">
+                        <label className="w-full sm:w-48 h-40 sm:h-32 rounded-2xl border-2 border-dashed border-border bg-popover/50 hover:bg-accent/50 hover:border-foreground/30 transition-all flex flex-col items-center justify-center cursor-pointer group active:scale-[0.98] shadow-sm">
                             <input 
                                 type="file" 
                                 accept="image/*"
@@ -381,7 +383,7 @@ export function ProductForm({
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-2 px-8 py-4 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-xl shadow-md hover:bg-primary/90 hover:shadow-lg transition-all disabled:opacity-50 w-full md:w-auto"
                 >
                     {isSubmitting && (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

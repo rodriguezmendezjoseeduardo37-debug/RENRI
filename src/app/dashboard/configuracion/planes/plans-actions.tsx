@@ -28,7 +28,7 @@ export function PlansActions({
                 type="button"
                 disabled
                 title="Plan actual"
-                className="w-full cursor-not-allowed border border-[#3A7D44] bg-[#3A7D44]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#3A7D44] opacity-80"
+                className="w-full cursor-not-allowed border border-[#bec092] bg-[#bec092]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#bec092] opacity-80 rounded-xl"
             >
                 PLAN ACTUAL
             </button>
@@ -54,10 +54,10 @@ export function PlansActions({
             type="button"
             onClick={handleUpgrade}
             disabled={isPending}
-            className={`w-full px-4 py-4 flex items-center justify-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors ${
+            className={`w-full px-4 py-4 flex items-center justify-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase transition-all rounded-xl ${
                 recommended
-                    ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 disabled:opacity-70"
-                    : "border border-border text-foreground hover:border-foreground disabled:opacity-70"
+                    ? "bg-[#bec092] text-black shadow-sm hover:opacity-90 disabled:opacity-70"
+                    : "border border-border text-foreground hover:border-[#bec092] hover:text-[#bec092] disabled:opacity-70"
             }`}
         >
             {isPending && <Loader2 className="w-4 h-4 animate-spin" />}

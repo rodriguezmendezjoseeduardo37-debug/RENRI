@@ -75,7 +75,7 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                 </div>
 
                 {/* Right: Slot Render */}
-                <div className="flex-1 bg-card border border-border p-6 lg:p-8">
+                <div className="flex-1 bg-card border border-border rounded-2xl shadow-sm p-6 lg:p-8">
                     {activeDay ? (
                         <>
                             <h4 className="text-[12px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-6 flex items-center justify-between">

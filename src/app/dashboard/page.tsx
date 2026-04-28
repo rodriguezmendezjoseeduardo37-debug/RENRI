@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
 import { StatCard } from "@/components/dashboard/stat-card";
+import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { appointments, payments, tenants, turns, users } from "@/db/schema";
 import {
@@ -170,7 +171,7 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-popover">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard label="CITAS HOY" value={citasHoy?.count ?? 0} sublabel="agendadas" />
                 <StatCard label="EN ESPERA" value={turnosEspera?.count ?? 0} sublabel="turnos activos" />
                 <StatCard
@@ -181,25 +182,22 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                 <StatCard label="CLIENTES" value={totalClientes?.count ?? 0} sublabel="registrados" />
             </div>
 
-            <div className="flex flex-wrap gap-3">
-                <Link
-                    href="/dashboard/citas"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    NUEVA CITA
-                </Link>
-                <Link
-                    href="/dashboard/turnos"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    VER TURNOS
-                </Link>
-                <Link
-                    href="/dashboard/horarios"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    HORARIOS
-                </Link>
+            <div className="flex flex-wrap gap-4 mt-6">
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/citas">
+                        NUEVA CITA
+                    </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/turnos">
+                        VER TURNOS
+                    </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/horarios">
+                        HORARIOS
+                    </Link>
+                </Button>
             </div>
         </>
     );
@@ -213,7 +211,7 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[1px] bg-popover">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     label="PEDIDOS HOY"
                     value={orderStats.pending}
@@ -237,38 +235,34 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             </div>
 
             {inventoryStats.lowStockCount > 0 && (
-                <div className="border-l-2 border-white bg-card p-4 flex items-center justify-between">
+                <div className="border-l-4 border-destructive bg-card rounded-2xl shadow-sm p-4 flex items-center justify-between">
                     <span className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
                         {inventoryStats.lowStockCount} PRODUCTOS CON STOCK BAJO
                     </span>
-                    <Link
-                        href="/dashboard/inventario?lowStock=true"
-                        className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors uppercase"
-                    >
-                        VER
-                    </Link>
+                    <Button asChild variant="outline" size="sm" className="text-[10px] font-bold tracking-[0.2em] uppercase">
+                        <Link href="/dashboard/inventario?lowStock=true">
+                            VER
+                        </Link>
+                    </Button>
                 </div>
             )}
 
-            <div className="flex flex-wrap gap-3">
-                <Link
-                    href="/dashboard/pedidos/nuevo"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    NUEVO PEDIDO
-                </Link>
-                <Link
-                    href="/dashboard/inventario"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    VER INVENTARIO
-                </Link>
-                <Link
-                    href="/dashboard/pedidos"
-                    className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
-                >
-                    VER PEDIDOS
-                </Link>
+            <div className="flex flex-wrap gap-4 mt-6">
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/pedidos/nuevo">
+                        NUEVO PEDIDO
+                    </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/inventario">
+                        VER INVENTARIO
+                    </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                    <Link href="/dashboard/pedidos">
+                        VER PEDIDOS
+                    </Link>
+                </Button>
             </div>
         </>
     );

@@ -45,13 +45,13 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar productos..."
-                className="bg-background border border-border text-foreground text-sm px-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors flex-1 min-w-[200px]"
+                className="bg-background border border-border text-foreground text-sm px-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-[#bec092] transition-colors flex-1 min-w-[200px] rounded-xl"
             />
             <select
                 name="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="bg-background border border-border text-foreground text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                className="bg-background border border-border text-foreground text-[10px] font-bold tracking-[0.2em] px-4 py-2.5 uppercase focus:outline-none focus:border-[#bec092] transition-colors appearance-none cursor-pointer rounded-xl"
             >
                 <option value="">TODAS LAS CATEGORÍAS</option>
                 {categories.map((c) => (
@@ -66,13 +66,13 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
                     name="lowStock"
                     checked={lowStock}
                     onChange={(e) => setLowStock(e.target.checked)}
-                    className="accent-white"
+                    className="accent-[#bec092]"
                 />
                 BAJO STOCK
             </label>
             <button
                 type="submit"
-                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                className="px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
             >
                 FILTRAR
             </button>
@@ -81,13 +81,13 @@ export function InventoryFilters({ categories }: InventoryFiltersProps) {
             <div className="flex gap-[1px] ml-auto">
                 <Link
                     href={`?view=grid&search=${currentSearch}&category=${currentCategory}&lowStock=${currentLowStock ? "true" : ""}`}
-                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "grid" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
+                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "grid" ? "bg-[#bec092] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                 >
                     GRID
                 </Link>
                 <Link
                     href={`?view=list&search=${currentSearch}&category=${currentCategory}&lowStock=${currentLowStock ? "true" : ""}`}
-                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80" : "bg-popover text-muted-foreground hover:text-foreground"}`}
+                    className={`px-3 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-[#bec092] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                 >
                     LISTA
                 </Link>

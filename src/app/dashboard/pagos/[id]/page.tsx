@@ -48,7 +48,7 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left: Info Panel */}
                 <div className="space-y-6">
-                    <div className="bg-card border border-border p-6 space-y-6">
+                    <div className="bg-card border border-border rounded-2xl shadow-sm p-6 space-y-6">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">MONTO A COBRAR</span>
                             <span className="text-2xl font-bold font-mono text-foreground">

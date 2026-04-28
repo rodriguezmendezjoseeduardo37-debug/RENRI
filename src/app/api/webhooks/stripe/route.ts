@@ -79,6 +79,18 @@ export async function POST(req: Request) {
                 }
                 break;
             }
+            case "charge.dispute.created": {
+                const dispute = event.data.object as Stripe.Dispute;
+                console.log(`⚠️ Disputa recibida: ${dispute.id} por monto ${dispute.amount}`);
+                // TODO: Actualizar pago en BD a estado DISPUTED
+                break;
+            }
+            case "payment_intent.payment_failed": {
+                const paymentIntent = event.data.object as Stripe.PaymentIntent;
+                console.log(`❌ Pago fallido: ${paymentIntent.id}. Razón: ${paymentIntent.last_payment_error?.message}`);
+                // TODO: Registrar fallo y notificar
+                break;
+            }
             default:
                 console.log(`Evento no manejado: ${event.type}`);
         }

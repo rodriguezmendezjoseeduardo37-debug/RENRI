@@ -84,7 +84,7 @@ export function CobroModal({
                 {/* Content */}
                 <div className="p-6 space-y-6">
                     {/* Turn Info */}
-                    <div className="bg-card border border-border p-4 space-y-1">
+                    <div className="bg-card border border-border rounded-2xl shadow-sm p-4 space-y-1">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                                 CLIENTE
@@ -108,7 +108,7 @@ export function CobroModal({
                     {checkoutUrl ? (
                         /* QR / Link para tarjeta */
                         <div className="space-y-4 text-center">
-                            <div className="bg-card border border-border p-6 flex flex-col items-center gap-4">
+                            <div className="bg-card border border-border rounded-2xl shadow-sm p-6 flex flex-col items-center gap-4">
                                 <QrCode className="h-16 w-16 text-foreground" />
                                 <p className="text-[11px] text-muted-foreground tracking-wide uppercase">
                                     Solicita al cliente escanear el código QR o compartir el enlace
@@ -199,7 +199,7 @@ export function CobroModal({
                             </div>
 
                             {/* Hint */}
-                            <div className="bg-card border border-border p-3">
+                            <div className="bg-card border border-border rounded-2xl shadow-sm p-3">
                                 <p className="text-[10px] text-muted-foreground leading-relaxed">
                                     {method === "cash"
                                         ? "El cobro se registrará como completado inmediatamente. Asegúrate de haber recibido el dinero."

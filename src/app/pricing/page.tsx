@@ -55,10 +55,10 @@ export default function PricingPage() {
                     {PLANS.map((plan) => (
                         <div
                             key={plan.name}
-                            className={`border ${plan.recommended ? "border-white" : "border-border"} bg-background p-10 md:p-12 flex flex-col relative group transition-all duration-500`}
+                            className={`border ${plan.recommended ? "border-[#bec092]" : "border-border"} bg-background p-10 md:p-12 flex flex-col relative group transition-all duration-500 rounded-2xl`}
                         >
                             {plan.recommended && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 -mt-4 md:mr-10">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 bg-[#bec092] text-black rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 -mt-4 md:mr-10">
                                     RECOMENDADO
                                 </div>
                             )}
@@ -99,8 +99,8 @@ export default function PricingPage() {
                                 href={plan.buttonHref}
                                 className={`w-full text-center font-bold tracking-[0.3em] uppercase py-5 text-[10px] transition-all duration-300 ${
                                     plan.recommended
-                                        ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-secondary"
-                                        : "border border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                                        ? "bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90"
+                                        : "border border-border text-muted-foreground hover:border-[#bec092] hover:text-[#bec092]"
                                 }`}
                             >
                                 {plan.buttonText}

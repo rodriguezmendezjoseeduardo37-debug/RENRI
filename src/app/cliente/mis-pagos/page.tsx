@@ -32,7 +32,7 @@ export default async function MisPagosPage() {
             </div>
 
             {payments.length === 0 ? (
-                <div className="border border-border bg-card p-10 text-center space-y-4">
+                <div className="border border-border bg-card p-10 text-center space-y-4 rounded-2xl">
                     <CreditCard className="mx-auto h-10 w-10 text-muted-foreground" />
                     <p className="text-lg font-bold tracking-[0.1em] uppercase text-foreground">
                         NO HAY PAGOS REGISTRADOS
@@ -42,7 +42,7 @@ export default async function MisPagosPage() {
                     </p>
                 </div>
             ) : (
-                <div className="border border-border overflow-x-auto bg-background">
+                <div className="border border-border overflow-x-auto bg-background rounded-2xl overflow-hidden">
                     <table className="w-full text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>
@@ -80,7 +80,7 @@ export default async function MisPagosPage() {
                                     <td className="px-6 py-4">
                                         <Link
                                             href={`/cliente/mis-pagos/${payment.id}`}
-                                            className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                                            className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all"
                                         >
                                             VER
                                         </Link>

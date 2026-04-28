@@ -72,15 +72,15 @@ export function ServiciosForm({
         }
     };
 
-    const inputClass = "w-full bg-background border border-border text-foreground text-sm px-4 py-3 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors";
+    const inputClass = "w-full bg-background border border-border rounded-lg text-foreground text-sm px-4 h-12 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary transition-colors";
     const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <div className="space-y-8">
             <div className="space-y-4">
                 {services.length === 0 ? (
-                    <div className="bg-card border border-border p-8 text-center">
-                        <p className="text-muted-foreground text-sm uppercase tracking-widest">
+                    <div className="bg-card border border-border rounded-2xl shadow-sm p-8 text-center">
+                        <p className="text-muted-foreground text-sm uppercase tracking-widest font-medium">
                             No hay servicios registrados
                         </p>
                     </div>
@@ -98,7 +98,7 @@ export function ServiciosForm({
                         return (
                             <div
                                 key={service.id}
-                                className={`bg-card border p-6 relative group transition-all ${stripeEatsTooMuch ? "border-red-900/50" : "border-border hover:border-white"}`}
+                                className={`bg-card border rounded-2xl shadow-sm p-6 relative group transition-all ${stripeEatsTooMuch ? "border-red-900/50" : "border-border hover:border-foreground/20 hover:shadow-md"}`}
                             >
                                 <div className="absolute top-4 right-4 text-[10px] font-mono text-foreground">
                                     #{index + 1}
@@ -144,7 +144,7 @@ export function ServiciosForm({
                                             <button
                                                 type="button"
                                                 onClick={() => setServiceToDelete(service.id)}
-                                                className="px-4 border border-border text-muted-foreground hover:text-red-500 hover:border-red-500 transition-colors bg-background"
+                                                className="px-4 h-12 border border-border rounded-lg text-muted-foreground hover:text-red-500 hover:border-red-500 hover:bg-red-500/10 transition-colors bg-background"
                                                 title="Eliminar servicio"
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -154,7 +154,7 @@ export function ServiciosForm({
                                 </div>
                                 
                                 <div className="mt-6">
-                                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-border bg-background">
+                                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-border rounded-xl bg-background hover:border-foreground/20 transition-colors">
                                         <input
                                             type="checkbox"
                                             checked={!!service.passFeeToClient}
@@ -174,7 +174,7 @@ export function ServiciosForm({
 
                                 {/* Stripe Online Payment Calculation */}
                                 {priceNum > 0 && (
-                                    <div className={`mt-2 p-4 border flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-red-950/20 border-red-900/50" : "bg-background border-border"}`}>
+                                    <div className={`mt-2 p-4 border rounded-xl flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-red-950/20 border-red-900/50" : "bg-background border-border"}`}>
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                                                 GANANCIA NETA (STRIPE EN LÍNEA)
@@ -206,7 +206,7 @@ export function ServiciosForm({
                 <button
                     type="button"
                     onClick={addService}
-                    className="flex items-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-lg shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     ANADIR SERVICIO
@@ -215,7 +215,7 @@ export function ServiciosForm({
                 <button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     <Save className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export function ServiciosForm({
 
             {serviceToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-                    <div className="bg-card border border-border p-8 max-w-sm w-full space-y-6">
+                    <div className="bg-card border border-border rounded-2xl p-8 max-w-sm w-full space-y-6 shadow-xl">
                         <div className="space-y-2">
                             <h3 className="text-foreground font-bold tracking-[0.1em] text-lg">
                                 ELIMINAR SERVICIO

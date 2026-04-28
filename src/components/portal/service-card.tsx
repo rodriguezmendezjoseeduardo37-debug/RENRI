@@ -18,15 +18,15 @@ export function ServiceCard({
     return (
         <button
             onClick={onClick}
-            className={`w-full text-left p-6 border transition-all duration-300 relative overflow-hidden group hover:-translate-y-1 block ${
+            className={`w-full text-left p-6 border transition-all duration-300 relative overflow-hidden group hover:-translate-y-1 block rounded-2xl ${
                 selected
-                    ? "border-foreground bg-foreground/5 shadow-sm"
-                    : "border-border bg-card hover:border-foreground/30 hover:bg-muted"
+                    ? "border-[#bec092] bg-[#bec092]/5 shadow-sm"
+                    : "border-border bg-card hover:border-[#bec092]/30 hover:bg-muted"
             }`}
         >
             {/* Ambient inner glow when selected */}
             {selected && (
-                <div className="absolute inset-0 bg-gradient-to-tr from-foreground/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#bec092]/5 to-transparent pointer-events-none" />
             )}
 
             <div className="flex items-start justify-between relative z-10 w-full">
@@ -57,7 +57,7 @@ export function ServiceCard({
                 <div 
                     className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-500 flex-shrink-0 ${
                         selected 
-                        ? "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 scale-100 opacity-100" 
+                        ? "bg-[#bec092] text-black scale-100 opacity-100" 
                         : "bg-muted text-transparent scale-75 opacity-0 group-hover:opacity-50"
                     }`}
                 >
