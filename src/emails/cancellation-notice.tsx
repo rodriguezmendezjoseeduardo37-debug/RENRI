@@ -14,7 +14,7 @@ import {
 } from '@react-email/components';
 import { EmailLayout } from './email-layout';
 
-interface CancellationNoticeEmailProps {
+export interface CancellationNoticeEmailProps {
   customerName: string;
   businessName: string;
   appointmentType: string;

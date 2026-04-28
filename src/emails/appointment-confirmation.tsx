@@ -122,7 +122,7 @@ export const AppointmentConfirmationEmail: React.FC<AppointmentConfirmationEmail
             <Text style={labelStyles}>🔔 ID de Cita</Text>
           </Column>
           <Column style={columnValueStyles}>
-            <Text style={valueStyles} style={{ fontFamily: 'monospace', fontSize: '12px' }}>
+            <Text style={{ ...valueStyles, fontFamily: 'monospace', fontSize: '12px' }}>
               {appointmentId}
             </Text>
           </Column>

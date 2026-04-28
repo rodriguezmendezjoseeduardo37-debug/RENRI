@@ -14,7 +14,7 @@ import {
 } from '@react-email/components';
 import { EmailLayout } from './email-layout';
 
-interface PasswordResetEmailProps {
+export interface PasswordResetEmailProps {
   userName: string;
   resetUrl: string;
   expiresIn?: string;

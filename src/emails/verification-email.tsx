@@ -14,7 +14,7 @@ import {
 } from '@react-email/components';
 import { EmailLayout } from './email-layout';
 
-interface VerificationEmailProps {
+export interface VerificationEmailProps {
   userName: string;
   verificationUrl: string;
   expiresIn?: string;

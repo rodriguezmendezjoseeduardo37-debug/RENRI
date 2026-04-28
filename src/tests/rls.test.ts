@@ -56,7 +56,7 @@ describe('RLS Middleware', () => {
     });
 
     it('debería lanzar error si no hay sesión', async () => {
-      vi.mocked(auth).mockResolvedValueOnce(null);
+      vi.mocked(auth).mockResolvedValueOnce(null as any);
 
       await expect(requireTenantAccess('tenant1')).rejects.toThrow(RLSError);
       await expect(requireTenantAccess('tenant1')).rejects.toThrow('No autenticado');

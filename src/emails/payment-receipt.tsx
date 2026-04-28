@@ -14,7 +14,7 @@ import {
 } from '@react-email/components';
 import { EmailLayout } from './email-layout';
 
-interface PaymentReceiptEmailProps {
+export interface PaymentReceiptEmailProps {
   customerName: string;
   customerEmail: string;
   invoiceNumber: string;

@@ -113,7 +113,24 @@ export async function processPendingEmails(): Promise<{
 
     for (const email of pendingEmails) {
       stats.processed++;
-      await sendQueuedEmail(email);
+      
+      // Transformar el resultado de la DB al tipo EmailQueueItem
+      const queueItem: EmailQueueItem = {
+        id: email.id,
+        type: email.type as EmailType,
+        recipientEmail: email.recipientEmail,
+        recipientName: email.recipientName || '',
+        templateData: JSON.parse(email.templateData),
+        status: email.status as any,
+        attempts: email.attempts,
+        maxAttempts: email.maxAttempts,
+        lastError: email.lastError || undefined,
+        nextRetryAt: email.nextRetryAt || undefined,
+        createdAt: email.createdAt,
+        sentAt: email.sentAt || undefined,
+      };
+
+      await sendQueuedEmail(queueItem);
     }
 
     return stats;
