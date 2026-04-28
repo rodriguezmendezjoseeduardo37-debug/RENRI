@@ -4,7 +4,7 @@ import { endOfDay, format, startOfDay, subDays, subMonths, subYears } from "date
 import { and, desc, eq, gte, lte } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { appointments, payments } from "@/db/schema";
+import { appointments, payments, tenants } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
 import { ActionError } from "@/lib/action-helpers";
 import { logger } from "@/lib/logger";
