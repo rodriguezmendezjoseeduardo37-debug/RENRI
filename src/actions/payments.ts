@@ -122,42 +122,40 @@ async function completePayment(
             // ─── Trigger Transfers (Separate Transfers) ───
             // If the payment used a transfer_group, we handle the distribution here.
             // (In a real app, this might be better in a background job or webhook)
-            if (payment.status !== "completed") { // Only for first-time completion
-                 const appointment = await tx.query.appointments.findFirst({
-                    where: eq(appointments.id, payment.referenceId),
+            const appointment = await tx.query.appointments.findFirst({
+                where: eq(appointments.id, payment.referenceId),
+            });
+
+            if (appointment) {
+                const tenant = await tx.query.tenants.findFirst({
+                    where: eq(tenants.id, payment.tenantId),
                 });
 
-                if (appointment) {
-                    const tenant = await tx.query.tenants.findFirst({
-                        where: eq(tenants.id, payment.tenantId),
-                    });
+                if (tenant?.stripeConnectAccountId) {
+                    // Transfer to Business
+                    // For now, we transfer the full amount minus platform fee
+                    const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
+                    const transferAmount = Number(payment.amount) - platformFee;
 
-                    if (tenant?.stripeConnectAccountId) {
-                        // Transfer to Business
-                        // For now, we transfer the full amount minus platform fee
-                        const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
-                        const transferAmount = Number(payment.amount) - platformFee;
-
-                        if (transferAmount > 0) {
-                            try {
-                                await stripeCreateTransfer(
-                                    transferAmount,
-                                    tenant.stripeConnectAccountId,
-                                    `Payment for appointment ${appointment.id}`,
-                                    { paymentId: payment.id, transferGroup: payment.id }
-                                );
-                            } catch (e) {
-                                logger.logAction("completePayment", "transfer_error", { paymentId: payment.id }, e as Error);
-                                // We don't fail the whole transaction if transfer fails, 
-                                // but we should log it for manual retry.
-                            }
+                    if (transferAmount > 0) {
+                        try {
+                            await stripeCreateTransfer(
+                                transferAmount,
+                                tenant.stripeConnectAccountId,
+                                `Payment for appointment ${appointment.id}`,
+                                { paymentId: payment.id, transferGroup: payment.id }
+                            );
+                        } catch (e) {
+                            logger.logAction("completePayment", "transfer_error", { paymentId: payment.id }, e as Error);
+                            // We don't fail the whole transaction if transfer fails, 
+                            // but we should log it for manual retry.
                         }
                     }
-
-                    // TODO: Logic for Staff transfer if they have an account
-                    // const staff = await tx.query.users.findFirst({ where: eq(users.id, appointment.staffId) });
-                    // if (staff?.stripeConnectAccountId) { ... }
                 }
+
+                // TODO: Logic for Staff transfer if they have an account
+                // const staff = await tx.query.users.findFirst({ where: eq(users.id, appointment.staffId) });
+                // if (staff?.stripeConnectAccountId) { ... }
             }
         }
 
