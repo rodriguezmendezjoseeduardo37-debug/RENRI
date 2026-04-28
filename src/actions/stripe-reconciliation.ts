@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { stripe } from "@/lib/stripe";
+import { stripeServer as stripe } from "@/lib/stripe";
 import { eq, and, lt } from "drizzle-orm";
 // Assume payments and appointments exist
 // import { payments, appointments } from "@/db/schema";
