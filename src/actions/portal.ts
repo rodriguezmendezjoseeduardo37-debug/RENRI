@@ -390,7 +390,7 @@ export async function createCheckoutSession(data: {
         // Update the payment status to simulate a successful payment
         await db
             .update(payments)
-            .set({ status: "paid", updatedAt: new Date() })
+            .set({ status: "completed", updatedAt: new Date() })
             .where(
                 and(
                     eq(payments.referenceId, data.appointmentId),
