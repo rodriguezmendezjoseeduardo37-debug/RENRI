@@ -10,10 +10,10 @@ import {
   Text,
   Button,
   Heading,
-} from '@react-email/components';
+} from 'react-email';
 import { EmailLayout } from './email-layout';
 
-interface AppointmentConfirmationEmailProps {
+export interface AppointmentConfirmationEmailProps {
   customerName: string;
   businessName: string;
   appointmentDate: string;

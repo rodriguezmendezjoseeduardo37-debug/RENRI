@@ -16,7 +16,7 @@ import {
   Img,
   Hr,
   Font,
-} from '@react-email/components';
+} from 'react-email';
 
 interface EmailLayoutProps {
   title: string;

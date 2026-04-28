@@ -16,7 +16,7 @@
  */
 
 import { db } from "@/db";
-import { render } from "@react-email/render";
+import { render } from "react-email";
 import {
   AppointmentConfirmationEmail,
   VerificationEmail,

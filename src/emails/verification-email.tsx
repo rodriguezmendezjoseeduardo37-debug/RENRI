@@ -11,7 +11,7 @@ import {
   Button,
   Heading,
   Hr,
-} from '@react-email/components';
+} from 'react-email';
 import { EmailLayout } from './email-layout';
 
 export interface VerificationEmailProps {
