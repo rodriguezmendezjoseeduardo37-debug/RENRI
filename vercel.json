@@ -2,11 +2,11 @@
     "crons": [
         {
             "path": "/api/cron/cleanup",
-            "schedule": "*/30 * * * *"
+            "schedule": "0 2 * * *"
         },
         {
             "path": "/api/cron/reconcile",
-            "schedule": "0 * * * *"
+            "schedule": "0 3 * * *"
         },
         {
             "path": "/api/cron/emails",
