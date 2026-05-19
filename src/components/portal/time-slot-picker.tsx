@@ -53,8 +53,8 @@ export function TimeSlotPicker({
                             !slot.available
                                 ? "border-border bg-muted/50 text-muted-foreground/50 cursor-not-allowed"
                                 : isSelected
-                                    ? "border-[#bec092] bg-[#bec092] text-black font-bold scale-[1.02]"
-                                    : "border-border bg-card text-foreground hover:border-[#bec092]/30 hover:bg-muted active:scale-95"
+                                    ? "border-[#08b6ff] bg-[#08b6ff] text-black font-bold scale-[1.02]"
+                                    : "border-border bg-card text-foreground hover:border-[#08b6ff]/30 hover:bg-muted active:scale-95"
                         }`}
                         title={!slot.available ? "Horario Ocupado" : "Seleccionar Horario"}
                     >

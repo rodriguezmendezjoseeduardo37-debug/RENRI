@@ -18,4 +18,4 @@ export const clientBusinesses = pgTable(
     (table) => ({
         pk: primaryKey({ columns: [table.clientId, table.tenantId] }),
     })
-);
+).enableRLS();

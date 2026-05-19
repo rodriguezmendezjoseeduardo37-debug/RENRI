@@ -6,9 +6,11 @@ import { PaymentStats } from "@/components/dashboard/pagos/payment-stats";
 import { RevenueChart } from "@/components/dashboard/pagos/revenue-chart";
 import { PaymentRow } from "@/components/dashboard/pagos/payment-row";
 import { ExportCsvButton } from "@/components/dashboard/pagos/export-csv-button";
+import { EmptyState } from "@/components/dashboard/empty-state";
 import { db } from "@/db";
 import { eq, inArray } from "drizzle-orm";
 import { users, appointments, orders, tenants } from "@/db/schema";
+import { CreditCard } from "lucide-react";
 
 // Helper function to get Monday and Sunday of current week
 function getCurrentWeekBounds(): { from: Date; to: Date } {
@@ -194,8 +196,13 @@ export default async function PagosPage() {
                         <tbody>
                             {paymentsData.length === 0 ? (
                                 <tr>
-                                    <td colSpan={7} className="px-6 py-12 text-center text-sm font-mono text-muted-foreground">
-                                        Aún no hay transacciones registradas.
+                                    <td colSpan={7} className="p-0 border-0">
+                                        <EmptyState
+                                            icon={CreditCard}
+                                            title="Sin transacciones"
+                                            description="Aún no hay transacciones registradas en este período."
+                                            className="border-0 bg-transparent py-16"
+                                        />
                                     </td>
                                 </tr>
                             ) : (

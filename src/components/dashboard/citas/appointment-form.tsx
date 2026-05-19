@@ -167,11 +167,11 @@ export function AppointmentForm({
     };
 
     const inputClass =
-        "w-full bg-background border border-border text-foreground text-sm px-4 py-2.5 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#bec092] transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-2.5 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-colors";
     const labelClass =
         "text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase block mb-1.5";
     const selectClass =
-        "w-full appearance-none bg-background border border-border text-foreground text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:border-[#bec092] transition-colors cursor-pointer";
+        "w-full appearance-none bg-background border border-border text-foreground text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:border-[#08b6ff] transition-colors cursor-pointer";
 
     return (
         <Dialog open={open} onOpenChange={(o) => {
@@ -197,7 +197,7 @@ export function AppointmentForm({
                             <div className="relative">
                                 {/* Selected Value Display or Search Input trigger */}
                                 <div
-                                    className={`w-full flex items-center justify-between border border-border bg-background px-4 py-2.5 rounded-xl cursor-pointer ${isClientDropdownOpen ? "border-[#bec092]" : "hover:border-border"}`}
+                                    className={`w-full flex items-center justify-between border border-border bg-background px-4 py-2.5 rounded-xl cursor-pointer ${isClientDropdownOpen ? "border-[#08b6ff]" : "hover:border-border"}`}
                                     onClick={() => setIsClientDropdownOpen(!isClientDropdownOpen)}
                                 >
                                     <span className="text-sm truncate">
@@ -225,7 +225,7 @@ export function AppointmentForm({
                                                 placeholder="Buscar por nombre o ID..."
                                                 value={clientSearch}
                                                 onChange={(e) => setClientSearch(e.target.value)}
-                                                className="w-full bg-secondary text-xs text-foreground px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-[#bec092]"
+                                                className="w-full bg-secondary text-xs text-foreground px-3 py-2 border border-border rounded-lg focus:outline-none focus:border-[#08b6ff]"
                                             />
                                         </div>
 
@@ -235,8 +235,8 @@ export function AppointmentForm({
                                             onClick={() => setIsCreatingClient(true)}
                                             className="w-full flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground hover:bg-secondary border-b border-border transition-colors uppercase text-left"
                                         >
-                                                <Plus className="w-3.5 h-3.5 text-[#bec092]" />
-                                                <span className="text-[#bec092]">REGISTRAR NUEVO CLIENTE</span>
+                                                <Plus className="w-3.5 h-3.5 text-[#08b6ff]" />
+                                                <span className="text-[#08b6ff]">REGISTRAR NUEVO CLIENTE</span>
                                         </button>
 
                                         {/* Client List */}
@@ -275,7 +275,7 @@ export function AppointmentForm({
                                 )}
                             </div>
                         ) : (
-                            <div className="p-4 border border-[#bec092]/30 bg-background rounded-xl space-y-4">
+                            <div className="p-4 border border-[#08b6ff]/30 bg-background rounded-xl space-y-4">
                                 <div className="flex items-center justify-between pb-2 border-b border-border">
                                     <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-foreground">NUEVO CLIENTE MANUAL</span>
                                     <button type="button" onClick={() => setIsCreatingClient(false)} className="text-foreground hover:text-foreground">
@@ -314,7 +314,7 @@ export function AppointmentForm({
                                         type="button"
                                         onClick={handleCreateClient}
                                         disabled={isSubmittingClient || !newClientName.trim()}
-                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 disabled:opacity-40 transition-all"
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 disabled:opacity-40 transition-all"
                                     >
                                         {isSubmittingClient && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                                         GUARDAR Y SELECCIONAR
@@ -457,7 +457,7 @@ export function AppointmentForm({
                             <button
                                 type="submit"
                                 disabled={isSubmitting || isCreatingClient}
-                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40"
+                                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40"
                             >
                                 {isSubmitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                                 {isEdit ? "GUARDAR" : "CREAR CITA"}

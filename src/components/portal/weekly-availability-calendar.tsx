@@ -93,7 +93,7 @@ export function WeeklyAvailabilityCalendar({
             // Ideally we'd pass staffId, date, time to prefill it. 
             // The booking page currently uses local state, so prefilling via URL params requires updating booking page.
             // For now, we will just take them to the booking page.
-            window.open(`/portal/${tenantSlug}/agendar?staffId=${selectedStaffId}&date=${dateStr}&time=${slot.startTime}`, "_blank");
+            window.open(`/portal/${tenantSlug}?staffId=${selectedStaffId}&date=${dateStr}&time=${slot.startTime}`, "_blank");
         }
     };
 

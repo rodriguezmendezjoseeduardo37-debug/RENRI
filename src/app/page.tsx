@@ -125,7 +125,7 @@ export default function Home() {
             </Link>
             <Link
               href="/register"
-              className="px-5 py-2.5 text-[13px] font-bold bg-[#bec092] text-[#0a0a0a] rounded-xl hover:opacity-90 transition-all shadow-[0_0_20px_rgba(190,192,146,0.15)]"
+              className="px-5 py-2.5 text-[13px] font-bold bg-[#08b6ff] text-[#0a0a0a] rounded-xl hover:opacity-90 transition-all shadow-[0_0_20px_rgba(190,192,146,0.15)]"
             >
               Comenzar gratis
             </Link>
@@ -147,8 +147,8 @@ export default function Home() {
           <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-24 pb-16 md:pt-36 md:pb-24">
             {/* badge */}
             <div className="flex justify-center mb-8">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#bec092]/20 bg-[#bec092]/5 text-[12px] text-[#bec092]/80 tracking-wide">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#bec092] animate-pulse" />
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#08b6ff]/20 bg-[#08b6ff]/5 text-[12px] text-[#08b6ff]/80 tracking-wide">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#08b6ff] animate-pulse" />
                 Plataforma para servicios y negocios
               </span>
             </div>
@@ -171,14 +171,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
               <Link
                 href="/register"
-                className="group flex items-center gap-3 px-8 py-4 text-[15px] font-bold bg-[#bec092] text-[#0a0a0a] rounded-2xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(190,192,146,0.2)]"
+                className="group flex items-center gap-3 px-8 py-4 text-[15px] font-bold bg-[#08b6ff] text-[#0a0a0a] rounded-2xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(190,192,146,0.2)]"
               >
                 Comenzar gratis
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
                 href="/pricing"
-                className="flex items-center gap-2 px-8 py-4 text-[15px] text-white/60 hover:text-[#bec092] transition-colors group"
+                className="flex items-center gap-2 px-8 py-4 text-[15px] text-white/60 hover:text-[#08b6ff] transition-colors group"
               >
                 Ver planes y precios
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
@@ -365,14 +365,14 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
               <Link
                 href="/register"
-                className="group flex items-center gap-3 px-10 py-4 text-[15px] font-bold bg-[#bec092] text-[#0a0a0a] rounded-2xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(190,192,146,0.2)]"
+                className="group flex items-center gap-3 px-10 py-4 text-[15px] font-bold bg-[#08b6ff] text-[#0a0a0a] rounded-2xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(190,192,146,0.2)]"
               >
                 Crear cuenta gratis
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link
                 href="/pricing"
-                className="flex items-center gap-2 px-8 py-4 text-[15px] text-white/50 hover:text-[#bec092] transition-colors group"
+                className="flex items-center gap-2 px-8 py-4 text-[15px] text-white/50 hover:text-[#08b6ff] transition-colors group"
               >
                 Ver planes y precios
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform opacity-0 group-hover:opacity-100" />

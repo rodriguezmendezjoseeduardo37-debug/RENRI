@@ -48,7 +48,7 @@ export default async function MetodoCobroPage({
                     </p>
                     <Link
                         href="/dashboard/configuracion/planes"
-                        className="mt-4 px-8 py-3 bg-[#bec092] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity"
+                        className="mt-4 px-8 py-3 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity"
                     >
                         VER PLANES
                     </Link>
@@ -85,7 +85,7 @@ export default async function MetodoCobroPage({
             </div>
 
             {params.success === "true" && (
-                <div className="bg-[#bec092]/10 border border-[#bec092]/30 text-[#bec092] px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
+                <div className="bg-[#08b6ff]/10 border border-[#08b6ff]/30 text-[#08b6ff] px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
                     ✅ Verificación completada. Tu cuenta de cobros está activa.
                 </div>
             )}

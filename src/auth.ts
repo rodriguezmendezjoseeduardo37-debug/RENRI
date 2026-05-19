@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { db } from "@/db";
 import { tenants, users } from "@/db/schema";
 import { normalizeEnabledModules, type BusinessModule } from "@/lib/business";
+import { checkRateLimit, resetLoginAttempts } from "@/lib/rate-limit";
 import authConfig from "./auth.config";
 
 const GOOGLE_REGISTER_COOKIE = "renri_register_account_type";
@@ -80,6 +81,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 const email = credentials.email as string;
                 const password = credentials.password as string;
 
+                // ── Rate limiting: 5 intentos por IP en 15 minutos ──
+                try {
+                    await checkRateLimit("login");
+                } catch {
+                    // Retornar null en vez de throw para que NextAuth lo maneje
+                    // como "CredentialsSignin" y no exponga la razón al cliente
+                    return null;
+                }
+
                 const [user] = await db
                     .select()
                     .from(users)
@@ -90,6 +100,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 const isValid = await bcrypt.compare(password, user.passwordHash);
                 if (!isValid) return null;
+
+                // Login exitoso — resetear contador de intentos
+                await resetLoginAttempts().catch(() => {});
 
                 const [tenant] = await db
                     .select()

@@ -49,7 +49,7 @@ export const products = pgTable(
         categoryIdx: index("products_category_idx").on(table.category),
         createdAtIdx: index("products_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();
 
 // ─── Stock Movement Type Enum ────────────────────────────
 export const stockMovementTypeEnum = pgEnum("stock_movement_type", [
@@ -87,4 +87,4 @@ export const stockMovements = pgTable(
             table.createdAt
         ),
     })
-);
+).enableRLS();

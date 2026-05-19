@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
     getClientAvailabilityPreview,
-    getClientWorkspace,
 } from "@/actions/client-portal";
 import { WeeklyAvailabilityCalendar } from "@/components/portal/weekly-availability-calendar";
 import { getCurrentUser } from "@/lib/auth-helpers";
@@ -11,10 +10,7 @@ export default async function DisponibilidadPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const [, availability] = await Promise.all([
-        getClientWorkspace(),
-        getClientAvailabilityPreview(),
-    ]);
+    const availability = await getClientAvailabilityPreview();
 
     return (
         <div className="space-y-8">
@@ -29,9 +25,9 @@ export default async function DisponibilidadPage() {
                 </div>
                 {availability.tenantSlug ? (
                     <Link
-                        href={`/portal/${availability.tenantSlug}/agendar`}
+                        href={`/portal/${availability.tenantSlug}`}
                         target="_blank"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
                     >
                         AGENDAR AHORA
                     </Link>

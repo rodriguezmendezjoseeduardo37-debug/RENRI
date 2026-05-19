@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Package, CheckCircle2 } from "lucide-react";
 import { getCheckoutDetails } from "@/actions/checkout";
+import { signSignedToken } from "@/lib/signed-token";
 import { CheckoutClient } from "./client";
 
 interface Props {
@@ -18,6 +19,13 @@ export default async function CheckoutPage({ params }: Props) {
     const { payment, order, items, businessId } = data;
     const isCompleted = payment.status === "completed";
 
+    // Generate a server-side checkout access token (2h TTL)
+    // This allows CheckoutClient to call processOrderPayment securely
+    const checkoutToken = signSignedToken(
+        { paymentId: payment.id, businessId },
+        2 * 60 * 60
+    );
+
     return (
         <div className="min-h-screen bg-background text-foreground">
             {/* Header */}
@@ -25,7 +33,7 @@ export default async function CheckoutPage({ params }: Props) {
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
                     <Link
                         href={`/negocio/${businessId}/tienda`}
-                        className="w-10 h-10 border border-border flex items-center justify-center hover:bg-[#bec092] hover:text-black hover:border-[#bec092] transition-colors rounded-xl"
+                        className="w-10 h-10 border border-border flex items-center justify-center hover:bg-[#08b6ff] hover:text-black hover:border-[#08b6ff] transition-colors rounded-xl"
                     >
                         <ArrowLeft className="w-4 h-4" />
                     </Link>
@@ -42,10 +50,10 @@ export default async function CheckoutPage({ params }: Props) {
 
             <main className="max-w-3xl mx-auto px-4 py-10">
                 {isCompleted ? (
-                    <div className="border border-[#bec092]/20 bg-background p-10 text-center space-y-4 rounded-2xl">
+                    <div className="border border-[#08b6ff]/20 bg-background p-10 text-center space-y-4 rounded-2xl">
                         <div className="relative inline-block">
-                            <div className="absolute inset-0 bg-[#bec092]/20 blur-xl rounded-full" />
-                            <CheckCircle2 className="w-14 h-14 text-[#bec092] relative z-10 mx-auto" />
+                            <div className="absolute inset-0 bg-[#08b6ff]/20 blur-xl rounded-full" />
+                            <CheckCircle2 className="w-14 h-14 text-[#08b6ff] relative z-10 mx-auto" />
                         </div>
                         <h2 className="text-2xl font-bold tracking-[0.1em] text-foreground uppercase font-[family-name:var(--font-heading)]">
                             ¡PAGO VALIDADO!
@@ -55,7 +63,7 @@ export default async function CheckoutPage({ params }: Props) {
                         </p>
                         <Link
                             href={`/negocio/${businessId}/tienda`}
-                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#bec092]/30 text-[#bec092] hover:bg-[#bec092] hover:text-black transition-colors rounded-xl"
+                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#08b6ff]/30 text-[#08b6ff] hover:bg-[#08b6ff] hover:text-black transition-colors rounded-xl"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" />
                             VOLVER A LA TIENDA
@@ -112,7 +120,7 @@ export default async function CheckoutPage({ params }: Props) {
                                 </div>
                                 <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
                                     <span className="tracking-[0.15em] uppercase">Total</span>
-                                    <span className="font-mono text-lg text-[#bec092]">${order.total} MXN</span>
+                                    <span className="font-mono text-lg text-[#08b6ff]">${order.total} MXN</span>
                                 </div>
                             </div>
 
@@ -124,7 +132,11 @@ export default async function CheckoutPage({ params }: Props) {
 
                         {/* Stripe Payment */}
                         <div>
-                            <CheckoutClient paymentId={payment.id} businessId={businessId} />
+                            <CheckoutClient
+                                paymentId={payment.id}
+                                businessId={businessId}
+                                checkoutToken={checkoutToken}
+                            />
                         </div>
                     </div>
                 )}

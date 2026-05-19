@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { db } from "@/db";
@@ -10,6 +10,7 @@ import {
     createConnectOnboardingLink,
     exchangeConnectCode,
     getConnectAccountStatus,
+    stripeServer
 } from "@/lib/stripe";
 import { canPerformAction } from "@/lib/plan-limits";
 
@@ -133,10 +134,54 @@ export async function getTenantStripeAccountId(tenantId: string) {
 
 // ─── Sync Stripe Balances ─────────────────────────────────
 export async function syncStripeBalances() {
-    // Esta función debería ser llamada diariamente por un cron
     console.log("Sincronizando saldos de cuentas conectadas de Stripe...");
-    // 1. Obtener todos los tenants con stripeConnectAccountId
-    // 2. Iterar e invocar stripe.balance.retrieve({ stripeAccount: accId })
-    // 3. Guardar el resultado en la tabla balances
-    return { success: true };
+    
+    // 1. Obtener todos los tenants activos con stripeConnectAccountId
+    const connectedTenants = await db
+        .select()
+        .from(tenants)
+        .where(
+            and(
+                eq(tenants.stripeConnectEnabled, true),
+                isNotNull(tenants.stripeConnectAccountId)
+            )
+        );
+
+    let synced = 0;
+    
+    // 2. Obtener balances desde Stripe de forma secuencial (para no agotar rate limits)
+    for (const tenant of connectedTenants) {
+        try {
+            const accId = tenant.stripeConnectAccountId!;
+            const balance = await stripeServer.balance.retrieve({
+                stripeAccount: accId,
+            });
+            
+            // Format balance (convert from cents to standard currency)
+            const available = balance.available.reduce((acc, curr) => acc + (curr.amount / 100), 0);
+            const pending = balance.pending.reduce((acc, curr) => acc + (curr.amount / 100), 0);
+            
+            // 3. Guardar el caché en la tabla tenants (en el JSON de billingSettings)
+            const currentBillingSettings = (tenant.billingSettings as Record<string, unknown>) || {};
+            const updatedSettings = {
+                ...currentBillingSettings,
+                lastStripeBalance: {
+                    available,
+                    pending,
+                    syncedAt: new Date().toISOString()
+                }
+            };
+            
+            await db.update(tenants)
+                .set({ billingSettings: updatedSettings })
+                .where(eq(tenants.id, tenant.id));
+                
+            synced++;
+        } catch (err) {
+            console.error(`[Stripe Sync] Error sincronizando balance para tenant ${tenant.id}:`, err);
+        }
+    }
+    
+    console.log(`[Stripe Sync] Completado. Sincronizados: ${synced}/${connectedTenants.length} tenants.`);
+    return { success: true, synced };
 }

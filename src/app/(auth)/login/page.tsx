@@ -126,8 +126,8 @@ function LoginForm() {
                                     setValue("accountType", type.value);
                                 }}
                                 className={`rounded-xl border p-3 text-left transition-all ${selectedType === type.value
-                                    ? "border-[#bec092] bg-[#bec092]/10 text-white"
-                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-[#bec092]/30"
+                                    ? "border-[#08b6ff] bg-[#08b6ff]/10 text-white"
+                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-[#08b6ff]/30"
                                     }`}
                             >
                                 <div className="text-xs font-medium">{type.label}</div>
@@ -175,7 +175,7 @@ function LoginForm() {
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#bec092]/50 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#08b6ff]/50 h-11"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -191,7 +191,7 @@ function LoginForm() {
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#bec092]/50 h-11"
+                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#08b6ff]/50 h-11"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -203,7 +203,7 @@ function LoginForm() {
 
                         <Button
                             type="submit"
-                            className="w-full h-11 bg-[#bec092] text-[#0a0a0a] rounded-xl shadow-sm hover:opacity-90 font-bold"
+                            className="w-full h-11 bg-[#08b6ff] text-[#0a0a0a] rounded-xl shadow-sm hover:opacity-90 font-bold"
                             disabled={isSubmitting}
                         >
                         {isSubmitting ? (

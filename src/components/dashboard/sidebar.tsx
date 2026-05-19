@@ -19,6 +19,7 @@ import {
     Repeat,
     Briefcase,
     Store,
+    BarChart2,
 } from "lucide-react";
 import { switchAccountType } from "@/actions/account";
 import type { BusinessModule } from "@/lib/business";
@@ -45,6 +46,7 @@ export const NAV_SERVICIOS: NavItem[] = [
     { href: "/dashboard/horarios", icon: Clock, label: "HORARIOS" },
     { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS" },
     { href: "/dashboard/clientes", icon: Users, label: "CLIENTES" },
+    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES" },
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
 ];
 
@@ -54,6 +56,7 @@ export const NAV_PYME: NavItem[] = [
     { href: "/dashboard/pedidos", icon: ShoppingCart, label: "PEDIDOS" },
     { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS" },
     { href: "/dashboard/clientes", icon: Users, label: "CLIENTES" },
+    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES" },
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION" },
 ];
 
@@ -108,7 +111,7 @@ export function Sidebar({
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-background transition-all duration-300 ease-in-out hidden md:flex flex-col w-60"
+            className="fixed left-3 top-3 bottom-3 z-40 w-60 rounded-2xl glass-panel hidden md:flex flex-col overflow-hidden transition-all duration-300 ease-in-out"
         >
             <div className="flex h-16 items-center border-b border-border px-4 gap-3">
                 <>
@@ -146,7 +149,7 @@ export function Sidebar({
                     </button>
 
                     {showModeSwitcher && (
-                        <div className="absolute left-0 right-0 bg-[#bec092] border-b border-[#a9aa83] z-50 text-black shadow-md">
+                        <div className="absolute left-0 right-0 bg-[#08b6ff] border-b border-[#a9aa83] z-50 text-black shadow-md">
                             {MODE_OPTIONS.map((mode) => {
                                 const isActive = mode.value === accountType;
                                 const ModeIcon = mode.icon;

@@ -78,7 +78,7 @@ export function BuyButton({
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className="w-full mt-4 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
             >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 COMPRAR — ${price}
@@ -92,7 +92,7 @@ export function BuyButton({
                         if (e.target === e.currentTarget) setIsOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-md border border-[#bec092]/20 bg-background p-6 space-y-6 rounded-2xl">
+                    <div className="w-full max-w-md border border-[#08b6ff]/20 bg-background p-6 space-y-6 rounded-2xl">
                         <div className="border-b border-border pb-4">
                             <h3 className="text-sm font-bold tracking-[0.2em] text-foreground uppercase">
                                 CONFIRMAR COMPRA
@@ -109,9 +109,9 @@ export function BuyButton({
 
                         {/* Pre-filled indicator for logged-in users */}
                         {isPreFilled && (
-                            <div className="flex items-center gap-2 px-3 py-2 bg-[#bec092]/10 border border-[#bec092]/20 rounded-xl">
-                                <UserCheck className="w-3.5 h-3.5 text-[#bec092] flex-shrink-0" />
-                                <span className="text-[10px] text-[#bec092] tracking-[0.15em] uppercase">
+                            <div className="flex items-center gap-2 px-3 py-2 bg-[#08b6ff]/10 border border-[#08b6ff]/20 rounded-xl">
+                                <UserCheck className="w-3.5 h-3.5 text-[#08b6ff] flex-shrink-0" />
+                                <span className="text-[10px] text-[#08b6ff] tracking-[0.15em] uppercase">
                                     Datos detectados de tu cuenta
                                 </span>
                             </div>
@@ -128,7 +128,7 @@ export function BuyButton({
                                     onChange={(e) => setName(e.target.value)}
                                     required
                                     placeholder="Juan Pérez"
-                                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#bec092] focus:outline-none transition-colors rounded-xl"
+                                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#08b6ff] focus:outline-none transition-colors rounded-xl"
                                 />
                             </div>
 
@@ -142,7 +142,7 @@ export function BuyButton({
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                     placeholder="correo@ejemplo.com"
-                                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#bec092] focus:outline-none transition-colors rounded-xl"
+                                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#08b6ff] focus:outline-none transition-colors rounded-xl"
                                 />
                             </div>
 
@@ -157,7 +157,7 @@ export function BuyButton({
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="flex-1 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
+                                    className="flex-1 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
                                 >
                                     {isLoading ? "PROCESANDO..." : "PAGAR CON TARJETA"}
                                 </button>

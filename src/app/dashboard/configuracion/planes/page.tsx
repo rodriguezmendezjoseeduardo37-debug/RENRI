@@ -98,7 +98,7 @@ export default async function PlanesPage({
                     return (
                         <div
                             key={plan.name}
-                            className={`border ${isCurrentPlan ? "border-[#bec092]" : plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative transition-colors rounded-2xl`}
+                            className={`border ${isCurrentPlan ? "border-[#08b6ff]" : plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative transition-colors rounded-2xl`}
                         >
                             {plan.recommended && !isCurrentPlan && (
                                 <div className="absolute top-0 right-0 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
@@ -106,7 +106,7 @@ export default async function PlanesPage({
                                 </div>
                             )}
                             {isCurrentPlan && (
-                                <div className="absolute top-0 right-0 bg-[#bec092] text-black rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
+                                <div className="absolute top-0 right-0 bg-[#08b6ff] text-black rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
                                     PLAN ACTUAL
                                 </div>
                             )}
@@ -126,7 +126,7 @@ export default async function PlanesPage({
                             <ul className="space-y-4 mb-12 flex-grow">
                                 {plan.features.map((feature) => (
                                     <li key={feature} className="flex items-start gap-3">
-                                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isCurrentPlan ? "text-[#bec092]" : "text-foreground"}`} />
+                                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isCurrentPlan ? "text-[#08b6ff]" : "text-foreground"}`} />
                                         <span className="text-xs text-muted-foreground leading-relaxed uppercase tracking-wide">{feature}</span>
                                     </li>
                                 ))}

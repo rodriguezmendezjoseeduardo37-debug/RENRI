@@ -56,7 +56,7 @@ export const users = pgTable(
         roleIdx: index("users_role_idx").on(table.role),
         createdAtIdx: index("users_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();
 
 // ─── Profiles ────────────────────────────────────────────
 export const profiles = pgTable(
@@ -80,4 +80,4 @@ export const profiles = pgTable(
     (table) => ({
         userIdIdx: index("profiles_user_id_idx").on(table.userId),
     })
-);
+).enableRLS();

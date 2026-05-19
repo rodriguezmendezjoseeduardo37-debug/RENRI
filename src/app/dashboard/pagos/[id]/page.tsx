@@ -6,8 +6,9 @@ import { StripeCheckoutWrapper } from "@/components/dashboard/pagos/stripe-check
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
-import { ArrowLeft, FileText, CheckCircle2, XCircle, Clock, RotateCcw } from "lucide-react";
+import { ArrowLeft, FileText, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { ReceiptButton } from "./receipt-button";
+import { RefundButton } from "./refund-button";
 
 export default async function PaymentDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -100,12 +101,13 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                     {isCompleted && (
                         <div className="flex gap-4">
                             <ReceiptButton />
-                            {payment.stripePaymentIntentId && !payment.stripePaymentIntentId.startsWith("MANUAL_") && (
-                                <button className="px-6 py-4 border border-red-900/50 hover:bg-red-950/20 text-red-500 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2">
-                                    <RotateCcw className="w-3 h-3" />
-                                    STRIPE REFUND
-                                </button>
-                            )}
+                            <RefundButton
+                                paymentId={payment.id}
+                                tenantId={payment.tenantId}
+                                totalAmount={Number(payment.amount)}
+                                currency={payment.currency}
+                                stripePaymentIntentId={payment.stripePaymentIntentId}
+                            />
                         </div>
                     )}
                 </div>

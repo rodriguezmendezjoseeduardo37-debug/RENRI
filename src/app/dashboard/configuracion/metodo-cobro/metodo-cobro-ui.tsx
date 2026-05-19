@@ -113,14 +113,14 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
     // ═════════════════════════════════════════════════════
     if (status.state === "active") {
         return (
-            <div className="border border-[#bec092]/30 bg-card rounded-2xl p-8 space-y-6">
+            <div className="border border-[#08b6ff]/30 bg-card rounded-2xl p-8 space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-[#bec092]/10 border border-[#bec092]/20 flex items-center justify-center">
-                        <CheckCircle2 className="w-6 h-6 text-[#bec092]" />
+                    <div className="w-12 h-12 rounded-2xl bg-[#08b6ff]/10 border border-[#08b6ff]/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-6 h-6 text-[#08b6ff]" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold tracking-[0.15em] text-[#bec092] uppercase">
+                        <p className="text-sm font-bold tracking-[0.15em] text-[#08b6ff] uppercase">
                             COBROS ACTIVOS
                         </p>
                         <p className="text-[10px] text-muted-foreground tracking-[0.1em]">
@@ -194,7 +194,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     <button
                         onClick={handleRefreshOnboarding}
                         disabled={isPending}
-                        className="flex items-center gap-2 px-6 py-3 bg-[#bec092] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity disabled:opacity-50"
+                        className="flex items-center gap-2 px-6 py-3 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
                         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
                         {isPending ? "CARGANDO..." : "COMPLETAR VERIFICACIÓN"}
@@ -202,7 +202,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
 
                     <button
                         onClick={() => router.refresh()}
-                        className="flex items-center gap-2 px-5 py-3 border border-border text-muted-foreground rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#bec092] transition-colors"
+                        className="flex items-center gap-2 px-5 py-3 border border-border text-muted-foreground rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#08b6ff] transition-colors"
                     >
                         <RefreshCw className="w-3.5 h-3.5" />
                         VERIFICAR ESTADO
@@ -248,8 +248,8 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                         desc: "Tus clientes pagan y el dinero llega a tu cuenta",
                     },
                 ].map((item) => (
-                    <div key={item.step} className="border border-border bg-card p-5 rounded-2xl space-y-3 text-center group hover:border-[#bec092]/30 transition-colors">
-                        <div className="text-3xl font-bold font-mono text-muted-foreground/30 group-hover:text-[#bec092]/40 transition-colors">
+                    <div key={item.step} className="border border-border bg-card p-5 rounded-2xl space-y-3 text-center group hover:border-[#08b6ff]/30 transition-colors">
+                        <div className="text-3xl font-bold font-mono text-muted-foreground/30 group-hover:text-[#08b6ff]/40 transition-colors">
                             {item.step}
                         </div>
                         <item.icon className="w-5 h-5 text-foreground mx-auto" />
@@ -285,7 +285,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                             value={holderName}
                             onChange={(e) => setHolderName(e.target.value)}
                             placeholder="Juan Pérez García"
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#bec092] transition-colors"
+                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#08b6ff] transition-colors"
                         />
                     </div>
 
@@ -300,13 +300,13 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                             onChange={(e) => formatClabe(e.target.value)}
                             placeholder="012 345 678 901 234 567"
                             maxLength={23} // 18 digits + 5 spaces
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground/50 tracking-widest focus:outline-none focus:border-[#bec092] transition-colors"
+                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground/50 tracking-widest focus:outline-none focus:border-[#08b6ff] transition-colors"
                         />
                         <div className="flex items-center justify-between">
                             <p className="text-[9px] text-muted-foreground tracking-wide">
                                 18 dígitos — Encuéntrala en tu banca en línea
                             </p>
-                            <p className={`text-[9px] font-mono tracking-wide ${clabe.length === 18 ? "text-[#bec092]" : "text-muted-foreground"}`}>
+                            <p className={`text-[9px] font-mono tracking-wide ${clabe.length === 18 ? "text-[#08b6ff]" : "text-muted-foreground"}`}>
                                 {clabe.length}/18
                             </p>
                         </div>
@@ -317,7 +317,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 <button
                     onClick={handleSetup}
                     disabled={isPending || clabe.length !== 18 || holderName.trim().length < 2}
-                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#bec092] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                     {isPending ? (
                         <>

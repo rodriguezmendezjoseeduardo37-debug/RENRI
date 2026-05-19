@@ -36,7 +36,7 @@ export const schedules = pgTable(
         staffIdIdx: index("schedules_staff_id_idx").on(table.staffId),
         createdAtIdx: index("schedules_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();
 
 // ─── Blocked Dates ───────────────────────────────────────
 export const blockedDates = pgTable(
@@ -60,4 +60,4 @@ export const blockedDates = pgTable(
         staffIdIdx: index("blocked_dates_staff_id_idx").on(table.staffId),
         dateIdx: index("blocked_dates_date_idx").on(table.date),
     })
-);
+).enableRLS();

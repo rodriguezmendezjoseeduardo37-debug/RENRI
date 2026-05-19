@@ -213,3 +213,35 @@ export async function updateTenantCommission(tenantId: string, commissionRate: s
     revalidatePath("/dashboard/admin/comisiones");
     return { success: true };
 }
+
+/**
+ * Marca el tenant como configurado tras completar el wizard de onboarding.
+ */
+export async function completeOnboarding(
+    tenantId: string,
+    data: {
+        name: string;
+        description?: string;
+        phone?: string;
+        address?: string;
+    }
+) {
+    const user = await requireAuth(["OWNER", "SUPER_ADMIN"]);
+    if (!user) throw new Error("Unauthorized");
+    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
+
+    await db
+        .update(tenants)
+        .set({
+            name: data.name.trim(),
+            description: data.description?.trim() || null,
+            phone: data.phone?.trim() || null,
+            address: data.address?.trim() || null,
+            isOnboarded: true,
+            updatedAt: new Date(),
+        })
+        .where(eq(tenants.id, tenantId));
+
+    revalidatePath("/dashboard");
+    return { success: true };
+}

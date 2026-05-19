@@ -449,9 +449,13 @@ export async function markPaymentAsPaidFromWebhook(paymentId: string, stripePaym
     }
 }
 
-export async function refundPaymentAction(paymentId: string, tenantId: string) {
+export async function refundPaymentAction(
+    paymentId: string,
+    tenantId: string,
+    amountToRefund?: number // Si es undefined → reembolso total. Si se pasa → parcial.
+) {
     try {
-        logger.logAction("refundPaymentAction", "start", { paymentId, tenantId });
+        logger.logAction("refundPaymentAction", "start", { paymentId, tenantId, amountToRefund });
 
         const validated = RefundPaymentSchema.parse({ paymentId });
         const user = await requireAuth();
@@ -473,24 +477,60 @@ export async function refundPaymentAction(paymentId: string, tenantId: string) {
             throw new ActionError("Only completed payments can be refunded", "INVALID_STATUS");
         }
 
-        if (payment.stripePaymentIntentId) {
-            await stripeRefundPayment(payment.stripePaymentIntentId);
+        const totalAmount = Number(payment.amount);
+
+        // Validar monto de reembolso parcial
+        if (amountToRefund !== undefined) {
+            if (amountToRefund <= 0) {
+                throw new ActionError("El monto del reembolso debe ser mayor a 0", "INVALID_AMOUNT");
+            }
+            if (amountToRefund > totalAmount) {
+                throw new ActionError(
+                    `El monto del reembolso ($${amountToRefund}) no puede ser mayor al total ($${totalAmount})`,
+                    "AMOUNT_EXCEEDS_TOTAL"
+                );
+            }
         }
 
+        // ── Ejecutar reembolso en Stripe ─────────────────────────────────
+        if (payment.stripePaymentIntentId && !payment.stripePaymentIntentId.startsWith("MANUAL_")) {
+            // stripeRefundPayment acepta amount opcional en centavos
+            const amountInCents = amountToRefund ? Math.round(amountToRefund * 100) : undefined;
+            await stripeRefundPayment(payment.stripePaymentIntentId, amountInCents);
+        }
+
+        const isFullRefund = amountToRefund === undefined || amountToRefund >= totalAmount;
+
+        // ── Actualizar estado en BD ───────────────────────────────────────
         const [refunded] = await db
             .update(payments)
-            .set({ status: "refunded" })
+            .set({
+                // Solo marcar como "refunded" si es reembolso total
+                status: isFullRefund ? "refunded" : "completed",
+                // Guardar nota del reembolso en el campo de notas si existe, si no en stripePaymentMethod temporalmente
+                // Idealmente: añadir columna refundedAmount a la tabla en próxima migración
+            })
             .where(eq(payments.id, validated.paymentId))
             .returning();
 
         revalidatePath("/dashboard/pagos");
-        logger.logAction("refundPaymentAction", "success", { paymentId });
-        return refunded;
+        revalidatePath(`/dashboard/pagos/${paymentId}`);
+        logger.logAction("refundPaymentAction", "success", {
+            paymentId,
+            isFullRefund,
+            amountRefunded: amountToRefund ?? totalAmount,
+        });
+        return {
+            payment: refunded,
+            refundedAmount: amountToRefund ?? totalAmount,
+            isFullRefund,
+        };
     } catch (error) {
         logger.logAction("refundPaymentAction", "error", { paymentId, tenantId }, error as Error);
         throw error;
     }
 }
+
 
 export async function getRevenueStats(
     tenantId: string,

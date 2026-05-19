@@ -53,7 +53,7 @@ export default async function InventarioPage({
                 </div>
                 <Link
                     href="/dashboard/inventario/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PRODUCTO
@@ -62,9 +62,9 @@ export default async function InventarioPage({
 
             {/* Low stock alert */}
             {lowStockProducts.length > 0 && (
-                <div className="flex items-center gap-3 px-5 py-4 bg-card border-l-4 border-[#bec092] rounded-r-xl">
-                    <AlertTriangle className="w-4 h-4 text-[#bec092] flex-shrink-0" />
-                    <span className="text-[11px] font-bold tracking-[0.2em] text-[#bec092] uppercase">
+                <div className="flex items-center gap-3 px-5 py-4 bg-card border-l-4 border-[#08b6ff] rounded-r-xl">
+                    <AlertTriangle className="w-4 h-4 text-[#08b6ff] flex-shrink-0" />
+                    <span className="text-[11px] font-bold tracking-[0.2em] text-[#08b6ff] uppercase">
                         ⚠ {lowStockProducts.length} PRODUCTO{lowStockProducts.length !== 1 ? "S" : ""} CON STOCK BAJO
                     </span>
                 </div>
@@ -100,13 +100,13 @@ export default async function InventarioPage({
                         className="bg-card p-5 flex flex-col"
                     >
                         <div className="flex items-center gap-2 mb-3">
-                            <stat.icon className={`w-3.5 h-3.5 ${stat.highlight ? "text-[#bec092]" : "text-muted-foreground"}`} />
+                            <stat.icon className={`w-3.5 h-3.5 ${stat.highlight ? "text-[#08b6ff]" : "text-muted-foreground"}`} />
                             <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                                 {stat.label}
                             </span>
                         </div>
                         <span
-                            className={`text-xl font-bold font-mono ${stat.highlight ? "text-[#bec092]" : "text-foreground"
+                            className={`text-xl font-bold font-mono ${stat.highlight ? "text-[#08b6ff]" : "text-foreground"
                                 }`}
                         >
                             {stat.value}
@@ -127,7 +127,7 @@ export default async function InventarioPage({
                     </p>
                     <Link
                         href="/dashboard/inventario/nuevo"
-                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
+                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
                     >
                         CREAR PRIMER PRODUCTO
                     </Link>

@@ -121,19 +121,19 @@ export default async function ClienteDashboardPage() {
                         <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pt-2">
                             <Link
                                 href="/cliente/mis-citas"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
                             >
                                 VER MIS CITAS
                             </Link>
                             <Link
                                 href="/cliente/disponibilidad"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#bec092] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-all"
                             >
                                 VER HORARIOS
                             </Link>
                             <Link
                                 href="/cliente/mis-pagos"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#bec092] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-all"
                             >
                                 VER PAGOS
                             </Link>
@@ -171,14 +171,14 @@ export default async function ClienteDashboardPage() {
                                         <Link
                                             href={`/negocio/${businessId}`}
                                             target="_blank"
-                                            className="inline-flex items-center justify-center gap-2 bg-[#bec092] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
+                                            className="inline-flex items-center justify-center gap-2 bg-[#08b6ff] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
                                         >
                                             ABRIR PORTAL
                                         </Link>
                                     ) : null}
                                     <Link
                                         href="/cliente/enlazar-negocio"
-                                        className="inline-flex items-center justify-center gap-2 border border-border text-muted-foreground rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#bec092] transition-all"
+                                        className="inline-flex items-center justify-center gap-2 border border-border text-muted-foreground rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#08b6ff] transition-all"
                                     >
                                         CAMBIAR NEGOCIO
                                     </Link>
@@ -193,7 +193,7 @@ export default async function ClienteDashboardPage() {
                                 </p>
                                 <Link
                                     href="/cliente/enlazar-negocio"
-                                    className="inline-flex items-center justify-center gap-2 bg-[#bec092] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
+                                    className="inline-flex items-center justify-center gap-2 bg-[#08b6ff] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
                                 >
                                     ENLAZAR NEGOCIO
                                 </Link>

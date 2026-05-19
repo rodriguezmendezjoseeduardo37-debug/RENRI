@@ -21,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/dashboard/inventario/${product.id}`}
-            className="border border-border rounded-2xl shadow-sm bg-card p-5 flex flex-col justify-between group hover:border-[#bec092] hover:shadow-md transition-all min-h-[220px]"
+            className="border border-border rounded-2xl shadow-sm bg-card p-5 flex flex-col justify-between group hover:border-[#08b6ff] hover:shadow-md transition-all min-h-[220px]"
         >
             {/* Image or placeholder */}
             <div className="flex items-center justify-between mb-4">

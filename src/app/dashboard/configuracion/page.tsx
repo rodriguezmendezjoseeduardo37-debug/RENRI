@@ -49,7 +49,7 @@ export default async function ConfiguracionPage() {
                         <Link
                             href={section.href}
                             key={section.href}
-                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#bec092] hover:shadow-md transition-all cursor-pointer"
+                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#08b6ff] hover:shadow-md transition-all cursor-pointer"
                         >
                             <section.icon className="w-6 h-6 text-foreground mb-4 group-hover:scale-110 transition-transform origin-left" />
                             <div>
@@ -136,7 +136,7 @@ export default async function ConfiguracionPage() {
                         <Link
                             href={section.href}
                             key={idx}
-                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#bec092] hover:shadow-md transition-all cursor-pointer"
+                            className="border border-border bg-card rounded-2xl shadow-sm p-6 flex flex-col justify-between h-48 group hover:border-[#08b6ff] hover:shadow-md transition-all cursor-pointer"
                         >
                             <section.icon className="w-6 h-6 text-foreground mb-4 group-hover:scale-110 transition-transform origin-left" />
                             <div>

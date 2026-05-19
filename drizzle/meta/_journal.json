@@ -64,6 +64,34 @@
       "when": 1777159391569,
       "tag": "0008_striped_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1779130470481,
+      "tag": "0009_overrated_silverclaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1779131914168,
+      "tag": "0010_mighty_iron_fist",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1779132065669,
+      "tag": "0011_dusty_newton_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1779218487213,
+      "tag": "0012_premium_vapor",
+      "breakpoints": true
     }
   ]
 }

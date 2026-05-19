@@ -80,7 +80,7 @@ export default async function MisPagosPage() {
                                     <td className="px-6 py-4">
                                         <Link
                                             href={`/cliente/mis-pagos/${payment.id}`}
-                                            className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#bec092] text-black rounded-xl hover:opacity-90 transition-all"
+                                            className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
                                         >
                                             VER
                                         </Link>

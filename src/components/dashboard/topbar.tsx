@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { UserMenu } from "@/components/auth/user-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SearchBar } from "@/components/dashboard/search-bar";
 import { NAV_SERVICIOS, NAV_PYME } from "./sidebar";
 import { NAV_USUARIO } from "./cliente-sidebar";
 import type { BusinessModule } from "@/lib/business";
-import { RenriMark } from "@/components/renri-mark";
 
 interface TopbarProps {
     tenantName: string;
@@ -22,10 +22,12 @@ interface TopbarProps {
 
 export function Topbar({ 
     tenantName, 
-    accountType = "servicios"
+    accountType = "servicios",
+    userRole,
 }: TopbarProps) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const menuRef = useRef<HTMLDivElement>(null);
     
     // Determine which nav items to use based on accountType
     const navItems = accountType === "cliente" 
@@ -33,85 +35,86 @@ export function Topbar({
         : accountType === "pyme" 
             ? NAV_PYME 
             : NAV_SERVICIOS;
+
+    // Only business roles can use global search (not pure clients)
+    const canSearch = accountType !== "cliente" && userRole !== "CLIENT";
+
+    // Close menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setMobileMenuOpen(false);
+            }
+        };
+        if (mobileMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [mobileMenuOpen]);
+
     return (
-        <>
-            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-md px-4 md:px-8 transition-colors duration-300">
-                <div className="flex items-center gap-3">
-                    {/* Hamburger Button (Mobile Only, visible up to md breakpoint) */}
+        <div className="relative z-30 mx-3 sticky top-3" ref={menuRef}>
+            <header className="flex h-14 items-center justify-between rounded-2xl glass-panel px-4 md:px-5 transition-all duration-300">
+                {/* Left: hamburger (mobile) + tenant name */}
+                <div className="flex items-center gap-3 min-w-0">
                     <button 
-                        className="md:hidden flex items-center justify-center w-10 h-10 -ml-2 rounded-lg text-foreground bg-accent/50 hover:bg-accent border border-border/50 transition-all shrink-0"
-                        onClick={() => setMobileMenuOpen(true)}
+                        className="md:hidden flex items-center justify-center w-9 h-9 -ml-1 rounded-xl text-foreground hover:bg-accent/60 transition-all shrink-0"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         aria-label="Abrir menú"
                     >
-                        <Menu className="h-4 w-4" />
+                        {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
                     </button>
-                    {/* Context string */}
-                    <span className="text-[11px] font-bold tracking-[0.3em] text-foreground uppercase truncate max-w-[160px] sm:max-w-sm">
+                    <span className="text-[11px] font-bold tracking-[0.28em] text-foreground uppercase truncate max-w-[120px] sm:max-w-[200px]">
                         {accountType === "cliente" && tenantName === "PORTAL DE USUARIO" ? "RENRI CLIENTES" : tenantName}
                     </span>
                 </div>
 
-                {/* Right side: theme toggle + user menu */}
-                <div className="flex items-center gap-3">
+                {/* Center: Global Search Bar (desktop only, business roles) */}
+                {canSearch && (
+                    <div className="hidden md:flex flex-1 justify-center px-6 max-w-xl mx-auto">
+                        <SearchBar accountType={accountType} />
+                    </div>
+                )}
+
+                {/* Right: theme toggle + user menu */}
+                <div className="flex items-center gap-2 flex-shrink-0">
                     <ThemeToggle />
                     <UserMenu accountType={accountType} />
                 </div>
             </header>
 
-            {/* Mobile Navigation Overlay */}
+            {/* ── Mobile Dropdown Menu (Sliding from Left) ─────────────────────── */}
             {mobileMenuOpen && (
-                <div className="fixed inset-0 z-50 flex md:hidden">
-                    {/* Backdrop */}
-                    <div 
-                        className="fixed inset-0 bg-background/80 backdrop-blur-sm"
-                        onClick={() => setMobileMenuOpen(false)}
-                    />
-                    
-                    {/* Slide-out Menu */}
-                    <div className="relative flex w-64 max-w-[80vw] flex-col bg-background border-r border-border shadow-2xl overflow-y-auto">
-                        <div className="flex items-center justify-between px-4 h-16 border-b border-border">
-                            <div className="flex items-center gap-2.5">
-                                <RenriMark size={24} activeModule={accountType} />
-                                <span className="text-foreground font-bold tracking-[0.3em] text-sm uppercase">
-                                    RENRI
-                                </span>
-                            </div>
-                            <button 
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                <X className="h-5 w-5" />
-                            </button>
-                        </div>
-                        
-                        <nav className="flex-1 py-4 flex flex-col">
-                            {navItems.map((item) => {
-                                const isActive =
-                                    pathname === item.href ||
-                                    (item.href !== "/dashboard" && pathname.startsWith(item.href));
+                <div className="absolute top-[110%] left-0 w-[260px] max-w-[calc(100vw-1.5rem)] md:hidden glass-panel rounded-2xl p-2 shadow-2xl border border-border/50 animate-in fade-in slide-in-from-left-8 duration-300 origin-top-left">
+                    <nav className="flex flex-col max-h-[75vh] overflow-y-auto">
+                        {navItems.map((item) => {
+                            const isActive =
+                                pathname === item.href ||
+                                (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                        className={`flex items-center h-12 px-6 gap-4 transition-all duration-200 ${
-                                            isActive
-                                                ? "text-foreground bg-accent border-l-2 border-foreground"
-                                                : "text-muted-foreground hover:text-foreground border-l-2 border-transparent"
-                                        }`}
-                                    >
-                                        <item.icon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
-                                        <span className="text-[11px] font-medium tracking-[0.2em] uppercase">
-                                            {item.label}
-                                        </span>
-                                    </Link>
-                                );
-                            })}
-                        </nav>
-                    </div>
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={`flex items-center h-12 px-4 gap-4 transition-all duration-200 rounded-xl ${
+                                        isActive
+                                            ? "text-foreground bg-accent"
+                                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                    }`}
+                                >
+                                    <item.icon className="h-5 w-5 flex-shrink-0" strokeWidth={1.5} />
+                                    <span className="text-[11px] font-medium tracking-[0.2em] uppercase">
+                                        {item.label}
+                                    </span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
                 </div>
             )}
-        </>
+        </div>
     );
 }

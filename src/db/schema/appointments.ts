@@ -59,4 +59,4 @@ export const appointments = pgTable(
         statusIdx: index("appointments_status_idx").on(table.status),
         createdAtIdx: index("appointments_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();

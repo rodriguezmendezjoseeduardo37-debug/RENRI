@@ -6,10 +6,13 @@ import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
-// Inicializa Stripe solo si hay una key, sino usa un valor vacío para evitar crashear en build.
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-    apiVersion: "2026-02-25.clover", // Current stripe api version or default
-});
+// Stripe se inicializa solo si hay una clave válida.
+// En desarrollo sin clave, las llamadas usarán el modo mock interno.
+function getStripe() {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) return null;
+    return new Stripe(key, { apiVersion: "2026-02-25.clover" });
+}
 
 export async function createCheckoutSession(planName: string) {
     const user = await getCurrentUser();
@@ -17,12 +20,13 @@ export async function createCheckoutSession(planName: string) {
         throw new Error("No autenticado");
     }
 
-    // Si no hay API key configurada, usamos el modo MOCK para desarrollo
-    if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_PRO_PRICE_ID) {
+    const stripe = getStripe();
+
+    // Modo mock (desarrollo sin clave Stripe)
+    if (!stripe || !process.env.STRIPE_PRO_PRICE_ID) {
         console.warn("⚠️ STRIPE_SECRET_KEY o STRIPE_PRO_PRICE_ID no configurados. Usando mock mode.");
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        
-        // Mock DB Update
+
         await db.update(tenants)
             .set({ plan: "pro", updatedAt: new Date() })
             .where(eq(tenants.id, user.tenantId));
@@ -42,7 +46,7 @@ export async function createCheckoutSession(planName: string) {
                 },
             ],
             metadata: {
-                userId: user.id, // Para identificar al usuario en el webhook
+                userId: user.id,
             },
             success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes?success=true`,
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes?canceled=true`,

@@ -52,7 +52,7 @@ export const orders = pgTable(
         statusIdx: index("orders_status_idx").on(table.status),
         createdAtIdx: index("orders_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();
 
 // ─── Order Items ─────────────────────────────────────────
 export const orderItems = pgTable(
@@ -73,4 +73,4 @@ export const orderItems = pgTable(
         orderIdIdx: index("order_items_order_id_idx").on(table.orderId),
         productIdIdx: index("order_items_product_id_idx").on(table.productId),
     })
-);
+).enableRLS();

@@ -57,9 +57,10 @@ export const tenants = pgTable(
             .notNull(),
         clinicalSettings: jsonb("clinical_settings").default({}).notNull(),
         billingSettings: jsonb("billing_settings").default({}).notNull(),
+        isOnboarded: boolean("is_onboarded").default(false).notNull(),
     },
     (table) => ({
         slugIdx: uniqueIndex("tenants_slug_idx").on(table.slug),
         createdAtIdx: index("tenants_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();

@@ -7,6 +7,10 @@ import { orders, orderItems, payments, products, users, tenants, clientBusinesse
 import { TAX_RATE, COMMISSION_RATES } from "@/lib/constants";
 import { createPaymentIntent as stripeCreatePaymentIntent } from "@/lib/stripe";
 import { getTenantStripeAccountId } from "@/actions/stripe-connect";
+import { signSignedToken, verifySignedToken } from "@/lib/signed-token";
+
+// Checkout token TTL: 2 horas. Suficiente para completar el pago.
+const CHECKOUT_TOKEN_TTL_SECONDS = 2 * 60 * 60;
 
 interface CheckoutInput {
     businessId: string;
@@ -202,7 +206,15 @@ export async function createProductCheckout(input: CheckoutInput) {
     revalidatePath("/dashboard/pedidos");
     revalidatePath("/dashboard/inventario");
 
-    return result;
+    // ── Signed checkout token ─────────────────────────────────────────
+    // Prevents arbitrary paymentIds from being processed by processOrderPayment.
+    // The token binds the paymentId + businessId and expires in 2 hours.
+    const checkoutToken = signSignedToken(
+        { paymentId: result.paymentId, businessId },
+        CHECKOUT_TOKEN_TTL_SECONDS
+    );
+
+    return { ...result, checkoutToken };
 }
 
 /**
@@ -264,14 +276,36 @@ export async function getCheckoutDetails(paymentId: string) {
 }
 
 /**
- * Public version of processPayment for order-based checkout.
- * No auth required — validates the payment is an order type.
+ * Public checkout: creates a Stripe PaymentIntent for an order.
+ *
+ * Security: requires a signed checkout token issued by createProductCheckout.
+ * This prevents anyone with an arbitrary paymentId from triggering
+ * a PaymentIntent (potential info leak + resource abuse).
+ *
+ * @param paymentId  - UUID of the payment record
+ * @param checkoutToken - HMAC-signed token from createProductCheckout (TTL: 2h)
  */
-export async function processOrderPayment(paymentId: string) {
+export async function processOrderPayment(paymentId: string, checkoutToken: string) {
+    // ── Verify signed checkout token ─────────────────────────────────
+    const tokenPayload = verifySignedToken<{ paymentId: string; businessId: string }>(
+        checkoutToken
+    );
+
+    if (!tokenPayload) {
+        throw new Error("Token de pago inválido o expirado. Vuelve a iniciar el proceso de compra.");
+    }
+
+    // Ensure the token was issued for this exact paymentId
+    if (tokenPayload.paymentId !== paymentId) {
+        throw new Error("Token de pago no coincide con el pago solicitado.");
+    }
+
+    // ── Load and validate payment ─────────────────────────────────────
     const payment = await db.query.payments.findFirst({
         where: and(
             eq(payments.id, paymentId),
-            eq(payments.referenceType, "order")
+            eq(payments.referenceType, "order"),
+            eq(payments.tenantId, tokenPayload.businessId) // Cross-check with token
         ),
     });
 
@@ -289,7 +323,7 @@ export async function processOrderPayment(paymentId: string) {
 
     const stripeAccountId = await getTenantStripeAccountId(payment.tenantId);
     const amountNumber = Number(payment.amount);
-    const commissionRate = COMMISSION_RATES.order; // 0.5%
+    const commissionRate = COMMISSION_RATES.order;
     const applicationFeeAmountCents = Math.round(amountNumber * 100 * commissionRate);
 
     const intent = await stripeCreatePaymentIntent(
@@ -314,4 +348,92 @@ export async function processOrderPayment(paymentId: string) {
         .where(eq(payments.id, paymentId));
 
     return { clientSecret: intent.client_secret, stripeAccountId };
+}
+
+/**
+ * Client-side confirmation fallback: after stripe.confirmPayment succeeds
+ * on the frontend, call this to verify the PaymentIntent status with Stripe
+ * and update the DB immediately (without waiting for the webhook).
+ *
+ * Security: requires the same signed checkout token.
+ * Idempotent: if the payment is already completed, it's a no-op.
+ */
+export async function confirmOrderPayment(paymentId: string, checkoutToken: string) {
+    const tokenPayload = verifySignedToken<{ paymentId: string; businessId: string }>(
+        checkoutToken
+    );
+
+    if (!tokenPayload || tokenPayload.paymentId !== paymentId) {
+        throw new Error("Token de pago inválido.");
+    }
+
+    const payment = await db.query.payments.findFirst({
+        where: and(
+            eq(payments.id, paymentId),
+            eq(payments.referenceType, "order"),
+            eq(payments.tenantId, tokenPayload.businessId)
+        ),
+    });
+
+    if (!payment) {
+        throw new Error("Pago no encontrado.");
+    }
+
+    // Already completed — idempotent
+    if (payment.status === "completed") {
+        return { success: true, alreadyCompleted: true };
+    }
+
+    // Verify with Stripe that the PaymentIntent actually succeeded
+    if (!payment.stripePaymentIntentId) {
+        throw new Error("Este pago no tiene un PaymentIntent asociado.");
+    }
+
+    const { stripeServer } = await import("@/lib/stripe");
+    const intent = await stripeServer.paymentIntents.retrieve(payment.stripePaymentIntentId);
+
+    if (intent.status !== "succeeded") {
+        // Payment hasn't actually succeeded — return the real status
+        const statusMessages: Record<string, string> = {
+            requires_payment_method: "El método de pago fue rechazado. Intenta con otra tarjeta.",
+            requires_action: "Se requiere una acción adicional para completar el pago.",
+            processing: "El pago aún se está procesando. Espera unos momentos.",
+            canceled: "El pago fue cancelado.",
+        };
+
+        return {
+            success: false,
+            stripeStatus: intent.status,
+            message: statusMessages[intent.status] ?? `Estado del pago: ${intent.status}`,
+        };
+    }
+
+    // PaymentIntent is confirmed as succeeded — update DB
+    await db.transaction(async (tx) => {
+        await tx
+            .update(payments)
+            .set({
+                status: "completed",
+                paidAt: new Date(),
+                stripePaymentIntentId: intent.id,
+            })
+            .where(eq(payments.id, paymentId));
+
+        if (payment.referenceType === "order" && payment.referenceId) {
+            await tx
+                .update(orders)
+                .set({ status: "processing", updatedAt: new Date() })
+                .where(
+                    and(
+                        eq(orders.id, payment.referenceId),
+                        eq(orders.tenantId, tokenPayload.businessId)
+                    )
+                );
+        }
+    });
+
+    revalidatePath("/dashboard/pedidos");
+    revalidatePath("/dashboard/pagos");
+
+    return { success: true, alreadyCompleted: false };
 }

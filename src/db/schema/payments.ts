@@ -55,4 +55,4 @@ export const payments = pgTable(
         statusIdx: index("payments_status_idx").on(table.status),
         createdAtIdx: index("payments_created_at_idx").on(table.createdAt),
     })
-);
+).enableRLS();

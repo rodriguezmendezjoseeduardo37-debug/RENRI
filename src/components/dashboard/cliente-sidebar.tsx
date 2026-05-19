@@ -24,7 +24,7 @@ export function ClienteSidebar() {
 
     return (
         <aside
-            className="fixed left-0 top-0 z-40 h-screen w-[220px] border-r border-border bg-background hidden md:flex flex-col"
+            className="fixed left-3 top-3 bottom-3 z-40 w-[220px] rounded-2xl glass-panel hidden md:flex flex-col overflow-hidden"
         >
             {/* Brand */}
             <div className="flex h-16 items-center border-b border-border px-5 gap-3">
@@ -50,7 +50,7 @@ export function ClienteSidebar() {
                             href={item.href}
                             className={`flex items-center h-11 px-4 gap-3 rounded-xl transition-all duration-200 group ${
                                 isActive
-                                    ? "text-black bg-[#bec092] font-bold"
+                                    ? "text-black bg-[#08b6ff] font-bold"
                                     : "text-muted-foreground hover:text-foreground hover:bg-card"
                             }`}
                         >

@@ -27,7 +27,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-background border border-[#bec092] p-3 shadow-2xl rounded-xl">
+            <div className="bg-background border border-[#08b6ff] p-3 shadow-2xl rounded-xl">
                 <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">{label}</p>
                 <p className="text-sm font-mono text-foreground font-bold">
                     ${payload[0].value.toLocaleString("es-MX")} MXN
@@ -76,10 +76,10 @@ export function RevenueChart({ data }: RevenueChartProps) {
                     <Line
                         type="step" // blocky non-rounded aesthetic
                         dataKey="amount"
-                        stroke="#bec092"
+                        stroke="#08b6ff"
                         strokeWidth={2}
                         dot={{ r: 0 }}
-                        activeDot={{ r: 4, fill: "#bec092", stroke: "black", strokeWidth: 2 }}
+                        activeDot={{ r: 4, fill: "#08b6ff", stroke: "black", strokeWidth: 2 }}
                     />
                 </LineChart>
             </ResponsiveContainer>

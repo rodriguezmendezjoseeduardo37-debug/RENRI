@@ -13,7 +13,7 @@ export const emailQueue = pgTable("email_queue", {
   nextRetryAt: timestamp("next_retry_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   sentAt: timestamp("sent_at"),
-});
+}).enableRLS();
 
 export const emailEvents = pgTable("email_events", {
   id: text("id").primaryKey(),
@@ -21,4 +21,4 @@ export const emailEvents = pgTable("email_events", {
   eventType: text("event_type").notNull(), // delivered, opened, clicked, bounced
   metadata: json("metadata"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-});
+}).enableRLS();

@@ -37,7 +37,7 @@ export default async function MiCitaDetallePage({
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <Link
-                href="/dashboard/mis-citas"
+                href="/cliente/mis-citas"
                 className="inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors uppercase"
             >
                 <ArrowLeft className="h-3.5 w-3.5" />
@@ -92,7 +92,7 @@ export default async function MiCitaDetallePage({
                         />
                         {tenant?.slug ? (
                             <Link
-                                href={`/portal/${tenant.slug}/agendar`}
+                                href={`/portal/${tenant.slug}`}
                                 target="_blank"
                                 className="inline-flex px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
                             >

@@ -12,4 +12,4 @@ export const stripeWebhookRetries = pgTable("stripe_webhook_retries", {
   nextRetryAt: timestamp("next_retry_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   processedAt: timestamp("processed_at"),
-});
+}).enableRLS();

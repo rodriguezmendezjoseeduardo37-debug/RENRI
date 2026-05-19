@@ -29,7 +29,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                     <div className="flex items-center gap-3">
                         <Link
                             href={`/negocio/${business.id}`}
-                            className="w-11 h-11 border border-border flex items-center justify-center hover:bg-[#bec092] hover:text-black hover:border-[#bec092] transition-colors rounded-xl mr-2"
+                            className="w-11 h-11 border border-border flex items-center justify-center hover:bg-[#08b6ff] hover:text-black hover:border-[#08b6ff] transition-colors rounded-xl mr-2"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </Link>
@@ -43,7 +43,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                                 unoptimized
                             />
                         ) : (
-                            <div className="w-10 h-10 rounded-xl bg-[#bec092]/10 border border-[#bec092]/20 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-xl bg-[#08b6ff]/10 border border-[#08b6ff]/20 flex items-center justify-center">
                                 <span className="text-base font-bold text-foreground uppercase">
                                     {business.name.charAt(0)}
                                 </span>
@@ -82,7 +82,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                             {products.items.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="border border-border bg-card flex flex-col overflow-hidden hover:border-[#bec092]/30 transition-colors group rounded-2xl"
+                                    className="border border-border bg-card flex flex-col overflow-hidden hover:border-[#08b6ff]/30 transition-colors group rounded-2xl"
                                 >
                                     {product.imageUrl ? (
                                             <div className="aspect-square bg-background overflow-hidden rounded-t-2xl">
@@ -124,7 +124,7 @@ export default async function PublicBusinessShopPage({ params }: Props) {
                                                 </span>
                                             </div>
                                             {product.stock > 0 ? (
-                                                <span className="px-2 py-1 bg-[#bec092]/10 border border-[#bec092]/20 text-[9px] text-[#bec092] font-bold tracking-[0.15em] uppercase rounded-lg">
+                                                <span className="px-2 py-1 bg-[#08b6ff]/10 border border-[#08b6ff]/20 text-[9px] text-[#08b6ff] font-bold tracking-[0.15em] uppercase rounded-lg">
                                                     EN STOCK
                                                 </span>
                                             ) : (

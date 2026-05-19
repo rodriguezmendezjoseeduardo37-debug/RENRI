@@ -174,7 +174,7 @@ export function BookingStepper(props: BookingStepperProps) {
         (step === 3 && !!clientName && !!clientEmail);
 
     const inputClass =
-        "w-full bg-card border border-border text-foreground text-sm px-5 py-4 placeholder:text-muted-foreground focus:outline-none focus:border-[#bec092] focus:bg-muted hover:border-[#bec092]/30 transition-all rounded-xl";
+        "w-full bg-card border border-border text-foreground text-sm px-5 py-4 placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] focus:bg-muted hover:border-[#08b6ff]/30 transition-all rounded-xl";
 
     const daysAhead = Array.from({ length: 14 }).map((_, i) => {
         const d = new Date();
@@ -193,11 +193,11 @@ export function BookingStepper(props: BookingStepperProps) {
                 <div className="flex flex-col items-center mb-6">
                     <div className="flex items-center justify-between w-full max-w-sm mb-4 relative">
                         {/* Connecting Line Backdrop */}
-                        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#bec092]/10 z-0" />
+                        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#08b6ff]/10 z-0" />
                         
                         {/* Active Connecting Line - animated based on step */}
                         <motion.div 
-                            className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#bec092] z-0"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#08b6ff] z-0"
                             initial={{ width: "0%" }}
                             animate={{ width: `${(step / 3) * 100}%` }}
                             transition={{ duration: 0.5, ease: "easeInOut" }}
@@ -209,7 +209,7 @@ export function BookingStepper(props: BookingStepperProps) {
                                     animate={{ scale: idx === step ? 1.1 : 1 }}
                                     className={`w-8 h-8 flex items-center justify-center text-[10px] font-bold font-mono border rounded-full backdrop-blur-md transition-all duration-300 ${
                                         idx <= step 
-                                            ? "bg-[#bec092] text-black border-[#bec092] shadow-md" 
+                                            ? "bg-[#08b6ff] text-black border-[#08b6ff] shadow-md" 
                                             : "bg-card text-muted-foreground border-border"
                                     }`}
                                 >
@@ -293,17 +293,17 @@ export function BookingStepper(props: BookingStepperProps) {
                                             onClick={() => setSelectedStaff(member)}
                                             className={`p-6 border text-left flex items-center gap-5 transition-all duration-300 relative overflow-hidden group hover:-translate-y-1 rounded-2xl ${
                                                 selectedStaff?.id === member.id
-                                                    ? "border-[#bec092] bg-[#bec092]/5"
-                                                    : "border-border bg-card hover:border-[#bec092]/30 hover:bg-muted"
+                                                    ? "border-[#08b6ff] bg-[#08b6ff]/5"
+                                                    : "border-border bg-card hover:border-[#08b6ff]/30 hover:bg-muted"
                                             }`}
                                         >
                                             {selectedStaff?.id === member.id && (
-                                                <div className="absolute inset-0 bg-gradient-to-tr from-[#bec092]/5 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-tr from-[#08b6ff]/5 to-transparent pointer-events-none" />
                                             )}
                                             <div
                                                 className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
                                                     selectedStaff?.id === member.id
-                                                        ? "bg-[#bec092] text-black shadow-sm"
+                                                        ? "bg-[#08b6ff] text-black shadow-sm"
                                                         : "bg-muted text-muted-foreground group-hover:text-foreground"
                                                 }`}
                                             >
@@ -356,8 +356,8 @@ export function BookingStepper(props: BookingStepperProps) {
                                                 onClick={() => handleDateChange(dateStr)}
                                                 className={`min-w-[70px] flex-shrink-0 py-4 flex flex-col items-center justify-center border transition-all rounded-xl ${
                                                     selectedDate === dateStr
-                                                        ? "bg-[#bec092] text-black border-[#bec092] shadow-md scale-105"
-                                                        : "bg-background text-foreground border-border hover:border-[#bec092]/30 hover:bg-muted"
+                                                        ? "bg-[#08b6ff] text-black border-[#08b6ff] shadow-md scale-105"
+                                                        : "bg-background text-foreground border-border hover:border-[#08b6ff]/30 hover:bg-muted"
                                                 }`}
                                             >
                                                 <span className="text-[10px] uppercase font-bold tracking-widest opacity-80">{dayName}</span>
@@ -540,7 +540,7 @@ export function BookingStepper(props: BookingStepperProps) {
                             disabled={!canNext}
                             className={`flex items-center gap-3 px-4 py-3 sm:px-8 sm:py-4 text-[10px] font-bold tracking-[0.3em] uppercase transition-all duration-300 rounded-xl ${
                                 canNext 
-                                ? "bg-[#bec092] text-black hover:opacity-90" 
+                                ? "bg-[#08b6ff] text-black hover:opacity-90" 
                                 : "bg-muted text-muted-foreground cursor-not-allowed border border-border"
                             }`}
                         >
@@ -554,7 +554,7 @@ export function BookingStepper(props: BookingStepperProps) {
                             className={`flex items-center gap-3 px-4 py-3 sm:px-8 sm:py-4 text-[10px] font-bold tracking-[0.3em] uppercase transition-all duration-300 rounded-xl ${
                                 isSubmitting || !canNext
                                 ? "bg-muted text-muted-foreground cursor-not-allowed border border-border"
-                                : "bg-[#bec092] text-black hover:opacity-90"
+                                : "bg-[#08b6ff] text-black hover:opacity-90"
                             }`}
                         >
                             {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
