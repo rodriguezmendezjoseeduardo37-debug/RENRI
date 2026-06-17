@@ -3,7 +3,6 @@ import { tenants } from "./tenants";
 import { users, profiles } from "./users";
 import { appointments } from "./appointments";
 import { schedules, blockedDates } from "./schedules";
-import { turns } from "./turns";
 import { products, stockMovements } from "./products";
 import { orders, orderItems } from "./orders";
 import { payments } from "./payments";
@@ -15,7 +14,6 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
     appointments: many(appointments),
     schedules: many(schedules),
     blockedDates: many(blockedDates),
-    turns: many(turns),
     products: many(products),
     stockMovements: many(stockMovements),
     orders: many(orders),
@@ -92,14 +90,6 @@ export const blockedDatesRelations = relations(blockedDates, ({ one }) => ({
     staff: one(users, {
         fields: [blockedDates.staffId],
         references: [users.id],
-    }),
-}));
-
-// ─── Turns ───────────────────────────────────────────────
-export const turnsRelations = relations(turns, ({ one }) => ({
-    tenant: one(tenants, {
-        fields: [turns.tenantId],
-        references: [tenants.id],
     }),
 }));
 

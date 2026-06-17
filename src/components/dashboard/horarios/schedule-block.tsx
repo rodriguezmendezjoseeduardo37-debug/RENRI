@@ -13,8 +13,8 @@ export function ScheduleBlock({ schedule, staffName, onClick, top, height }: Sch
     const isActive = schedule.isActive;
 
     // Aesthetic rules: Active = Strong adaptive contrast. Inactive = dark bg, gray text, strikethrough.
-    const bgClass = isActive ? "bg-foreground border-foreground shadow-sm" : "bg-card border-border border-dashed";
-    const textClass = isActive ? "text-background" : "text-muted-foreground line-through";
+    const bgClass = isActive ? "bg-[#12b4ff] border-[#12b4ff] shadow-[0_0_15px_rgba(18,180,255,0.15)]" : "bg-card border-border border-dashed";
+    const textClass = isActive ? "text-black" : "text-muted-foreground line-through";
 
     // Format time from HH:mm:ss to HH:mm
     const formatTime = (time: string) => time.substring(0, 5);
@@ -22,7 +22,7 @@ export function ScheduleBlock({ schedule, staffName, onClick, top, height }: Sch
     return (
         <div
             onClick={() => onClick?.(schedule)}
-            className={`absolute left-0 right-0 mx-1 border cursor-pointer overflow-hidden transition-all hover:ring-2 hover:ring-foreground hover:-mx-0 ${bgClass} ${textClass}`}
+            className={`absolute left-0 right-0 mx-1 border cursor-pointer overflow-hidden rounded-xl transition-all hover:ring-2 hover:ring-[#12b4ff] hover:-mx-0 ${bgClass} ${textClass}`}
             style={{
                 top: `${top}px`,
                 height: `${height}px`,

@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/auth-helpers";
 import { BookingStepper } from "./booking-client";
 import Link from "next/link";
 import Image from "next/image";
-import { User } from "lucide-react";
 
 export default async function PortalPage({
     params,
@@ -93,10 +92,10 @@ export default async function PortalPage({
                     </Link>
                     <span className="text-foreground hidden sm:inline">|</span>
                     <Link
-                        href={`/portal/${tenantSlug}/turno`}
+                        href={`/portal/${tenantSlug}/historial`}
                         className="hover:text-[#08b6ff] transition-colors"
                     >
-                        VER TURNO
+                        HISTORIAL
                     </Link>
                 </div>
             </main>

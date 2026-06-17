@@ -81,7 +81,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                     <button
                         onClick={() => setEditOpen(true)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-[10px] font-medium tracking-[0.15em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-[10px] font-medium tracking-[0.15em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
                     >
                         <Edit className="h-3 w-3" />
                         EDITAR
@@ -89,16 +89,16 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-[1px] bg-popover">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Detalles de la cita */}
-                <div className="lg:col-span-2 bg-background p-6 space-y-6">
-                    <h2 className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                <div className="lg:col-span-2 bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 space-y-6">
+                    <h2 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                         DETALLES DE LA CITA
                     </h2>
 
-                    <div className="space-y-[1px] bg-popover">
+                    <div className="space-y-[1px] rounded-xl overflow-hidden ring-1 ring-border">
                         {details.map((d) => (
-                            <div key={d.label} className="bg-card px-6 py-4 flex items-start justify-between">
+                            <div key={d.label} className="bg-background px-6 py-4 flex items-start justify-between">
                                 <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase w-32 flex-shrink-0">
                                     {d.label}
                                 </span>
@@ -113,15 +113,15 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                 </div>
 
                 {/* Sidebar: Pagos y Acciones */}
-                <div className="bg-background p-6 space-y-6">
+                <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 space-y-6">
                     <div>
-                        <h3 className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase mb-4">
+                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-4">
                             PAGO
                         </h3>
 
                         {payment ? (
                             /* Pago existente */
-                            <div className="bg-card border border-border rounded-2xl shadow-sm p-6">
+                            <div className="bg-background ring-1 ring-border rounded-2xl p-6">
                                 <span className="text-[11px] text-muted-foreground block uppercase tracking-widest">MONTO</span>
                                 <span className="text-3xl font-bold text-foreground mt-1 block">
                                     ${payment.amount ?? "0.00"}
@@ -158,7 +158,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                             </div>
                         ) : cobroOpen ? (
                             /* Formulario de cobro presencial */
-                            <div className="bg-card border border-border rounded-2xl shadow-sm p-5 space-y-4">
+                            <div className="bg-background ring-1 ring-border rounded-2xl p-5 space-y-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase block">MONTO</label>
                                     <div className="relative">
@@ -170,7 +170,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                             value={cobroAmount}
                                             onChange={(e) => setCobroAmount(e.target.value)}
                                             placeholder="0.00"
-                                            className="w-full bg-background border border-border px-3 py-3 pl-7 text-xl font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-foreground/50 transition-colors font-mono"
+                                            className="w-full bg-background ring-1 ring-border rounded-xl px-3 py-3 pl-7 text-xl font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-[#12b4ff] transition-all font-mono"
                                             autoFocus
                                         />
                                     </div>
@@ -182,9 +182,9 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                         <button
                                             type="button"
                                             onClick={() => setCobroMethod("cash")}
-                                            className={`flex flex-col items-center gap-1.5 p-3 border transition-all ${
+                                            className={`flex flex-col items-center gap-1.5 p-3 border rounded-xl transition-all ${
                                                 cobroMethod === "cash"
-                                                    ? "border-foreground bg-foreground/5 text-foreground"
+                                                    ? "border-[#12b4ff] bg-[#12b4ff]/5 text-foreground"
                                                     : "border-border text-muted-foreground hover:border-foreground/30"
                                             }`}
                                         >
@@ -194,9 +194,9 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                         <button
                                             type="button"
                                             onClick={() => setCobroMethod("card")}
-                                            className={`flex flex-col items-center gap-1.5 p-3 border transition-all ${
+                                            className={`flex flex-col items-center gap-1.5 p-3 border rounded-xl transition-all ${
                                                 cobroMethod === "card"
-                                                    ? "border-foreground bg-foreground/5 text-foreground"
+                                                    ? "border-[#12b4ff] bg-[#12b4ff]/5 text-foreground"
                                                     : "border-border text-muted-foreground hover:border-foreground/30"
                                             }`}
                                         >
@@ -252,7 +252,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                             </div>
                         ) : (
                             /* Sin pago — botón para registrar cobro */
-                            <div className="bg-card border border-border rounded-2xl shadow-sm p-6 text-center space-y-3">
+                            <div className="bg-background ring-1 ring-border rounded-2xl p-6 text-center space-y-3">
                                 <p className="text-[11px] text-muted-foreground uppercase tracking-widest">
                                     SIN PAGO REGISTRADO
                                 </p>
@@ -268,7 +268,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                     </div>
 
                     <div>
-                        <h3 className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase mb-4">
+                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-4">
                             ACCIONES DE CITA
                         </h3>
                         <div className="space-y-2">
@@ -276,7 +276,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                 <button
                                     onClick={() => handleAction(() => confirmAppointment(appointment.id, tenantId), "Cita confirmada")}
                                     disabled={isLoading}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all disabled:opacity-50"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
                                     CONFIRMAR CITA
@@ -286,7 +286,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                 <button
                                     onClick={() => handleAction(() => completeAppointment(appointment.id, tenantId), "Cita completada")}
                                     disabled={isLoading}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
                                     COMPLETAR
@@ -297,7 +297,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                     <button 
                                         onClick={() => setEditOpen(true)}
                                         disabled={isLoading}
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
                                     >
                                         <Clock className="h-3.5 w-3.5" />
                                         REAGENDAR
@@ -305,7 +305,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                     <button
                                         onClick={() => handleAction(() => cancelAppointment(appointment.id, tenantId), "Cita cancelada")}
                                         disabled={isLoading}
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-red-900/50 text-red-500 rounded-xl hover:bg-red-950/30 hover:text-red-400 transition-all disabled:opacity-50"
                                     >
                                         {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
                                         CANCELAR

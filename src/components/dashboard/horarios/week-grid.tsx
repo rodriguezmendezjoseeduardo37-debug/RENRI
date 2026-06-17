@@ -24,8 +24,9 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
     };
 
     return (
-        <div className="w-full h-full overflow-hidden border border-border bg-background text-foreground flex flex-col">
-            {/* Header: Days */}
+        <div className="w-full h-full bg-card rounded-2xl ring-1 ring-border shadow-sm text-foreground flex flex-col overflow-x-auto">
+            <div className="min-w-[800px] flex-1 flex flex-col relative h-full">
+                {/* Header: Days */}
             <div className="flex border-b border-border">
                 <div className="w-16 flex-shrink-0 border-r border-border"></div>
                 {DAYS.map((day, i) => (
@@ -45,7 +46,7 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
                 <div className="flex relative" style={{ height: `${HOURS.length * ROW_HEIGHT_PX}px` }}>
 
                     {/* Time Column */}
-                    <div className="w-16 flex-shrink-0 border-r border-border bg-background z-10 sticky left-0">
+                    <div className="w-16 flex-shrink-0 border-r border-border bg-card z-10 sticky left-0">
                         {HOURS.map((hour) => (
                             <div
                                 key={hour}
@@ -99,6 +100,7 @@ export function WeekGrid({ schedules, staffName, onDayClick, onScheduleClick }: 
                         );
                     })}
                 </div>
+            </div>
             </div>
         </div>
     );

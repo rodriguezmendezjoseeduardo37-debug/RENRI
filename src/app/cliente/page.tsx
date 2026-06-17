@@ -62,34 +62,32 @@ export default async function ClienteDashboardPage() {
             </div>
 
             <div className="space-y-5 sm:space-y-8">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <StatCard
-                        label="MIS CITAS"
-                        value={appointments.length}
-                        sublabel="registradas"
-                    />
-                    <StatCard
-                        label="PAGOS PENDIENTES"
-                        value={pendingPayments.length}
-                        sublabel="por cubrir"
-                    />
-                    <StatCard
-                        label="NEGOCIO"
-                        value={
-                            isLinked
-                                ? businessId.slice(0, 8).toUpperCase()
-                                : "—"
-                        }
-                        sublabel={
-                            isLinked
-                                ? tenant?.name ?? "ENLAZADO"
-                                : "SIN ENLACE"
-                        }
-                    />
+                {/* Wide Stats Card */}
+                <div className="bg-card rounded-2xl ring-1 ring-border p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm mb-8 gap-6 xl:gap-0">
+                  <div className="flex-1 w-full">
+                    <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{appointments.length}</span>
+                    <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Mis Citas / Registradas</span>
+                  </div>
+                  <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+                  
+                  <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                    <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{pendingPayments.length}</span>
+                    <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Pagos Pendientes / Por Cubrir</span>
+                  </div>
+                  <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+                  <div className="flex-[1.5] w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                    <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">
+                        {isLinked ? businessId.slice(0, 8).toUpperCase() : "—"}
+                    </span>
+                    <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">
+                        {isLinked ? tenant?.name ?? "ENLAZADO" : "SIN ENLACE"} / Negocio
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 sm:gap-6">
-                    <div className="border border-border bg-card p-5 sm:p-8 space-y-4 sm:space-y-5 rounded-2xl">
+                    <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm p-5 sm:p-8 space-y-4 sm:space-y-5">
                         <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             SIGUIENTE PASO
                         </h3>
@@ -121,26 +119,26 @@ export default async function ClienteDashboardPage() {
                         <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pt-2">
                             <Link
                                 href="/cliente/mis-citas"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl hover:bg-[#00a0e6] shadow-[0_0_20px_rgba(18,180,255,0.2)] transition-all"
                             >
                                 VER MIS CITAS
                             </Link>
                             <Link
                                 href="/cliente/disponibilidad"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
                             >
                                 VER HORARIOS
                             </Link>
                             <Link
                                 href="/cliente/mis-pagos"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
                             >
                                 VER PAGOS
                             </Link>
                         </div>
                     </div>
 
-                    <div className="border border-border bg-background p-5 sm:p-8 space-y-4 sm:space-y-5 rounded-2xl">
+                    <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm p-5 sm:p-8 space-y-4 sm:space-y-5">
                         <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                             {isLinked
                                 ? "NEGOCIO ENLAZADO"
@@ -171,14 +169,14 @@ export default async function ClienteDashboardPage() {
                                         <Link
                                             href={`/negocio/${businessId}`}
                                             target="_blank"
-                                            className="inline-flex items-center justify-center gap-2 bg-[#08b6ff] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
+                                            className="inline-flex items-center justify-center gap-2 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#00a0e6] transition-all"
                                         >
                                             ABRIR PORTAL
                                         </Link>
                                     ) : null}
                                     <Link
                                         href="/cliente/enlazar-negocio"
-                                        className="inline-flex items-center justify-center gap-2 border border-border text-muted-foreground rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#08b6ff] transition-all"
+                                        className="inline-flex items-center justify-center gap-2 border border-border text-muted-foreground rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#12b4ff] transition-all"
                                     >
                                         CAMBIAR NEGOCIO
                                     </Link>
@@ -193,7 +191,7 @@ export default async function ClienteDashboardPage() {
                                 </p>
                                 <Link
                                     href="/cliente/enlazar-negocio"
-                                    className="inline-flex items-center justify-center gap-2 bg-[#08b6ff] text-black rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all"
+                                    className="inline-flex items-center justify-center gap-2 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#00a0e6] transition-all"
                                 >
                                     ENLAZAR NEGOCIO
                                 </Link>

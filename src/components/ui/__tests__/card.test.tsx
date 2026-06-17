@@ -30,6 +30,6 @@ describe('Card', () => {
         // Note: the component is rendered as a div without aria-label, so we query by text
         const card = screen.getByText('Test Card');
         expect(card).toHaveClass('my-custom-class');
-        expect(card).toHaveClass('rounded-xl border bg-card text-card-foreground shadow'); // default classes
+        expect(card).toHaveClass('rounded-2xl border bg-card text-card-foreground shadow-md');
     });
 });

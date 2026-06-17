@@ -17,7 +17,7 @@ test.describe('Landing Page', () => {
 
     // Features Section
     await expect(page.getByText('Citas')).toBeVisible();
-    await expect(page.getByText('Turnos')).toBeVisible();
+    await expect(page.getByText('Agenda')).toBeVisible();
     await expect(page.getByText('Pagos')).toBeVisible();
     await expect(page.getByText('Reportes')).toBeVisible();
   });

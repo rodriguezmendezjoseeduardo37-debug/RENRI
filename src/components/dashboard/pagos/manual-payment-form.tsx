@@ -32,7 +32,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
     };
 
     return (
-        <form onSubmit={handleSubmit} className="border border-border bg-card p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="ring-1 ring-border bg-card p-6 space-y-6 rounded-2xl shadow-sm">
             <h3 className="text-[14px] font-bold tracking-[0.2em] text-foreground uppercase">
                 REGISTRO MANUAL OFF-PLATFORM
             </h3>
@@ -45,7 +45,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                     <select
                         value={method}
                         onChange={(e) => setMethod(e.target.value)}
-                        className="w-full bg-background border border-border p-3 text-sm text-foreground focus:border-white focus:outline-none transition-colors"
+                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-[#12b4ff] focus:outline-none transition-all"
                     >
                         <option value="EFECTIVO">EFECTIVO</option>
                         <option value="TRANSFERENCIA">TRANSFERENCIA BANCARIA</option>
@@ -63,7 +63,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                         value={reference}
                         onChange={(e) => setReference(e.target.value)}
                         placeholder="Folio, Autorización..."
-                        className="w-full bg-background border border-border p-3 text-sm text-foreground focus:border-white focus:outline-none transition-colors font-mono"
+                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-[#12b4ff] focus:outline-none transition-all font-mono"
                     />
                 </div>
             </div>
@@ -71,7 +71,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors disabled:opacity-50"
+                className="w-full bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#12b4ff]/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
             >
                 {isLoading ? "REGISTRANDO..." : "CONFIRMAR PAGO RECIBIDO"}
             </button>

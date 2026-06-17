@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RENRI
 
-## Getting Started
+RENRI es una plataforma SaaS multi-tenant para profesionistas y negocios en Mexico. Centraliza agenda, citas, clientes, pagos, inventario, pedidos, portal publico de reservas y portal de cliente.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js App Router
+- React 18
+- TypeScript
+- Tailwind CSS y componentes tipo shadcn/ui
+- Drizzle ORM con PostgreSQL
+- NextAuth v5 con credenciales y Google OAuth
+- Stripe y Stripe Connect
+- Resend / React Email
+- Vitest para pruebas unitarias
+- Playwright para pruebas E2E y visuales
+
+## Estructura Principal
+
+- `src/app`: rutas App Router, dashboards, portales y APIs.
+- `src/actions`: server actions por dominio de negocio.
+- `src/db/schema`: esquema Drizzle por modulo.
+- `src/components`: componentes compartidos, publicos, dashboard y portal.
+- `src/lib`: utilidades transversales de auth, seguridad, pagos, emails y limites.
+- `drizzle`: migraciones generadas.
+- `tests`: pruebas E2E y visuales con Playwright.
+- `src/tests` y `src/**/__tests__`: pruebas unitarias con Vitest.
+
+## Variables de Entorno
+
+El proyecto carga `.env.local`. Como minimo, revisa estas variables segun el flujo que quieras probar:
+
+```env
+DATABASE_URL=
+DIRECT_URL=
+AUTH_SECRET=
+NEXTAUTH_URL=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+STRIPE_SECRET_KEY=
+STRIPE_PRO_PRICE_ID=
+NEXT_PUBLIC_APP_URL=
+RESEND_API_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Algunos flujos tienen modo mock si Stripe no esta configurado, pero base de datos y auth si requieren valores validos para pruebas completas.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+En Windows, si PowerShell bloquea `npm.ps1`, usa `npm.cmd`.
 
-## Learn More
+```bash
+npm.cmd run dev
+npm.cmd run build
+npm.cmd run lint
+npm.cmd test
+npm.cmd run test:e2e
+npm.cmd run test:visual
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Base de Datos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm.cmd run db:generate
+npm.cmd run db:migrate
+npm.cmd run db:push
+npm.cmd run db:studio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`drizzle.config.ts` usa `DIRECT_URL` para migraciones y `src/db/index.ts` usa `DATABASE_URL` en runtime.
 
-## Deploy on Vercel
+## Estado de Calidad
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El build de produccion debe pasar antes de publicar:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm.cmd run build
+```
+
+Las pruebas unitarias cubren componentes UI basicos, utilidades y middleware RLS. Las pruebas Playwright cubren flujos publicos/auth y snapshots visuales.
+
+## Notas de Mantenimiento
+
+- El flujo historico de `turnos` fue retirado del codigo de aplicacion. Las referencias restantes viven en migraciones/documentacion historica o textos de producto.
+- Next 16 advierte que `middleware.ts` pasara a la convencion `proxy`. Conviene migrarlo en un cambio dedicado.
+- Mantener README, tests y scripts sincronizados con los cambios de producto evita que la deuda de entrega vuelva a crecer.

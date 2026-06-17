@@ -5,9 +5,9 @@ const PLANS = [
     {
         name: "STARTER",
         price: "Gratis",
-        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
+        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU OPERACIÓN.",
         features: [
-            "Gestión de hasta 50 pacientes",
+            "Gestión de hasta 50 clientes",
             "Portal público básico",
             "Agendamiento manual",
             "Soporte por correo electrónico",
@@ -18,9 +18,9 @@ const PLANS = [
     {
         name: "PRO",
         price: ["$210", "MXN / mes"],
-        desc: "PARA SERVICIOS Y NEGOCIOS ESTABLECIDOS CON VOLUMEN.",
+        desc: "PARA EMPRESAS Y NEGOCIOS ESTABLECIDOS CON ALTO VOLUMEN.",
         features: [
-            "Pacientes ilimitados",
+            "Clientes ilimitados",
             "Portal público personalizado",
             "Agendamiento en línea automático",
             "Recordatorios por WhatsApp",
@@ -35,8 +35,15 @@ const PLANS = [
 
 export default function PricingPage() {
     return (
-        <div className="min-h-screen bg-background text-foreground p-8 md:p-16 flex flex-col items-center">
-            <div className="max-w-6xl w-full">
+        <div className="relative min-h-[100svh] bg-[#0a0a0a] flex flex-col items-center font-sans selection:bg-[#12b4ff]/30 selection:text-white p-8 md:p-16 overflow-hidden">
+            {/* Background Grid + Glow */}
+            <div className="absolute inset-0 pointer-events-none z-0">
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#12b4ff]/10 blur-[120px]"></div>
+                <div className="absolute top-[20%] right-[-5%] w-[30%] h-[50%] rounded-full bg-white/5 blur-[120px]"></div>
+            </div>
+
+            <div className="relative z-10 max-w-6xl w-full flex flex-col h-full">
                 <Link href="/" className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground uppercase transition-colors mb-12">
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER AL INICIO
@@ -55,10 +62,10 @@ export default function PricingPage() {
                     {PLANS.map((plan) => (
                         <div
                             key={plan.name}
-                            className={`border ${plan.recommended ? "border-[#08b6ff]" : "border-border"} bg-background p-10 md:p-12 flex flex-col relative group transition-all duration-500 rounded-2xl`}
+                            className={`bg-[#1c1c22] p-10 md:p-12 flex flex-col relative group transition-all duration-500 rounded-2xl shadow-xl ring-1 ${plan.recommended ? "ring-[#12b4ff]/50" : "ring-white/5 hover:ring-white/10"}`}
                         >
                             {plan.recommended && (
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 bg-[#08b6ff] text-black rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 -mt-4 md:mr-10">
+                                <div className="absolute top-0 left-1/2 -translate-x-1/2 md:left-auto md:right-0 md:translate-x-0 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.3)] text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1.5 -mt-4 md:mr-10">
                                     RECOMENDADO
                                 </div>
                             )}
@@ -99,8 +106,8 @@ export default function PricingPage() {
                                 href={plan.buttonHref}
                                 className={`w-full text-center font-bold tracking-[0.3em] uppercase py-5 text-[10px] transition-all duration-300 ${
                                     plan.recommended
-                                        ? "bg-[#08b6ff] text-black rounded-xl shadow-sm hover:opacity-90"
-                                        : "border border-border text-muted-foreground hover:border-[#08b6ff] hover:text-[#08b6ff]"
+                                        ? "bg-[#12b4ff] text-black rounded-xl hover:bg-[#00a0e6] shadow-[0_0_20px_rgba(18,180,255,0.2)]"
+                                        : "bg-white/5 text-white ring-1 ring-white/10 rounded-xl hover:bg-white/10"
                                 }`}
                             >
                                 {plan.buttonText}

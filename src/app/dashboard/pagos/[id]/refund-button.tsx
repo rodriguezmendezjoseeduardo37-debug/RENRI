@@ -85,7 +85,7 @@ export function RefundButton({
                         if (e.target === e.currentTarget && !isLoading) setOpen(false);
                     }}
                 >
-                    <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-8 space-y-6">
+                    <div className="bg-card ring-1 ring-border rounded-2xl shadow-2xl w-full max-w-md p-8 space-y-6">
 
                         {success ? (
                             /* ── Success state ── */
@@ -108,7 +108,7 @@ export function RefundButton({
                                 </p>
                                 <button
                                     onClick={() => { setOpen(false); setSuccess(null); }}
-                                    className="w-full py-3 bg-card border border-border text-[11px] font-bold tracking-[0.2em] uppercase hover:border-foreground transition-colors rounded-xl"
+                                    className="w-full py-3 bg-card ring-1 ring-border text-[11px] font-bold tracking-[0.2em] uppercase hover:ring-[#12b4ff] transition-all rounded-xl"
                                 >
                                     CERRAR
                                 </button>
@@ -136,8 +136,8 @@ export function RefundButton({
                                             onClick={() => setMode(m)}
                                             className={`p-3 rounded-xl border text-[11px] font-bold tracking-[0.15em] uppercase transition-all ${
                                                 mode === m
-                                                    ? "border-[#08b6ff] bg-[#08b6ff]/10 text-[#08b6ff]"
-                                                    : "border-border text-muted-foreground hover:border-[#08b6ff]/30"
+                                                    ? "ring-1 ring-[#12b4ff] bg-[#12b4ff]/10 text-[#12b4ff]"
+                                                    : "ring-1 ring-border text-muted-foreground hover:ring-[#12b4ff]/30"
                                             }`}
                                         >
                                             {m === "full" ? "Total" : "Parcial"}
@@ -162,7 +162,7 @@ export function RefundButton({
                                                 value={partialAmount}
                                                 onChange={(e) => setPartialAmount(e.target.value)}
                                                 placeholder={`0.00 — máx $${totalAmount.toFixed(2)}`}
-                                                className="w-full pl-8 pr-4 py-3 bg-background border border-border rounded-xl text-foreground font-mono text-sm focus:border-[#08b6ff] focus:outline-none transition-colors"
+                                                className="w-full pl-8 pr-4 py-3 bg-background ring-1 ring-border rounded-xl text-foreground font-mono text-sm focus:ring-[#12b4ff] focus:outline-none transition-all"
                                             />
                                         </div>
                                     </div>
@@ -182,7 +182,7 @@ export function RefundButton({
                                     <button
                                         onClick={() => setOpen(false)}
                                         disabled={isLoading}
-                                        className="flex-1 py-3 border border-border text-[11px] font-bold tracking-[0.2em] uppercase hover:border-foreground transition-colors rounded-xl disabled:opacity-50"
+                                        className="flex-1 py-3 ring-1 ring-border text-[11px] font-bold tracking-[0.2em] uppercase hover:ring-foreground transition-all rounded-xl disabled:opacity-50"
                                     >
                                         CANCELAR
                                     </button>

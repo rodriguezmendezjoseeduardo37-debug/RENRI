@@ -45,16 +45,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
+      <head>
+        <link href="https://db.onlinewebfonts.com/c/bb5de19d87c09a95216dc6ccd96e37c6?family=Nimbus+Sans+TW01" rel="stylesheet" type="text/css" />
+      </head>
       <body
         className={cn(
           geistSans.variable,
           geistMono.variable,
-          "font-sans antialiased"
+          "font-sans antialiased relative bg-background text-foreground"
         )}
       >
+        <div className="fixed inset-0 bg-[linear-gradient(to_right,hsl(var(--foreground)/0.03)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--foreground)/0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none z-[-1]"></div>
         <Providers>
           <SkipLinks />
-          {children}
+          <div className="relative z-0">
+            {children}
+          </div>
           <Toaster richColors position="top-right" />
         </Providers>
       </body>

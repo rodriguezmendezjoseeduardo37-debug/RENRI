@@ -27,9 +27,9 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                     DISPONIBILIDAD: {staffName}
                 </h3>
                 <div className="flex gap-4 text-[10px] font-medium tracking-[0.2em] uppercase">
-                    <span className="text-foreground bg-white/10 px-2 py-1">{availableDays.length} días Disp</span>
-                    <span className="text-red-500 bg-red-500/10 px-2 py-1">{blockedDays.length} Bloqueados</span>
-                    <span className="text-muted-foreground bg-popover px-2 py-1">{noScheduleDays.length} Sin Asignar</span>
+                    <span className="text-foreground bg-[#12b4ff]/10 text-[#12b4ff] px-2 py-1 rounded-lg">{availableDays.length} días Disp</span>
+                    <span className="text-red-500 bg-red-500/10 px-2 py-1 rounded-lg">{blockedDays.length} Bloqueados</span>
+                    <span className="text-muted-foreground bg-foreground/5 px-2 py-1 rounded-lg">{noScheduleDays.length} Sin Asignar</span>
                 </div>
             </div>
 
@@ -49,23 +49,23 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                             statusText = "BLOQUEADO";
                         } else if (hasSlots) {
                             if (availableSlots === 0) {
-                                styleClass = "border-border text-foreground bg-popover";
+                                styleClass = "ring-1 ring-border text-foreground bg-card";
                                 statusText = "LLENO";
                             } else {
-                                styleClass = "border-white bg-card text-foreground";
+                                styleClass = "ring-1 ring-[#12b4ff]/30 bg-card text-foreground";
                                 statusText = `${availableSlots} LIBRES`;
                             }
                         }
 
                         if (isSel) {
-                            styleClass += " ring-1 ring-white ml-2";
+                            styleClass += " ring-2 ring-[#12b4ff] ml-2";
                         }
 
                         return (
                             <button
                                 key={day.date}
                                 onClick={() => setSelectedDate(day.date)}
-                                className={`text-left px-4 py-3 border transition-all flex justify-between items-center ${styleClass}`}
+                                className={`text-left px-4 py-3 border border-transparent rounded-xl transition-all flex justify-between items-center ${styleClass}`}
                             >
                                 <span className="text-xs font-mono tracking-widest">{day.date}</span>
                                 <span className="text-[9px] font-bold tracking-[0.2em]">{statusText}</span>
@@ -75,13 +75,13 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                 </div>
 
                 {/* Right: Slot Render */}
-                <div className="flex-1 bg-card border border-border rounded-2xl shadow-sm p-6 lg:p-8">
+                <div className="flex-1 bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 lg:p-8">
                     {activeDay ? (
                         <>
                             <h4 className="text-[12px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-6 flex items-center justify-between">
                                 TURNOS DEL {activeDay.date}
                                 {activeDay.isBlocked && (
-                                    <span className="px-2 py-1 bg-red-500 text-primary-foreground">FECHA BLOQUEADA</span>
+                                    <span className="px-2 py-1 bg-red-500 text-white rounded-lg">FECHA BLOQUEADA</span>
                                 )}
                             </h4>
 
@@ -93,13 +93,13 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
                                     {activeDay.slots.map((slot, i) => {
                                         const bgClass = slot.isAvailable
-                                            ? "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:bg-secondary"
-                                            : "bg-popover text-muted-foreground line-through cursor-not-allowed";
+                                            ? "bg-[#12b4ff]/10 text-[#12b4ff] ring-1 ring-[#12b4ff]/20 rounded-xl hover:bg-[#12b4ff]/20"
+                                            : "bg-foreground/5 text-muted-foreground line-through cursor-not-allowed rounded-xl";
 
                                         return (
                                             <div
                                                 key={i}
-                                                className={`py-3 text-center border border-border transition-colors ${bgClass}`}
+                                                className={`py-3 text-center transition-all ${bgClass}`}
                                                 title={!slot.isAvailable ? "Reservado" : "Libre"}
                                             >
                                                 <span className="text-[11px] font-mono font-bold">{slot.time}</span>

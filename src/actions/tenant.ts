@@ -20,6 +20,7 @@ const clinicalSettingsSchema = z.object({
             name: z.string().min(1).max(255),
             price: z.string().optional(),
             duration: z.number().int().min(5).max(480).optional(), // in minutes
+            passFeeToClient: z.boolean().optional(),
         })
     ).optional(),
 }).passthrough();
@@ -102,7 +103,12 @@ export async function updateTenantSettings(
 
     // Validate settings structure
     const schema = type === "clinical" ? clinicalSettingsSchema : billingSettingsSchema;
-    const validated = schema.parse(data) as Record<string, unknown>;
+    const parseResult = schema.safeParse(data);
+    
+    if (!parseResult.success) {
+        throw new Error("Error de validación en la configuración.");
+    }
+    const validated = parseResult.data as Record<string, unknown>;
 
     const limits = getPlanLimits(user.plan);
     
@@ -158,25 +164,6 @@ export async function updatePublicSalesEnabled(
     return { success: true };
 }
 
-export async function updateQueueOpenStatus(
-    tenantId: string,
-    isOpen: boolean
-) {
-    const user = await requireAuth();
-    if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") throw new Error("Unauthorized");
-
-    await db
-        .update(tenants)
-        .set({
-            isQueueOpen: isOpen,
-            updatedAt: new Date(),
-        })
-        .where(eq(tenants.id, tenantId));
-
-    revalidatePath("/dashboard/turnos");
-    return { success: true };
-}
 
 /**
  * Super Admin: Get all tenants to manage platform-wide settings.

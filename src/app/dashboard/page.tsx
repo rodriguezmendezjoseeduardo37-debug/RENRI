@@ -2,12 +2,12 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { and, count, eq, gte, lt, sum } from "drizzle-orm";
 import { redirect } from "next/navigation";
+import { Store, Truck, Repeat, Syringe, Sparkles, SmilePlus, Calendar, CreditCard, Users } from "lucide-react";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
-import { StatCard } from "@/components/dashboard/stat-card";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { appointments, payments, tenants, turns, users } from "@/db/schema";
+import { appointments, payments, tenants, users } from "@/db/schema";
 import {
     normalizeEnabledModules,
     type BusinessModule,
@@ -120,7 +120,7 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    const [citasHoy, turnosEspera, ingresosHoy, totalClientes] = await Promise.all([
+    const [citasHoy, ingresosHoy, totalClientes] = await Promise.all([
         db
             .select({ count: count() })
             .from(appointments)
@@ -128,18 +128,6 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                 and(
                     eq(appointments.tenantId, businessId),
                     eq(appointments.date, todayStr)
-                )
-            )
-            .then((rows) => rows[0]),
-        db
-            .select({ count: count() })
-            .from(turns)
-            .where(
-                and(
-                    eq(turns.tenantId, businessId),
-                    eq(turns.status, "waiting"),
-                    gte(turns.createdAt, startOfDay),
-                    lt(turns.createdAt, endOfDay)
                 )
             )
             .then((rows) => rows[0]),
@@ -171,15 +159,76 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard label="CITAS HOY" value={citasHoy?.count ?? 0} sublabel="agendadas" />
-                <StatCard label="EN ESPERA" value={turnosEspera?.count ?? 0} sublabel="turnos activos" />
-                <StatCard
-                    label="INGRESOS HOY"
-                    value={`$${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`}
-                    sublabel="MXN"
-                />
-                <StatCard label="CLIENTES" value={totalClientes?.count ?? 0} sublabel="registrados" />
+            {/* Wide Stats Card */}
+            <div className="bg-card rounded-2xl ring-1 ring-border p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm mb-8 gap-6 xl:gap-0">
+              <div className="flex-1 w-full">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{citasHoy?.count ?? 0}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Citas / Hoy</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+              
+              <div className="flex-[1.5] w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Ingresos / MXN</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{totalClientes?.count ?? 0}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Clientes / Registrados</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">0</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">En Espera / Hoy</span>
+              </div>
+            </div>
+
+            {/* Middle Row (3 Cards) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {[
+                { icon: <Calendar className="w-5 h-5 text-primary" />, title: "Agenda Inteligente", sub: "24 citas activas" },
+                { icon: <CreditCard className="w-5 h-5 text-[#10b981]" />, title: "Pagos Procesados", sub: "8 transacciones" },
+                { icon: <Users className="w-5 h-5 text-amber-500" />, title: "Portal de Clientes", sub: "3 registrados hoy" },
+              ].map((card, i) => (
+                <div key={i} className="bg-card rounded-2xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-4 hover:ring-border/80 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-foreground/5 ring-1 ring-foreground/10 flex items-center justify-center">
+                    {card.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-foreground text-[15px] font-bold mb-1">{card.title}</h3>
+                    <p className="text-muted-foreground text-[12px] font-medium">{card.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Table */}
+            <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
+              <div className="min-w-[600px]">
+                  <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">
+                    <div>Cliente</div>
+                    <div>Servicio / Interacción</div>
+                    <div>Hora</div>
+                    <div>Estado</div>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
+                      <div className="text-foreground text-[13px] font-medium">Carlos Ruiz</div>
+                      <div className="text-muted-foreground text-[13px]">Pago de Consulta</div>
+                      <div className="text-muted-foreground text-[13px]">12:00 PM</div>
+                      <div className="text-primary text-[13px] font-medium">Completado</div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4 px-8 py-5 items-center hover:bg-accent/30 transition-colors">
+                      <div className="text-foreground text-[13px] font-medium">Ana Gómez</div>
+                      <div className="text-muted-foreground text-[13px]">Reserva Online</div>
+                      <div className="text-muted-foreground text-[13px]">02:30 PM</div>
+                      <div className="text-amber-500 text-[13px] font-medium">En espera</div>
+                    </div>
+                  </div>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-4 mt-6">
@@ -188,11 +237,7 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                         NUEVA CITA
                     </Link>
                 </Button>
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
-                    <Link href="/dashboard/turnos">
-                        VER TURNOS
-                    </Link>
-                </Button>
+
                 <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
                     <Link href="/dashboard/horarios">
                         HORARIOS
@@ -211,27 +256,76 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard
-                    label="PEDIDOS HOY"
-                    value={orderStats.pending}
-                    sublabel="pendientes"
-                />
-                <StatCard
-                    label="PRODUCTOS"
-                    value={inventoryStats.totalProducts}
-                    sublabel="en inventario"
-                />
-                <StatCard
-                    label="BAJO STOCK"
-                    value={inventoryStats.lowStockCount}
-                    sublabel="productos"
-                />
-                <StatCard
-                    label="INGRESOS"
-                    value={`$${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 2 })}`}
-                    sublabel="completados"
-                />
+            {/* Wide Stats Card */}
+            <div className="bg-card rounded-2xl ring-1 ring-border p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm mb-8 gap-6 xl:gap-0">
+              <div className="flex-1 w-full">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{orderStats.pending}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Pedidos hoy / Pendientes</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+              
+              <div className="flex-[1.5] w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Ingresos / MXN</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{inventoryStats.totalProducts}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Productos / En Inventario</span>
+              </div>
+              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{inventoryStats.lowStockCount}</span>
+                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Bajo Stock / Productos</span>
+              </div>
+            </div>
+
+            {/* Middle Row (3 Cards) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {[
+                { icon: <Calendar className="w-5 h-5 text-primary" />, title: "Agenda Inteligente", sub: "24 citas activas" },
+                { icon: <CreditCard className="w-5 h-5 text-[#10b981]" />, title: "Pagos Procesados", sub: "8 transacciones" },
+                { icon: <Users className="w-5 h-5 text-amber-500" />, title: "Portal de Clientes", sub: "3 registrados hoy" },
+              ].map((card, i) => (
+                <div key={i} className="bg-card rounded-2xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-4 hover:ring-border/80 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-foreground/5 ring-1 ring-foreground/10 flex items-center justify-center">
+                    {card.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-foreground text-[15px] font-bold mb-1">{card.title}</h3>
+                    <p className="text-muted-foreground text-[12px] font-medium">{card.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom Table */}
+            <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
+              <div className="min-w-[600px]">
+                  <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">
+                    <div>Cliente</div>
+                    <div>Servicio / Interacción</div>
+                    <div>Hora</div>
+                    <div>Estado</div>
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
+                      <div className="text-foreground text-[13px] font-medium">Juan Pérez</div>
+                      <div className="text-muted-foreground text-[13px]">Pago de Consulta</div>
+                      <div className="text-muted-foreground text-[13px]">10:00 AM</div>
+                      <div className="text-[#10b981] text-[13px] font-medium">Completado</div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4 px-8 py-5 items-center hover:bg-accent/30 transition-colors">
+                      <div className="text-foreground text-[13px] font-medium">María López</div>
+                      <div className="text-muted-foreground text-[13px]">Reserva Online</div>
+                      <div className="text-muted-foreground text-[13px]">11:30 AM</div>
+                      <div className="text-amber-500 text-[13px] font-medium">En preparación</div>
+                    </div>
+                  </div>
+              </div>
             </div>
 
             {inventoryStats.lowStockCount > 0 && (
@@ -248,7 +342,7 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             )}
 
             <div className="flex flex-wrap gap-4 mt-6">
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground hover:bg-primary/90">
                     <Link href="/dashboard/pedidos/nuevo">
                         NUEVO PEDIDO
                     </Link>

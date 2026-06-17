@@ -19,9 +19,9 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
 
     if (!payment) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 border border-border bg-background">
+            <div className="flex flex-col items-center justify-center h-64 ring-1 ring-border rounded-2xl bg-card shadow-sm">
                 <p className="text-muted-foreground font-mono uppercase tracking-widest text-sm">REFERENCIA NO ENCONTRADA</p>
-                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 border border-border hover:border-foreground text-foreground transition-colors text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
+                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 ring-1 ring-border rounded-xl hover:ring-[#12b4ff] hover:text-foreground text-muted-foreground transition-all text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
             </div>
         );
     }
@@ -49,7 +49,7 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Left: Info Panel */}
                 <div className="space-y-6">
-                    <div className="bg-card border border-border rounded-2xl shadow-sm p-6 space-y-6">
+                    <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 space-y-6">
                         <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">MONTO A COBRAR</span>
                             <span className="text-2xl font-bold font-mono text-foreground">
@@ -91,9 +91,9 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
 
                         <Link
                             href={`/dashboard/${payment.referenceType === "appointment" ? "citas" : "pedidos"}/${payment.referenceId}`}
-                            className="w-full flex items-center justify-center gap-2 py-3 border border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:border-foreground hover:text-foreground transition-colors uppercase"
+                            className="w-full flex items-center justify-center gap-2 py-3 ring-1 ring-border rounded-xl text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:ring-[#12b4ff] hover:text-foreground transition-all uppercase shadow-sm"
                         >
-                            <FileText className="w-3 h-3" />
+                            <FileText className="w-3.5 h-3.5" />
                             VER REFERENCIA ASOCIADA
                         </Link>
                     </div>
@@ -128,11 +128,11 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                             <ManualPaymentForm paymentId={payment.id} />
                         </>
                     ) : (
-                        <div className="h-full border border-border bg-card p-8 flex flex-col items-center justify-center text-center space-y-4">
-                            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center">
-                                <CheckCircle2 className="w-8 h-8 text-primary-foreground" />
+                        <div className="h-full ring-1 ring-border bg-card rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 shadow-sm">
+                            <div className="w-16 h-16 rounded-full bg-[#12b4ff]/20 flex items-center justify-center ring-1 ring-[#12b4ff]/30">
+                                <CheckCircle2 className="w-8 h-8 text-[#12b4ff]" />
                             </div>
-                            <h3 className="text-xl font-bold tracking-[0.2em] text-foreground uppercase">
+                            <h3 className="text-xl font-bold tracking-[0.2em] text-[#12b4ff] uppercase">
                                 PAGO COMPLETADO
                             </h3>
                             <p className="text-muted-foreground text-xs uppercase tracking-widest font-mono">

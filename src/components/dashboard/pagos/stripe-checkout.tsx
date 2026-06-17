@@ -88,12 +88,12 @@ function CheckoutForm({ onSuccess }: CheckoutFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="border border-border bg-background p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="ring-1 ring-border rounded-2xl bg-background p-6 space-y-6 shadow-sm">
             <h3 className="text-[14px] font-bold tracking-[0.2em] text-foreground uppercase border-b border-border pb-4 mb-6">
                 PROCESAR DIGITALMENTE (STRIPE)
             </h3>
 
-            <div className="bg-background p-4 border border-border">
+            <div className="bg-background p-4 ring-1 ring-border rounded-xl">
                 {!elementReady && (
                     <div className="flex items-center justify-center py-6">
                         <span className="text-xs text-muted-foreground tracking-[0.1em]">CARGANDO STRIPE...</span>
@@ -118,7 +118,7 @@ function CheckoutForm({ onSuccess }: CheckoutFormProps) {
             <button
                 type="submit"
                 disabled={isLoading || !stripe || !elements || !elementReady}
-                className="w-full border border-white bg-background text-foreground py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-primary-foreground transition-colors disabled:opacity-50"
+                className="w-full bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#12b4ff]/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
             >
                 {isLoading ? "CARGANDO..." : "PAGAR AHORA"}
             </button>
@@ -150,14 +150,14 @@ export function StripeCheckoutWrapper({ paymentId, onSuccess }: { paymentId: str
 
     if (!clientSecret) {
         return (
-            <div className="border border-border bg-background p-6 flex flex-col items-center justify-center space-y-4">
+            <div className="ring-1 ring-border rounded-2xl bg-background p-6 flex flex-col items-center justify-center space-y-4 shadow-sm">
                 <h3 className="text-[14px] font-bold tracking-[0.2em] text-muted-foreground uppercase text-center">
                     PAGO EN LINEA CONFIGURADO
                 </h3>
                 <button
                     onClick={initializePayment}
                     disabled={isInitializing}
-                    className="px-6 py-3 border border-border text-foreground text-[10px] font-bold tracking-[0.2em] uppercase hover:border-foreground transition-colors disabled:opacity-50"
+                    className="px-6 py-3 ring-1 ring-border rounded-xl text-foreground text-[10px] font-bold tracking-[0.2em] uppercase hover:ring-[#12b4ff] hover:text-[#12b4ff] transition-all disabled:opacity-50"
                 >
                     {isInitializing ? "CONECTANDO STRIPE..." : "INICIAR TERMINAL DIGITAL"}
                 </button>

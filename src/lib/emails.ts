@@ -112,3 +112,37 @@ export async function sendAppointmentCancelled(data: {
         `,
     });
 }
+
+export async function sendVerificationEmail(data: {
+    to: string;
+    token: string;
+    businessName: string;
+}) {
+    const resend = getResendClient();
+    if (!resend) return;
+
+    const verifyUrl = `${process.env.NEXTAUTH_URL}/api/auth/verify?token=${data.token}`;
+
+    await resend.emails.send({
+        from: `${data.businessName} <noreply@${process.env.RESEND_DOMAIN || "resend.dev"}>`,
+        to: data.to,
+        subject: `Verifica tu cuenta — ${data.businessName}`,
+        html: `
+            <div style="font-family: 'Helvetica Neue', sans-serif; max-width: 480px; margin: 0 auto; background: #000; color: #fff; padding: 40px;">
+                <h1 style="font-size: 24px; font-weight: 700; letter-spacing: 2px; margin: 0 0 24px;">${data.businessName.toUpperCase()}</h1>
+                <div style="border-top: 1px solid #333; padding-top: 24px;">
+                    <p style="font-size: 11px; letter-spacing: 3px; color: #888; margin: 0 0 16px;">VERIFICACIÓN DE CORREO</p>
+                    <p style="font-size: 14px; color: #ccc; line-height: 1.6;">
+                        Para continuar, por favor verifica tu dirección de correo electrónico haciendo clic en el siguiente enlace:
+                    </p>
+                </div>
+                <div style="margin-top: 32px; text-align: center;">
+                    <a href="${verifyUrl}" style="background: #08b6ff; color: #0a0a0a; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block;">VERIFICAR CORREO</a>
+                </div>
+                <p style="font-size: 12px; color: #888; margin-top: 32px; text-align: center;">
+                    Si no solicitaste esto, puedes ignorar este correo.
+                </p>
+            </div>
+        `,
+    });
+}

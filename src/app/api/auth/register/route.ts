@@ -3,7 +3,9 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/db";
-import { tenants, users } from "@/db/schema";
+import { tenants, users, verificationTokens } from "@/db/schema";
+import { sendVerificationEmail } from "@/lib/emails";
+import crypto from "crypto";
 
 const registerSchema = z.object({
     name: z.string().min(2),
@@ -69,6 +71,27 @@ export async function POST(req: Request) {
                 })
                 .where(eq(users.id, existing.id));
 
+            if (!existing.isVerified) {
+                const token = crypto.randomBytes(32).toString("hex");
+                const expiresAt = new Date();
+                expiresAt.setHours(expiresAt.getHours() + 24);
+
+                await db.insert(verificationTokens).values({
+                    identifier: email,
+                    token,
+                    expiresAt,
+                }).onConflictDoUpdate({
+                    target: verificationTokens.identifier,
+                    set: { token, expiresAt },
+                });
+
+                await sendVerificationEmail({
+                    to: email,
+                    token,
+                    businessName: "RENRI",
+                });
+            }
+
             return NextResponse.json(
                 { success: true, activatedExistingClient: true },
                 { status: 201 }
@@ -118,6 +141,25 @@ export async function POST(req: Request) {
                 role: "OWNER",
                 isVerified: false,
             });
+        });
+
+        const token = crypto.randomBytes(32).toString("hex");
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + 24);
+
+        await db.insert(verificationTokens).values({
+            identifier: email,
+            token,
+            expiresAt,
+        }).onConflictDoUpdate({
+            target: verificationTokens.identifier,
+            set: { token, expiresAt },
+        });
+
+        await sendVerificationEmail({
+            to: email,
+            token,
+            businessName: "RENRI",
         });
 
         return NextResponse.json({ success: true }, { status: 201 });

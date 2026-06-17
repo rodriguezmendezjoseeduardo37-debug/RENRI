@@ -94,7 +94,7 @@ export function ScheduleFormModal({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="bg-background border border-border sm:max-w-[425px]">
+            <DialogContent className="bg-card ring-1 ring-border border-0 sm:max-w-[425px] rounded-2xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold tracking-[0.1em] text-foreground uppercase font-[family-name:var(--font-heading)]">
                         {initialData ? "EDITAR BLOQUE" : "NUEVO HORARIO"}
@@ -112,7 +112,7 @@ export function ScheduleFormModal({
                                 <select
                                     {...form.register("dayOfWeek", { valueAsNumber: true })}
                                     disabled={!!initialData}
-                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all disabled:opacity-50"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all disabled:opacity-50"
                                 >
                                     {DAYS.map((day, i) => (
                                         <option key={i} value={i}>{day.toUpperCase()}</option>
@@ -134,7 +134,7 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("startTime")}
-                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-[#12b4ff] transition-all"
                                 />
                                 {form.formState.errors.startTime && (
                                     <p className="text-[11px] text-red-500">{form.formState.errors.startTime.message}</p>
@@ -148,7 +148,7 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("endTime")}
-                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground font-mono focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-[#12b4ff] transition-all"
                                 />
                                 {form.formState.errors.endTime && (
                                     <p className="text-[11px] text-red-500">{form.formState.errors.endTime.message}</p>
@@ -164,7 +164,7 @@ export function ScheduleFormModal({
                                 </label>
                                 <select
                                     {...form.register("slotDurationMinutes", { valueAsNumber: true })}
-                                    className="w-full bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
                                 >
                                     <option value={15}>15 min</option>
                                     <option value={20}>20 min</option>
@@ -174,7 +174,7 @@ export function ScheduleFormModal({
                             </div>
 
                             <div className="space-y-2 flex flex-col justify-end">
-                                <label className="flex items-center space-x-3 p-3 border border-border bg-card cursor-pointer">
+                                <label className="flex items-center space-x-3 p-3 ring-1 ring-border bg-background rounded-xl cursor-pointer">
                                     <input
                                         type="checkbox"
                                         {...form.register("isActive")}
@@ -188,11 +188,11 @@ export function ScheduleFormModal({
                         </div>
                     </div>
 
-                    <div className="flex gap-3 pt-4 border-t border-border">
+                    <div className="flex gap-3 pt-4 border-t border-zinc-800">
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="flex-1 px-4 py-3 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors disabled:opacity-50"
+                            className="flex-1 px-4 py-3 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
                         >
                             {isLoading ? "GUARDANDO..." : "GUARDAR"}
                         </button>
@@ -202,7 +202,7 @@ export function ScheduleFormModal({
                                 type="button"
                                 onClick={handleDelete}
                                 disabled={isDeleting}
-                                className="px-4 py-3 border border-red-900/50 text-red-500 hover:bg-red-950/30 hover:text-red-400 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors"
+                                className="px-4 py-3 border border-red-900/50 text-red-500 hover:bg-red-950/30 hover:text-red-400 rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase transition-all"
                             >
                                 {isDeleting ? "..." : "ELIMINAR"}
                             </button>

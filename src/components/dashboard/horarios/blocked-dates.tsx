@@ -61,7 +61,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="flex-1 bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all invert-0"
+                    className="flex-1 bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
                     style={{ colorScheme: "dark" }}
                 />
                 <input
@@ -69,23 +69,23 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Motivo (opcional)"
-                    className="flex-[2] bg-card border border-border rounded-2xl shadow-sm p-3 text-sm text-foreground focus:outline-none focus:border-white transition-all"
+                    className="flex-[2] bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
                 />
                 <button
                     type="submit"
                     disabled={isLoading || !date}
-                    className="bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary transition-colors disabled:opacity-50"
+                    className="bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
                 >
                     {isLoading ? "BLOQUEANDO..." : "BLOQUEAR DÍA"}
                 </button>
             </form>
 
-            <div className="border border-border overflow-x-auto bg-background">
+            <div className="ring-1 ring-border overflow-x-auto bg-card rounded-2xl shadow-sm">
                 <table className="w-full text-left">
-                    <thead className="border-b border-border bg-card">
+                    <thead className="border-b border-border">
                         <tr>
-                            <th className="px-4 py-3 text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">Fecha</th>
-                            <th className="px-4 py-3 text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase hidden sm:table-cell">Motivo</th>
+                            <th className="px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">Fecha</th>
+                            <th className="px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase hidden sm:table-cell">Motivo</th>
                             <th className="px-4 py-3 w-16"></th>
                         </tr>
                     </thead>
@@ -98,7 +98,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                             </tr>
                         ) : (
                             blockedDates.map((b) => (
-                                <tr key={b.id} className="border-b border-border last:border-0 bg-background hover:bg-card transition-colors group">
+                                <tr key={b.id} className="border-b border-border last:border-0 hover:bg-accent/30 transition-colors group">
                                     <td className="px-4 py-4 text-sm font-bold tracking-[0.1em] text-foreground whitespace-nowrap">
                                         {format(new Date(b.date), "dd / MM / yyyy")}
                                     </td>

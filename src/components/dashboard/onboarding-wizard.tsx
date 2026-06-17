@@ -191,7 +191,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                             <p className="text-sm text-white/60">¿Cuál es el giro principal de tu negocio?</p>
                             <div className="space-y-3">
                                 {([
-                                    { value: "servicios", label: "Servicios & Citas", desc: "Agenda citas, gestiona turnos y horarios. Ideal para clínicas, salones, consultorios." },
+                                    { value: "servicios", label: "Servicios & Citas", desc: "Agenda citas, gestiona horarios. Ideal para clínicas, salones, consultorios." },
                                     { value: "pyme", label: "Tienda / PYME", desc: "Inventario, pedidos y ventas de productos. Ideal para tiendas, restaurantes, negocios." },
                                     { value: "both", label: "Ambos", desc: "Tienes un negocio con servicios Y venta de productos." },
                                 ] as const).map(opt => (

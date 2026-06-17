@@ -37,7 +37,7 @@ export function SearchBar({ accountType = "servicios" }: SearchBarProps) {
             ? "Buscar pedidos, productos, clientes..."
             : accountType === "cliente"
             ? "Buscar citas, pagos..."
-            : "Buscar citas, turnos, clientes...";
+            : "Buscar citas, clientes...";
 
     /* ── Keyboard shortcut ⌘K / Ctrl+K ─────────────── */
     useEffect(() => {
@@ -148,7 +148,6 @@ export function SearchBar({ accountType = "servicios" }: SearchBarProps) {
                     id="global-search-input"
                     aria-label="Búsqueda global"
                     aria-autocomplete="list"
-                    aria-expanded={open}
                 />
                 {query ? (
                     <button

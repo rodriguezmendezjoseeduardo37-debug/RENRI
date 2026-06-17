@@ -1,5 +1,7 @@
 "use client";
 
+import { motion } from "framer-motion";
+
 import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
@@ -99,24 +101,45 @@ function LoginForm() {
     }
 
     return (
-        <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
-            <CardHeader className="text-center space-y-2">
-                <div className="mx-auto mb-2 flex flex-col items-center gap-3">
-                    <RenriMark size={48} theme="dark" />
-                    <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="w-full max-w-md"
+        >
+            <div className="text-center space-y-2 pt-8 mb-8">
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                    className="mx-auto mb-2 flex flex-col items-center gap-3"
+                >
+                    <RenriMark size={56} theme="dark" />
+                    <h1 className="text-3xl font-bold tracking-tight text-white/90">
                         RENRI
                     </h1>
-                </div>
-                <CardTitle className="text-xl text-white">Iniciar Sesión</CardTitle>
-                <CardDescription className="text-white/70">
-                    Ingresa a tu cuenta para continuar
-                </CardDescription>
-            </CardHeader>
+                </motion.div>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                    <h2 className="text-2xl text-white font-semibold tracking-tight">Iniciar Sesión</h2>
+                    <p className="text-white/50 text-sm mt-1">
+                        Ingresa a tu cuenta para continuar
+                    </p>
+                </motion.div>
+            </div>
 
-            <CardContent className="space-y-6">
-                <div className="space-y-2">
-                    <Label className="text-white/70">Módulo</Label>
-                    <div className="grid grid-cols-3 gap-2">
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="space-y-6"
+            >
+                <div className="space-y-3">
+                    <Label className="text-white/90 font-medium">Módulo</Label>
+                    <div className="grid grid-cols-3 gap-3">
                         {ACCOUNT_TYPES.map((type) => (
                             <button
                                 key={type.value}
@@ -125,13 +148,13 @@ function LoginForm() {
                                     setSelectedType(type.value);
                                     setValue("accountType", type.value);
                                 }}
-                                className={`rounded-xl border p-3 text-left transition-all ${selectedType === type.value
-                                    ? "border-[#08b6ff] bg-[#08b6ff]/10 text-white"
-                                    : "border-[hsl(0,0%,14.9%)] text-white/50 hover:border-[#08b6ff]/30"
+                                className={`rounded-xl border p-3 text-left transition-all duration-300 ${selectedType === type.value
+                                    ? "border-[#08b6ff] bg-[#08b6ff]/5 text-white"
+                                    : "border-white/5 bg-[#121212] text-white/50 hover:border-white/20"
                                     }`}
                             >
-                                <div className="text-xs font-medium">{type.label}</div>
-                                <div className="text-[10px] mt-0.5 opacity-70">
+                                <div className="text-sm font-semibold">{type.label}</div>
+                                <div className="text-[11px] mt-1 opacity-70 leading-tight">
                                     {type.description}
                                 </div>
                             </button>
@@ -141,21 +164,29 @@ function LoginForm() {
 
                 <Button
                     variant="outline"
-                    className="w-full border-[hsl(0,0%,14.9%)] bg-transparent text-white hover:bg-[hsl(0,0%,14.9%)] h-11"
+                    className="w-full border-0 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white h-[52px] rounded-full flex items-center justify-center relative overflow-hidden transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98] group"
                     onClick={handleGoogleSignIn}
                     disabled={isGoogleLoading}
                 >
-                    {isGoogleLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                        <Chrome className="mr-2 h-4 w-4" />
-                    )}
-                    Continuar con Google
+                    <div className="absolute left-1.5 bg-white rounded-full p-2 flex items-center justify-center shadow-sm">
+                        {isGoogleLoading ? (
+                            <Loader2 className="h-5 w-5 animate-spin text-zinc-900" />
+                        ) : (
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-[18px] h-[18px]">
+                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                                <path fill="none" d="M0 0h48v48H0z"></path>
+                            </svg>
+                        )}
+                    </div>
+                    <span className="text-[15px] font-semibold tracking-wide">Iniciar sesión con Google</span>
                 </Button>
 
-                <div className="relative">
-                    <Separator className="bg-[hsl(0,0%,14.9%)]" />
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[hsl(0,0%,7%)] px-3 text-xs text-white/50">
+                <div className="relative py-2">
+                    <Separator className="bg-white/5" />
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-[13px] text-white/40">
                         o con email
                     </span>
                 </div>
@@ -168,14 +199,14 @@ function LoginForm() {
                     )}
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-white/70">
+                        <Label htmlFor="email" className="text-white/90 font-medium">
                             Correo electrónico
                         </Label>
                         <Input
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#08b6ff]/50 h-11"
+                            className="bg-[#121212] border-white/5 text-white placeholder:text-white/30 focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -183,15 +214,15 @@ function LoginForm() {
                         )}
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="password" className="text-white/70">
+                    <div className="space-y-2 pt-2">
+                        <Label htmlFor="password" className="text-white/90 font-medium">
                             Contraseña
                         </Label>
                         <Input
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-transparent border-[hsl(0,0%,14.9%)] text-white placeholder:text-white/40 focus:border-[#08b6ff]/50 h-11"
+                            className="bg-[#121212] border-white/5 text-white placeholder:text-white/30 focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -201,11 +232,11 @@ function LoginForm() {
                         )}
                     </div>
 
-                        <Button
-                            type="submit"
-                            className="w-full h-11 bg-[#08b6ff] text-[#0a0a0a] rounded-xl shadow-sm hover:opacity-90 font-bold"
-                            disabled={isSubmitting}
-                        >
+                    <Button
+                        type="submit"
+                        className="w-full h-12 bg-white text-black hover:bg-white/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
+                        disabled={isSubmitting}
+                    >
                         {isSubmitting ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : null}
@@ -213,37 +244,33 @@ function LoginForm() {
                     </Button>
                 </form>
 
-                <p className="text-center text-sm text-white/50">
+                <p className="text-center text-[13px] text-white/50 pt-4">
                     ¿No tienes cuenta?{" "}
                     <Link
                         href="/register"
-                        className="text-white underline-offset-4 hover:underline"
+                        className="text-white font-medium hover:text-[#08b6ff] transition-colors"
                     >
                         Regístrate
                     </Link>
                 </p>
-            </CardContent>
-        </Card>
+            </motion.div>
+        </motion.div>
     );
 }
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,3.9%)] px-4">
+        <div className="min-h-screen flex items-center justify-center bg-transparent relative px-4 overflow-hidden">
             <Suspense fallback={
-                <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
-                    <CardHeader className="text-center space-y-2">
-                        <div className="mx-auto mb-2 flex flex-col items-center gap-3">
-                            <RenriMark size={48} theme="dark" />
-                            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
-                                RENRI
-                            </h1>
-                        </div>
-                    </CardHeader>
-                    <CardContent className="flex justify-center py-10">
-                        <Loader2 className="h-6 w-6 animate-spin text-foreground" />
-                    </CardContent>
-                </Card>
+                <div className="w-full max-w-md flex flex-col items-center justify-center space-y-8">
+                    <div className="flex flex-col items-center gap-3">
+                        <RenriMark size={56} theme="dark" />
+                        <h1 className="text-3xl font-bold tracking-tight text-white/90">
+                            RENRI
+                        </h1>
+                    </div>
+                    <Loader2 className="h-6 w-6 animate-spin text-white/50" />
+                </div>
             }>
                 <LoginForm />
             </Suspense>

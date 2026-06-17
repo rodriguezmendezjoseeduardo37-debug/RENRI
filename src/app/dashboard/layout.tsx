@@ -57,13 +57,15 @@ export default async function DashboardLayout({
 
     return (
         <div
-            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-background text-foreground transition-colors duration-300`}
+            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-transparent text-foreground transition-colors duration-300 relative`}
         >
+            
             <Sidebar
                 accountType={accountType}
                 businessId={user.businessId ?? tenant?.id}
                 enabledModules={user.enabledModules}
                 userRole={user.role}
+                tenantName={tenant?.name ?? "RENRI"}
             />
 
             {/* Main content area — offset by floating sidebar (240px + 12px margin + 12px gap) */}

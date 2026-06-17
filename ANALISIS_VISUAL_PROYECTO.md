@@ -3,7 +3,7 @@
 ## 🎯 Resumen Ejecutivo
 
 RENRI es una **plataforma de gestión para profesionales y PYMEs** que conecta:
-- **Empresarios/Profesionales** que ofrecen servicios (citas, turnos, etc.)
+- **Empresarios/Profesionales** que ofrecen servicios (citas, agenda, etc.)
 - **Clientes** que reservan esos servicios
 - **Sistema de pagos** integrado con Stripe
 - **Portal público** para reservas sin autenticación
@@ -35,12 +35,12 @@ RENRI es una **plataforma de gestión para profesionales y PYMEs** que conecta:
 - **URL:** `/terminos`
 - **Contenido:** Documentos legales
 
-#### Portal Público de Turnos
+#### Portal Público de Reservas
 - **URL:** `/portal`
 - **Subrutas:**
   - `/portal/[tenantSlug]` - Vista pública del negocio específico
-  - `/portal/turno` - Detalle de turno
-  - `/portal/cancel` - Cancelar turno
+  - `/portal/reserva` - Detalle de reserva
+  - `/portal/cancel` - Cancelar reserva
 
 **Flujo:** 
 1. Cliente accede a `/portal/[nombreNegocio]`
@@ -87,7 +87,6 @@ Dashboard (/)
 ├── 📦 PEDIDOS
 ├── 🛠️ SERVICIOS
 ├── ⏰ HORARIOS
-├── 🔄 TURNOS
 ├── 📊 INVENTARIO
 ├── ⚙️ ADMIN
 └── ⚙️ CONFIGURACIÓN
@@ -142,11 +141,6 @@ Dashboard (/)
 - Horarios especiales
 - Sincronizar con Google Calendar
 
-**7. Turnos** (`/dashboard/turnos`)
-- Gestionar cambios/rotaciones
-- Asignar turnos
-- Historial de turnos
-- Disponibilidad de personal
 
 **8. Inventario** (`/dashboard/inventario`)
 - Stock de productos/materiales
@@ -350,7 +344,7 @@ src/
 │   ├── (auth)/            # Grupo autenticación
 │   ├── dashboard/         # Panel empresario
 │   ├── cliente/           # Portal cliente
-│   ├── portal/            # Sistema público turnos
+│   ├── portal/            # Sistema público reservas
 │   ├── api/               # Endpoints API
 │   ├── checkout/          # Checkout page
 │   ├── pricing/           # Precios

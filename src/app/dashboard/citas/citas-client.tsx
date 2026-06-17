@@ -175,7 +175,7 @@ export function CitasClient({
                 </div>
                 <button
                     onClick={() => setFormOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all"
+                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVA CITA
@@ -217,7 +217,7 @@ export function CitasClient({
                         <List className="h-3.5 w-3.5" />
                         LISTA
                         {viewMode === "list" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-foreground" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#12b4ff] rounded-full" />
                         )}
                     </button>
                     <button
@@ -228,7 +228,7 @@ export function CitasClient({
                         <CalendarIcon className="h-3.5 w-3.5" />
                         CALENDARIO
                         {viewMode === "calendar" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-foreground" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#12b4ff] rounded-full" />
                         )}
                     </button>
                 </div>
@@ -240,7 +240,7 @@ export function CitasClient({
 
             {/* Content */}
             {viewMode === "list" ? (
-                <div className="space-y-[1px] bg-popover">
+                <div className="space-y-3">
                     {filtered.length > 0 ? (
                         filtered.map((apt) => (
                             <AppointmentCard
@@ -254,7 +254,7 @@ export function CitasClient({
                             />
                         ))
                     ) : (
-                        <div className="bg-card px-6 py-16 text-center">
+                        <div className="bg-card ring-1 ring-border rounded-2xl px-6 py-16 text-center shadow-sm">
                             <p className="text-muted-foreground text-sm">
                                 No se encontraron citas
                             </p>

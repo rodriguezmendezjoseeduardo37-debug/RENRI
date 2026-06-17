@@ -72,14 +72,14 @@ export function ServiciosForm({
         }
     };
 
-    const inputClass = "w-full bg-background border border-border rounded-lg text-foreground text-sm px-4 h-12 placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary transition-colors";
+    const inputClass = "w-full bg-background ring-1 ring-border rounded-xl text-foreground text-sm px-4 h-12 placeholder:text-muted-foreground focus:outline-none focus:ring-[#12b4ff] transition-all";
     const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <div className="space-y-8">
             <div className="space-y-4">
                 {services.length === 0 ? (
-                    <div className="bg-card border border-border rounded-2xl shadow-sm p-8 text-center">
+                    <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-8 text-center">
                         <p className="text-muted-foreground text-sm uppercase tracking-widest font-medium">
                             No hay servicios registrados
                         </p>
@@ -98,7 +98,7 @@ export function ServiciosForm({
                         return (
                             <div
                                 key={service.id}
-                                className={`bg-card border rounded-2xl shadow-sm p-6 relative group transition-all ${stripeEatsTooMuch ? "border-red-900/50" : "border-border hover:border-foreground/20 hover:shadow-md"}`}
+                                className={`bg-card ring-1 rounded-2xl shadow-sm p-6 relative group transition-all ${stripeEatsTooMuch ? "ring-red-900/50" : "ring-border hover:ring-[#12b4ff]/30 hover:shadow-md"}`}
                             >
                                 <div className="absolute top-4 right-4 text-[10px] font-mono text-foreground">
                                     #{index + 1}
@@ -137,14 +137,14 @@ export function ServiciosForm({
                                                 onChange={(event) => updateService(
                                                     service.id,
                                                     "duration",
-                                                    parseInt(event.target.value, 10) || 0
+                                                    event.target.value ? Math.max(5, parseInt(event.target.value, 10)) : 5
                                                 )}
                                                 className={inputClass}
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setServiceToDelete(service.id)}
-                                                className="px-4 h-12 border border-border rounded-lg text-muted-foreground hover:text-red-500 hover:border-red-500 hover:bg-red-500/10 transition-colors bg-background"
+                                                className="px-4 h-12 ring-1 ring-border rounded-xl text-muted-foreground hover:text-red-500 hover:ring-red-500 hover:bg-red-500/10 transition-all bg-background"
                                                 title="Eliminar servicio"
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -154,7 +154,7 @@ export function ServiciosForm({
                                 </div>
                                 
                                 <div className="mt-6">
-                                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-border rounded-xl bg-background hover:border-foreground/20 transition-colors">
+                                    <label className="flex items-center gap-3 cursor-pointer p-4 ring-1 ring-border rounded-xl bg-background hover:ring-[#12b4ff]/50 transition-all">
                                         <input
                                             type="checkbox"
                                             checked={!!service.passFeeToClient}
@@ -174,7 +174,7 @@ export function ServiciosForm({
 
                                 {/* Stripe Online Payment Calculation */}
                                 {priceNum > 0 && (
-                                    <div className={`mt-2 p-4 border rounded-xl flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-red-950/20 border-red-900/50" : "bg-background border-border"}`}>
+                                    <div className={`mt-2 p-4 ring-1 rounded-xl flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-red-950/20 ring-red-900/50" : "bg-background ring-border"}`}>
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                                                 GANANCIA NETA (STRIPE EN LÍNEA)
@@ -202,20 +202,20 @@ export function ServiciosForm({
                 )}
             </div>
 
-            <div className="flex justify-between items-center pt-6 border-t border-border">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-border">
                 <button
                     type="button"
                     onClick={addService}
-                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-lg shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-[#12b4ff] transition-all"
                 >
                     <Plus className="w-3.5 h-3.5" />
-                    ANADIR SERVICIO
+                    AÑADIR SERVICIO
                 </button>
 
                 <button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground rounded-lg shadow-sm hover:bg-primary/90 hover:shadow transition-all disabled:opacity-50"
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     <Save className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export function ServiciosForm({
 
             {serviceToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-                    <div className="bg-card border border-border rounded-2xl p-8 max-w-sm w-full space-y-6 shadow-xl">
+                    <div className="bg-card ring-1 ring-border rounded-2xl p-8 max-w-sm w-full space-y-6 shadow-xl">
                         <div className="space-y-2">
                             <h3 className="text-foreground font-bold tracking-[0.1em] text-lg">
                                 ELIMINAR SERVICIO
@@ -238,14 +238,14 @@ export function ServiciosForm({
                             <button
                                 type="button"
                                 onClick={() => setServiceToDelete(null)}
-                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all"
+                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-[#12b4ff] transition-all"
                             >
                                 CANCELAR
                             </button>
                             <button
                                 type="button"
                                 onClick={handleConfirmDelete}
-                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-red-600/20 text-red-500 border border-red-500/30 hover:bg-red-600/30 transition-colors"
+                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-red-900/50 text-red-500 rounded-xl hover:bg-red-950/30 hover:text-red-400 transition-all"
                             >
                                 ELIMINAR
                             </button>

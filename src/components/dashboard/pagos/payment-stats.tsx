@@ -15,7 +15,7 @@ export function PaymentStats({
         new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(val);
 
     const StatBox = ({ label, value, sub }: { label: string; value: string | number; sub?: string }) => (
-        <div className="bg-card border border-border rounded-2xl shadow-sm p-6 flex flex-col justify-between h-32 hover:border-[#08b6ff] transition-colors group">
+        <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 flex flex-col justify-between h-32 hover:ring-[#12b4ff]/30 transition-all group">
             <span className="text-[10px] font-bold tracking-[0.25em] text-muted-foreground uppercase">
                 {label}
             </span>

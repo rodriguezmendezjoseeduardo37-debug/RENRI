@@ -311,7 +311,6 @@ export async function createPresentialPayment(
 
     revalidatePath("/dashboard/pagos");
     revalidatePath("/dashboard/citas");
-    revalidatePath("/dashboard/turnos");
     return payment;
 }
 

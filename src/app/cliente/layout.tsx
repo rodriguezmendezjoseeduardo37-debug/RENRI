@@ -29,7 +29,7 @@ export default async function ClienteLayout({
 
     return (
         <div
-            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-background text-foreground`}
+            className={`${spaceGrotesk.variable} ${inter.variable} font-[family-name:var(--font-body)] min-h-screen bg-transparent text-foreground relative`}
         >
             <ClienteSidebar />
 

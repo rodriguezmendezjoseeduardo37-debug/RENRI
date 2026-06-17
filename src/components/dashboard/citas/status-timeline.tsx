@@ -18,13 +18,13 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
 
     return (
         <div className="space-y-4">
-            <h3 className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+            <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
                 PROGRESO
             </h3>
 
             {isCancelled ? (
-                <div className="flex items-center gap-3 p-4 bg-card border border-border">
-                    <div className="w-3 h-3 bg-secondary" />
+                <div className="flex items-center gap-3 p-4 bg-card ring-1 ring-border rounded-xl">
+                    <div className="w-3 h-3 bg-red-500 rounded-full" />
                     <span className="text-sm text-muted-foreground uppercase tracking-[0.1em]">
                         {currentStatus === "cancelled" ? "CANCELADA" : "NO SHOW"}
                     </span>
@@ -40,11 +40,11 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Step indicator */}
                                 <div className="flex flex-col items-center gap-2 flex-1">
                                     <div
-                                        className={`w-4 h-4 flex items-center justify-center ${isDone ? "bg-white" : "border border-border"
+                                        className={`w-4 h-4 rounded-full flex items-center justify-center ${isDone ? "bg-[#12b4ff] shadow-[0_0_10px_rgba(18,180,255,0.3)]" : "border border-border"
                                             }`}
                                     >
                                         {isDone && (
-                                            <div className="w-1.5 h-1.5 bg-background" />
+                                            <div className="w-1.5 h-1.5 bg-black rounded-full" />
                                         )}
                                     </div>
                                     <span
@@ -58,7 +58,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Connector line */}
                                 {i < STEPS.length - 1 && (
                                     <div
-                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-white" : "bg-popover"
+                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-[#12b4ff]" : "bg-border"
                                             }`}
                                     />
                                 )}

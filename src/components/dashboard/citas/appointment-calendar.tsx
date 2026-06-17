@@ -40,11 +40,11 @@ export function AppointmentCalendar({
     }
 
     return (
-        <div className="border border-border overflow-x-auto">
+        <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm overflow-x-auto">
             <div className="min-w-[800px]">
                 {/* Day headers */}
                 <div className="grid grid-cols-8 border-b border-border">
-                    <div className="p-3 text-[10px] font-medium tracking-[0.2em] text-muted-foreground">
+                    <div className="p-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground">
                         HORA
                     </div>
                     {weekDates.map((d, i) => (
@@ -52,7 +52,7 @@ export function AppointmentCalendar({
                             key={i}
                             className="p-3 text-center border-l border-border"
                         >
-                            <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground block">
+                            <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground block">
                                 {DAYS[i]}
                             </span>
                             <span className="text-[11px] text-foreground font-mono">
@@ -86,12 +86,12 @@ export function AppointmentCalendar({
                                 >
                                     {slotApts.map((apt) => {
                                         const bgColor = apt.status === "confirmed" || apt.status === "completed" 
-                                            ? "bg-green-600/20 text-green-500 border-green-500/30" 
+                                            ? "bg-[#12b4ff]/15 text-[#12b4ff] border-[#12b4ff]/30 rounded-xl" 
                                             : apt.status === "cancelled" 
-                                            ? "bg-red-600/20 text-red-500 border-red-500/30"
+                                            ? "bg-red-600/15 text-red-500 border-red-500/30 rounded-xl"
                                             : apt.status === "pending"
-                                            ? "bg-blue-600/20 text-blue-500 border-blue-500/30"
-                                            : "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 border-transparent";
+                                            ? "bg-[#12b4ff]/10 text-[#12b4ff]/70 border-[#12b4ff]/20 rounded-xl"
+                                            : "bg-foreground/5 text-foreground border-transparent rounded-xl";
                                         
                                         return (
                                         <div

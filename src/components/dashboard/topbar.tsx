@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { UserMenu } from "@/components/auth/user-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBar } from "@/components/dashboard/search-bar";
+import { NotificationsBell } from "@/components/dashboard/notifications-bell";
 import { NAV_SERVICIOS, NAV_PYME } from "./sidebar";
 import { NAV_USUARIO } from "./cliente-sidebar";
 import type { BusinessModule } from "@/lib/business";
@@ -78,9 +79,10 @@ export function Topbar({
                     </div>
                 )}
 
-                {/* Right: theme toggle + user menu */}
+                {/* Right: theme toggle + notifications + user menu */}
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <ThemeToggle />
+                    <NotificationsBell />
                     <UserMenu accountType={accountType} />
                 </div>
             </header>

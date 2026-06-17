@@ -27,7 +27,7 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-background border border-[#08b6ff] p-3 shadow-2xl rounded-xl">
+            <div className="bg-background ring-1 ring-[#12b4ff] p-3 shadow-[0_0_15px_rgba(18,180,255,0.15)] rounded-xl">
                 <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase mb-1">{label}</p>
                 <p className="text-sm font-mono text-foreground font-bold">
                     ${payload[0].value.toLocaleString("es-MX")} MXN
@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export function RevenueChart({ data }: RevenueChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="w-full h-[300px] border border-border flex items-center justify-center bg-background">
+            <div className="w-full h-[300px] ring-1 ring-border rounded-2xl flex items-center justify-center bg-background shadow-sm">
                 <span className="text-[10px] font-bold tracking-[0.3em] text-foreground uppercase">
                     SIN DATOS SUFICIENTES
                 </span>
@@ -50,7 +50,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
     }
 
     return (
-        <div className="w-full h-[300px] border border-border bg-card p-4 pt-8 rounded-2xl overflow-hidden shadow-sm">
+        <div className="w-full h-[300px] ring-1 ring-border bg-card p-4 pt-8 rounded-2xl overflow-hidden shadow-sm">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} />
@@ -76,10 +76,10 @@ export function RevenueChart({ data }: RevenueChartProps) {
                     <Line
                         type="step" // blocky non-rounded aesthetic
                         dataKey="amount"
-                        stroke="#08b6ff"
+                        stroke="#12b4ff"
                         strokeWidth={2}
                         dot={{ r: 0 }}
-                        activeDot={{ r: 4, fill: "#08b6ff", stroke: "black", strokeWidth: 2 }}
+                        activeDot={{ r: 4, fill: "#12b4ff", stroke: "black", strokeWidth: 2 }}
                     />
                 </LineChart>
             </ResponsiveContainer>

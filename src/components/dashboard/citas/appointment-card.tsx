@@ -24,9 +24,9 @@ export function AppointmentCard({
 }: AppointmentCardProps) {
     const borderColor =
         appointment.status === "confirmed" || appointment.status === "completed"
-            ? "border-l-[#08b6ff]"
+            ? "border-l-[#12b4ff]"
             : appointment.status === "pending"
-                ? "border-l-[#08b6ff]/50"
+                ? "border-l-[#12b4ff]/50"
                 : appointment.status === "cancelled"
                     ? "border-l-red-500"
                     : "border-l-[#333333]";
@@ -34,7 +34,7 @@ export function AppointmentCard({
     return (
         <div className="relative">
             <div
-                className={`bg-card border-l-2 ${borderColor} p-4 md:px-6 md:py-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-border hover:border-[#08b6ff]/30 transition-colors`}
+                className={`bg-card border-l-2 ${borderColor} p-4 md:px-6 md:py-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 ring-1 ring-border hover:ring-[#12b4ff]/30 transition-all`}
             >
                 {/* Left: client + service */}
                 <div className="flex-1 min-w-0">
@@ -69,7 +69,7 @@ export function AppointmentCard({
                         {appointment.status === "pending" && onConfirm && (
                             <button
                                 onClick={onConfirm}
-                                className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
+                                className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase bg-[#12b4ff] text-black rounded-xl hover:opacity-90 shadow-[0_0_15px_rgba(18,180,255,0.15)] transition-all"
                             >
                                 CONFIRMAR
                             </button>
@@ -86,7 +86,7 @@ export function AppointmentCard({
                             )}
                         <Link
                             href={`/dashboard/citas/${appointment.id}`}
-                            className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:border-[#08b6ff]/50 hover:text-foreground transition-all"
+                            className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:border-[#12b4ff]/50 hover:text-foreground transition-all"
                         >
                             VER
                         </Link>
@@ -110,7 +110,7 @@ export function AppointmentCard({
                         </button>
                         <button
                             onClick={onCancelDismiss}
-                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
                         >
                             NO
                         </button>

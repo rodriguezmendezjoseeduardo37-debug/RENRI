@@ -69,7 +69,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 value={value}
                 disabled={disabled}
                 onChange={(e) => onChange(e.target.value)}
-                className="bg-background border border-border text-foreground p-2 text-xs focus:border-white transition-colors outline-none disabled:opacity-30"
+                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-[#12b4ff] transition-all outline-none disabled:opacity-30"
             />
         </div>
     );
@@ -91,7 +91,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 value={value}
                 disabled={disabled}
                 onChange={(e) => onChange(Number(e.target.value))}
-                className="bg-background border border-border text-foreground p-2 text-xs focus:border-white transition-colors outline-none disabled:opacity-30"
+                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-[#12b4ff] transition-all outline-none disabled:opacity-30"
             >
                 <option value={15}>15 min</option>
                 <option value={20}>20 min</option>
@@ -105,9 +105,9 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
     );
 
     return (
-        <div className="border border-border bg-card overflow-hidden">
+        <div className="ring-1 ring-border bg-card rounded-2xl shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border bg-white/5 flex items-center gap-3">
-                <div className="p-2 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80">
+                <div className="p-2 bg-foreground/5 ring-1 ring-foreground/10 text-[#12b4ff] rounded-xl">
                     <CalendarDays className="w-4 h-4" />
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                         </div>
                         <button 
                             onClick={() => setWeekdays({...weekdays, isOpen: !weekdays.isOpen})}
-                            className={`p-1.5 border transition-colors ${weekdays.isOpen ? "border-blue-500 text-blue-500" : "border-border text-muted-foreground"}`}
+                        className={`p-1.5 border rounded-lg transition-colors ${weekdays.isOpen ? "border-[#12b4ff] text-[#12b4ff]" : "border-border text-muted-foreground"}`}
                         >
                             <Power className="w-3.5 h-3.5" />
                         </button>
@@ -153,7 +153,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                         </div>
                         <button 
                             onClick={() => setWeekend({...weekend, isOpen: !weekend.isOpen})}
-                            className={`p-1.5 border transition-colors ${weekend.isOpen ? "border-purple-500 text-purple-500" : "border-border text-muted-foreground"}`}
+                        className={`p-1.5 border rounded-lg transition-colors ${weekend.isOpen ? "border-purple-500 text-purple-500" : "border-border text-muted-foreground"}`}
                         >
                             <Power className="w-3.5 h-3.5" />
                         </button>
@@ -178,7 +178,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-3 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-secondary disabled:opacity-50 transition-all min-w-[240px]"
+                    className="flex items-center justify-center gap-3 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase disabled:opacity-50 transition-all min-w-[240px]"
                 >
                     {isSubmitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

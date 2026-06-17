@@ -182,7 +182,7 @@ export default async function PagosPage() {
                     </h2>
                 </div>
 
-                <div className="border border-border rounded-2xl overflow-hidden bg-background">
+                <div className="ring-1 ring-border rounded-2xl overflow-hidden bg-background shadow-sm">
                     <table className="w-full text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>
@@ -201,7 +201,7 @@ export default async function PagosPage() {
                                             icon={CreditCard}
                                             title="Sin transacciones"
                                             description="Aún no hay transacciones registradas en este período."
-                                            className="border-0 bg-transparent py-16"
+                                            className="bg-transparent py-16"
                                         />
                                     </td>
                                 </tr>

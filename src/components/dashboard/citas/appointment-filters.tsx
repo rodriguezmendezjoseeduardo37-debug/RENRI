@@ -33,7 +33,7 @@ export function AppointmentFilters({
                     placeholder="Buscar cliente o servicio..."
                     value={filters.search ?? ""}
                     onChange={(e) => onChange({ ...filters, search: e.target.value })}
-                    className="w-full bg-background border border-border text-foreground text-sm pl-10 pr-4 py-2.5 placeholder:text-muted-foreground focus:outline-none focus:border-white transition-colors"
+                    className="w-full bg-card ring-1 ring-border text-foreground text-sm pl-10 pr-4 py-2.5 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
                 />
             </div>
 
@@ -43,7 +43,7 @@ export function AppointmentFilters({
                     type="date"
                     value={filters.date ?? ""}
                     onChange={(e) => onChange({ ...filters, date: e.target.value || undefined })}
-                    className="bg-background border border-border text-foreground text-sm px-4 py-2.5 focus:outline-none focus:border-foreground transition-colors dark:[color-scheme:dark]"
+                    className="bg-card ring-1 ring-border text-foreground text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-[#12b4ff] transition-all dark:[color-scheme:dark]"
                 />
             </div>
 
@@ -57,7 +57,7 @@ export function AppointmentFilters({
                             status: (e.target.value as AppointmentStatus) || undefined,
                         })
                     }
-                    className="appearance-none bg-background border border-border text-foreground text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
+                    className="appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-[#12b4ff] transition-all cursor-pointer"
                 >
                     {STATUS_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -76,7 +76,7 @@ export function AppointmentFilters({
                         onChange={(e) =>
                             onChange({ ...filters, staffId: e.target.value || undefined })
                         }
-                        className="appearance-none bg-background border border-border text-foreground text-sm pl-4 pr-10 py-2.5 focus:outline-none focus:border-white transition-colors cursor-pointer"
+                        className="appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-[#12b4ff] transition-all cursor-pointer"
                     >
                         <option value="">TODOS STAFF</option>
                         {staffList.map((s) => (

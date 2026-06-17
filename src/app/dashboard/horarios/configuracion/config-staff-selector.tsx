@@ -21,7 +21,7 @@ export function ConfigStaffSelector({ allStaff, targetStaffId }: ConfigStaffSele
                 params.set("staffId", e.target.value);
                 router.push(`${pathname}?${params.toString()}`);
             }}
-            className="bg-background border border-border text-foreground text-[10px] font-bold tracking-[0.2em] p-3 uppercase focus:outline-none focus:border-white transition-colors"
+            className="bg-card ring-1 ring-border text-foreground text-[10px] font-bold tracking-[0.2em] p-3 uppercase rounded-xl focus:outline-none focus:ring-[#12b4ff] transition-all"
         >
             {allStaff.map(staff => (
                 <option key={staff.id} value={staff.id}>
