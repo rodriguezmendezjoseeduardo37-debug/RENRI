@@ -1,11 +1,7 @@
 import Stripe from "stripe";
 import { signSignedToken } from "@/lib/signed-token";
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-if (!stripeSecretKey) {
-    throw new Error("STRIPE_SECRET_KEY is required");
-}
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
 
 export const stripeServer = new Stripe(stripeSecretKey, {
     apiVersion: "2026-02-25.clover",
