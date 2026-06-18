@@ -18,7 +18,7 @@ export default async function MiCitaDetallePage({
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const [{ tenant }, detail] = await Promise.all([
+    const [{ tenant, isLinked }, detail] = await Promise.all([
         getClientWorkspace(),
         getClientAppointmentDetail(id),
     ]);
@@ -90,7 +90,7 @@ export default async function MiCitaDetallePage({
                             canCancel={canCancel}
                             canPay={canPay}
                         />
-                        {tenant?.slug ? (
+                        {isLinked && tenant?.slug ? (
                             <Link
                                 href={`/portal/${tenant.slug}`}
                                 target="_blank"

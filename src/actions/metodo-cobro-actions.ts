@@ -228,14 +228,19 @@ export async function refreshOnboardingLink() {
     const protocol = host.includes("localhost") ? "http" : "https";
     const baseUrl = `${protocol}://${host}`;
 
-    const accountLink = await stripeServer.accountLinks.create({
-        account: tenant.stripeConnectAccountId,
-        refresh_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
-        return_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`,
-        type: "account_onboarding",
-    });
+    try {
+        const accountLink = await stripeServer.accountLinks.create({
+            account: tenant.stripeConnectAccountId,
+            refresh_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
+            return_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`,
+            type: "account_onboarding",
+        });
 
-    return { url: accountLink.url };
+        return { url: accountLink.url };
+    } catch (error: any) {
+        console.error("Stripe accountLinks error:", error);
+        return { error: error.message };
+    }
 }
 
 // ─── Disconnect payment method ────────────────────────────

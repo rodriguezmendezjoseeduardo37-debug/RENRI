@@ -9,7 +9,7 @@ export default async function MisCitasPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
-    const [{ tenant, businessId }, appointments] = await Promise.all([
+    const [{ tenant, businessId, isLinked }, appointments] = await Promise.all([
         getClientWorkspace(),
         getClientAppointments(),
     ]);
@@ -25,7 +25,7 @@ export default async function MisCitasPage() {
                         BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · RESERVAS, HISTORIAL Y SEGUIMIENTO
                     </p>
                 </div>
-                {tenant?.slug ? (
+                {isLinked && tenant?.slug ? (
                     <Link
                         href={`/portal/${tenant.slug}`}
                         target="_blank"
@@ -82,7 +82,7 @@ export default async function MisCitasPage() {
                                 >
                                     VER DETALLE
                                 </Link>
-                                {tenant?.slug ? (
+                                {isLinked && tenant?.slug ? (
                                     <Link
                                         href={`/portal/${tenant.slug}`}
                                         target="_blank"

@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { Check, ArrowLeft } from "lucide-react";
+import { db } from "@/db";
+import { tenants } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { PlansActions } from "./plans-actions";
 
@@ -47,15 +50,19 @@ export default async function PlanesPage({
     const params = await searchParams;
     const isSuccess = params.success === "true";
     const isCanceled = params.canceled === "true";
-    
-    // Leer el plan actual de la sesión del usuario
-    const sessionPlan = user.plan ? user.plan.toUpperCase() : "STARTER";
-    // Si viene de stripe con success, mostramos PRO optimísticamente hasta que el JWT expire/actualice
-    const currentPlan = isSuccess ? "PRO" : sessionPlan;
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, user.tenantId),
+    });
+
+    const realPlan = tenant?.plan ? tenant.plan.toUpperCase() : "STARTER";
+    const currentPlan = isSuccess ? "PRO" : realPlan;
+
+    // Sincronizar la sesión si está desincronizada con la BD, o forzar si es success
+    const shouldUpdateSession = isSuccess || user.plan !== tenant?.plan;
 
     return (
         <div className="max-w-5xl mx-auto space-y-10">
-            {isSuccess && <SessionUpdater planToUpdate="pro" />}
+            {shouldUpdateSession && <SessionUpdater planToUpdate={isSuccess ? "pro" : tenant?.plan} />}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
@@ -139,6 +146,7 @@ export default async function PlanesPage({
                                 buttonText={plan.buttonText}
                                 recommended={!!plan.recommended}
                                 isCurrentPlan={isCurrentPlan}
+                                isDisabled={currentPlan === "PRO" && plan.name === "STARTER"}
                             />
                         </div>
                     );

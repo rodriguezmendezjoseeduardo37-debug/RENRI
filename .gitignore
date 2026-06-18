@@ -74,3 +74,8 @@ build.log
 test-results/
 playwright-report/
 blob-report/
+
+.agents/
+renri-video/
+renri_spot_2.html
+skills-lock.json

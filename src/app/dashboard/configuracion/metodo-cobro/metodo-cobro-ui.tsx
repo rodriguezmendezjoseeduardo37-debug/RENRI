@@ -100,10 +100,14 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
     const handleRefreshOnboarding = () => {
         startTransition(async () => {
             try {
-                const { url } = await refreshOnboardingLink();
-                window.location.href = url;
-            } catch {
-                toast.error("Error al generar enlace de verificación.");
+                const result = await refreshOnboardingLink();
+                if (result.error) {
+                    toast.error(`Stripe Error: ${result.error}`);
+                } else if (result.url) {
+                    window.location.href = result.url;
+                }
+            } catch (err: any) {
+                toast.error(err.message || "Error al generar enlace de verificación.");
             }
         });
     };

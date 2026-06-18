@@ -1,6 +1,6 @@
 "use server";
 
-import { and, asc, desc, eq, sql, gte, lte } from "drizzle-orm";
+import { and, asc, desc, eq, sql, gte, lte, ilike, or, ne, inArray } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
@@ -559,6 +559,7 @@ export async function getClientAvailabilityPreview(daysAhead: number = 14) {
             businessId: effectiveBusinessId,
             tenantSlug: "",
             staff: [],
+            isLinked: false,
         };
     }
 
@@ -605,10 +606,13 @@ export async function getClientAvailabilityPreview(daysAhead: number = 14) {
         })
     );
 
+    const isLinked = !!user.linkedBusinessId || tenant.accountType !== "cliente";
+
     return {
         businessId: effectiveBusinessId,
         tenantSlug: tenant.slug,
         staff: staffWithSlots,
+        isLinked,
     };
 }
 
@@ -832,4 +836,155 @@ export async function getLinkedBusinesses() {
         .orderBy(desc(clientBusinesses.linkedAt));
 
     return links;
+}
+
+// ─── Explore / Discover Businesses ───────────────────────
+
+export type PublicBusiness = {
+    id: string;
+    name: string;
+    slug: string;
+    address: string | null;
+    phone: string | null;
+    description: string | null;
+    logoUrl: string | null;
+    accountType: string;
+    ownerName: string | null;
+    isLinked: boolean;
+};
+
+/**
+ * Returns all active, non-client businesses for exploration.
+ * Marks which ones the current user is already linked to.
+ */
+export async function getAllPublicBusinesses(): Promise<PublicBusiness[]> {
+    const user = await requireBusinessLinkedUser();
+
+    // Get user's linked business IDs
+    const linkedLinks = await db
+        .select({ tenantId: clientBusinesses.tenantId })
+        .from(clientBusinesses)
+        .where(eq(clientBusinesses.clientId, user.id));
+    const linkedIds = new Set(linkedLinks.map((l) => l.tenantId));
+
+    // Get all active non-client businesses
+    const businesses = await db
+        .select({
+            id: tenants.id,
+            name: tenants.name,
+            slug: tenants.slug,
+            address: tenants.address,
+            phone: tenants.phone,
+            description: tenants.description,
+            logoUrl: tenants.logoUrl,
+            accountType: tenants.accountType,
+        })
+        .from(tenants)
+        .where(
+            and(
+                eq(tenants.isActive, true),
+                ne(tenants.accountType, "cliente")
+            )
+        )
+        .orderBy(asc(tenants.name));
+
+    // For each business, get the owner name
+    const businessIds = businesses.map((b) => b.id);
+    const owners =
+        businessIds.length > 0
+            ? await db
+                  .select({
+                      tenantId: users.tenantId,
+                      name: users.name,
+                  })
+                  .from(users)
+                  .where(
+                      and(
+                          inArray(users.tenantId, businessIds),
+                          eq(users.role, "OWNER")
+                      )
+                  )
+            : [];
+
+    const ownerMap = new Map(owners.map((o) => [o.tenantId, o.name]));
+
+    return businesses.map((b) => ({
+        ...b,
+        ownerName: ownerMap.get(b.id) ?? null,
+        isLinked: linkedIds.has(b.id),
+    }));
+}
+
+/**
+ * Search businesses by name, slug, address, or short ID.
+ */
+export async function searchPublicBusinesses(
+    query: string
+): Promise<PublicBusiness[]> {
+    const user = await requireBusinessLinkedUser();
+
+    const q = query.trim();
+    if (!q || q.length < 2) return [];
+
+    // Get user's linked business IDs
+    const linkedLinks = await db
+        .select({ tenantId: clientBusinesses.tenantId })
+        .from(clientBusinesses)
+        .where(eq(clientBusinesses.clientId, user.id));
+    const linkedIds = new Set(linkedLinks.map((l) => l.tenantId));
+
+    const pattern = `%${q}%`;
+
+    const businesses = await db
+        .select({
+            id: tenants.id,
+            name: tenants.name,
+            slug: tenants.slug,
+            address: tenants.address,
+            phone: tenants.phone,
+            description: tenants.description,
+            logoUrl: tenants.logoUrl,
+            accountType: tenants.accountType,
+        })
+        .from(tenants)
+        .where(
+            and(
+                eq(tenants.isActive, true),
+                ne(tenants.accountType, "cliente"),
+                or(
+                    ilike(tenants.name, pattern),
+                    ilike(tenants.slug, pattern),
+                    ilike(tenants.address, pattern),
+                    sql`${tenants.id}::text LIKE ${q.toLowerCase() + "%"}`
+                )
+            )
+        )
+        .orderBy(asc(tenants.name))
+        .limit(20);
+
+    // Get owners
+    const businessIds = businesses.map((b) => b.id);
+    const owners =
+        businessIds.length > 0
+            ? await db
+                  .select({
+                      tenantId: users.tenantId,
+                      name: users.name,
+                  })
+                  .from(users)
+                  .where(
+                      and(
+                          sql`${users.tenantId} = ANY(${businessIds})`,
+                          eq(users.role, "OWNER")
+                      )
+                  )
+            : [];
+
+    const ownerMap = new Map(owners.map((o) => [o.tenantId, o.name]));
+
+    return businesses.map((b) => ({
+        ...b,
+        ownerName: ownerMap.get(b.id) ?? null,
+        isLinked: linkedIds.has(b.id),
+    }));
 }

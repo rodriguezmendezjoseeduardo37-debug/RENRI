@@ -121,14 +121,12 @@ export async function POST(req: Request) {
                 return;
             }
 
-            const planMap = { servicios: "starter", pyme: "pro" } as const;
-
             const [tenant] = await tx
                 .insert(tenants)
                 .values({
                     name: `${name}'s Business`,
                     slug: `${email.split("@")[0]}-${Date.now()}`,
-                    plan: planMap[accountType],
+                    plan: "starter",
                     accountType,
                 })
                 .returning();

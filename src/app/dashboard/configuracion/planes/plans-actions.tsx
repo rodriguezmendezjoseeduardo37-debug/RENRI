@@ -11,6 +11,7 @@ type PlansActionsProps = {
     buttonText: string;
     recommended: boolean;
     isCurrentPlan: boolean;
+    isDisabled?: boolean;
 };
 
 export function PlansActions({
@@ -18,6 +19,7 @@ export function PlansActions({
     buttonText,
     recommended,
     isCurrentPlan,
+    isDisabled,
 }: PlansActionsProps) {
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
@@ -31,6 +33,19 @@ export function PlansActions({
                 className="w-full cursor-not-allowed border border-[#08b6ff] bg-[#08b6ff]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#08b6ff] opacity-80 rounded-xl"
             >
                 PLAN ACTUAL
+            </button>
+        );
+    }
+
+    if (isDisabled) {
+        return (
+            <button
+                type="button"
+                disabled
+                title="No disponible"
+                className="w-full cursor-not-allowed border border-border bg-background px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground opacity-60 rounded-xl"
+            >
+                NO DISPONIBLE
             </button>
         );
     }

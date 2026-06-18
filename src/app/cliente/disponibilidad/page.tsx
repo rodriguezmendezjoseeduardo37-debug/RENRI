@@ -23,7 +23,7 @@ export default async function DisponibilidadPage() {
                         BUSINESS ID {availability.businessId.slice(0, 8).toUpperCase()} · PROXIMOS ESPACIOS LIBRES DEL NEGOCIO
                     </p>
                 </div>
-                {availability.tenantSlug ? (
+                {availability.isLinked && availability.tenantSlug ? (
                     <Link
                         href={`/portal/${availability.tenantSlug}`}
                         target="_blank"

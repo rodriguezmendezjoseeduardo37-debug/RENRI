@@ -22,16 +22,9 @@ export async function createCheckoutSession(planName: string) {
 
     const stripe = getStripe();
 
-    // Modo mock (desarrollo sin clave Stripe)
+    // Modo estricto: Requiere las claves de Stripe sí o sí.
     if (!stripe || !process.env.STRIPE_PRO_PRICE_ID) {
-        console.warn("⚠️ STRIPE_SECRET_KEY o STRIPE_PRO_PRICE_ID no configurados. Usando mock mode.");
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        await db.update(tenants)
-            .set({ plan: "pro", updatedAt: new Date() })
-            .where(eq(tenants.id, user.tenantId));
-
-        return { url: "/dashboard/configuracion/planes?success=true" };
+        throw new Error("Las credenciales de Stripe (STRIPE_SECRET_KEY o STRIPE_PRO_PRICE_ID) no están configuradas en el entorno. No se puede procesar el pago.");
     }
 
     try {
