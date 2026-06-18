@@ -4,6 +4,7 @@ import {
     getClientAppointments,
     getClientPayments,
     getClientWorkspace,
+    getClientOrders,
 } from "@/actions/client-portal";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { getCurrentUser } from "@/lib/auth-helpers";
@@ -32,11 +33,12 @@ export default async function ClienteDashboardPage() {
 
     const firstName = user.name?.split(" ")[0]?.toUpperCase() ?? "USUARIO";
 
-    const [{ tenant, businessId, ownerName, isLinked }, appointments, payments] =
+    const [{ tenant, businessId, ownerName, isLinked }, appointments, payments, orders] =
         await Promise.all([
             getClientWorkspace(),
             getClientAppointments(),
             getClientPayments(),
+            getClientOrders(),
         ]);
 
     const orderedAppointments = [...appointments].sort((a, b) =>
@@ -73,6 +75,12 @@ export default async function ClienteDashboardPage() {
                   <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
                     <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{pendingPayments.length}</span>
                     <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Pagos Pendientes / Por Cubrir</span>
+                  </div>
+                  <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
+
+                  <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
+                    <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{orders.length}</span>
+                    <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Mis Compras / Productos</span>
                   </div>
                   <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
 
@@ -198,6 +206,50 @@ export default async function ClienteDashboardPage() {
                             </>
                         )}
                     </div>
+                </div>
+
+                {/* Recent Purchases Card */}
+                <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm p-5 sm:p-8 mt-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-[11px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
+                            COMPRAS RECIENTES
+                        </h3>
+                    </div>
+                    {orders.length > 0 ? (
+                        <div className="space-y-4">
+                            {orders.slice(0, 3).map((order) => (
+                                <div key={order.id} className="flex flex-col sm:flex-row justify-between p-4 border border-border rounded-xl">
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-bold text-foreground">
+                                            {new Date(order.createdAt).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" }).toUpperCase()}
+                                        </p>
+                                        <div className="flex flex-col gap-1">
+                                            {order.items.map((item) => (
+                                                <p key={item.id} className="text-sm text-muted-foreground">
+                                                    {item.quantity}x {item.product.name}
+                                                </p>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 sm:mt-0 text-right">
+                                        <p className="text-sm font-bold text-foreground">${Number(order.total).toFixed(2)}</p>
+                                        <p className="text-xs text-muted-foreground capitalize">{order.status}</p>
+                                    </div>
+                                </div>
+                            ))}
+                            {orders.length > 3 && (
+                                <p className="text-xs text-center text-muted-foreground pt-2">
+                                    Y {orders.length - 3} compras más...
+                                </p>
+                            )}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">
+                            {isLinked
+                                ? "No tienes compras registradas en este negocio recientemente."
+                                : "Enlaza tu cuenta para ver tus compras y productos."}
+                        </p>
+                    )}
                 </div>
             </div>
         </div>

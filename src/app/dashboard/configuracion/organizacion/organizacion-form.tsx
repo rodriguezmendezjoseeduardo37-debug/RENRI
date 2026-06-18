@@ -74,7 +74,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
     };
 
     const inputClass =
-        "w-full bg-card border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-foreground focus:outline-none focus:border-[#08b6ff] transition-colors";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50";
     const labelClass =
         "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
@@ -388,7 +388,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                 <button
                     type="submit"
                     disabled={isLoading || !name.trim() || !slug.trim()}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR CAMBIOS"}

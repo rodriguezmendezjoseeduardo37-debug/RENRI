@@ -25,7 +25,7 @@ export default async function PerfilConfigPage() {
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border hover:text-foreground hover:border-foreground transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER

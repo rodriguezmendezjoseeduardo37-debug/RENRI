@@ -32,9 +32,8 @@ export function RenriMark({
   activeModule = "servicios",
   className,
 }: RenriMarkProps) {
-  const dark = theme === "dark";
-  const bg = dark ? "#0E0E0E" : "#F4F2EE";
-  const fg = dark ? "#F4F2EE" : "#0E0E0E";
+  const bg = "var(--background)";
+  const fg = "currentColor";
 
   let accentX = 86;
   let accentY = 20;

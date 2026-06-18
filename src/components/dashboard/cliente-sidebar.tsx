@@ -7,7 +7,8 @@ import {
     Calendar,
     Clock,
     CreditCard,
-    Link2
+    Link2,
+    ShoppingBag
 } from "lucide-react";
 import { RenriMark } from "@/components/renri-mark";
 
@@ -15,6 +16,7 @@ export const NAV_USUARIO = [
     { href: "/cliente", icon: Home, label: "INICIO", iconColor: "text-[#12b4ff]" },
     { href: "/cliente/disponibilidad", icon: Clock, label: "DISPONIBILIDAD", iconColor: "text-rose-500" },
     { href: "/cliente/mis-citas", icon: Calendar, label: "MIS CITAS", iconColor: "text-[#12b4ff]" },
+    { href: "/cliente/mis-compras", icon: ShoppingBag, label: "MIS COMPRAS", iconColor: "text-amber-500" },
     { href: "/cliente/mis-pagos", icon: CreditCard, label: "MIS PAGOS", iconColor: "text-[#10b981]" },
     { href: "/cliente/enlazar-negocio", icon: Link2, label: "ENLAZAR NEGOCIO", iconColor: "text-indigo-500" },
 ];

@@ -92,6 +92,65 @@ async function completePayment(
             );
         }
 
+        // ─── Stripe Transfer (MUST succeed before marking completed) ───
+        // If this is an appointment payment, attempt the Stripe transfer FIRST.
+        // Only mark as completed if the transfer succeeds.
+        if (payment.referenceType === "appointment") {
+            const appointment = await tx.query.appointments.findFirst({
+                where: eq(appointments.id, payment.referenceId),
+            });
+
+            if (appointment) {
+                const tenant = await tx.query.tenants.findFirst({
+                    where: eq(tenants.id, payment.tenantId),
+                });
+
+                if (tenant?.stripeConnectAccountId) {
+                    const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
+                    const transferAmount = Number(payment.amount) - platformFee;
+
+                    if (transferAmount > 0) {
+                        try {
+                            await stripeCreateTransfer(
+                                transferAmount,
+                                tenant.stripeConnectAccountId,
+                                `Payment for appointment ${appointment.id}`,
+                                {
+                                    paymentId: payment.id,
+                                    transferGroup: payment.id,
+                                    idempotencyKey: `transfer_${payment.id}`,
+                                }
+                            );
+                        } catch (transferError) {
+                            // Transfer failed → mark payment as FAILED, NOT completed
+                            logger.logAction(
+                                "completePayment",
+                                "error",
+                                { paymentId: payment.id, transferAmount, reason: "transfer_failed" },
+                                transferError as Error
+                            );
+
+                            await tx
+                                .update(payments)
+                                .set({
+                                    status: "failed",
+                                    ...(validated.stripePaymentIntentId
+                                        ? { stripePaymentIntentId: validated.stripePaymentIntentId }
+                                        : {}),
+                                })
+                                .where(eq(payments.id, validated.paymentId));
+
+                            throw new ActionError(
+                                "Stripe transfer failed — payment marked as failed for manual retry",
+                                "TRANSFER_FAILED"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
+        // ─── Transfer succeeded (or not applicable) → mark completed ───
         const [updatedPayment] = await tx
             .update(payments)
             .set({
@@ -108,55 +167,17 @@ async function completePayment(
             throw new ActionError("Payment update failed", "PAYMENT_UPDATE_FAILED");
         }
 
+        // Confirm appointment only AFTER payment is truly completed
         if (payment.referenceType === "appointment") {
             await tx
                 .update(appointments)
-                .set({ status: "confirmed" })
+                .set({ status: "confirmed", updatedAt: new Date() })
                 .where(
                     and(
                         eq(appointments.id, payment.referenceId),
                         eq(appointments.tenantId, payment.tenantId)
                     )
                 );
-
-            // ─── Trigger Transfers (Separate Transfers) ───
-            // If the payment used a transfer_group, we handle the distribution here.
-            // (In a real app, this might be better in a background job or webhook)
-            const appointment = await tx.query.appointments.findFirst({
-                where: eq(appointments.id, payment.referenceId),
-            });
-
-            if (appointment) {
-                const tenant = await tx.query.tenants.findFirst({
-                    where: eq(tenants.id, payment.tenantId),
-                });
-
-                if (tenant?.stripeConnectAccountId) {
-                    // Transfer to Business
-                    // For now, we transfer the full amount minus platform fee
-                    const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
-                    const transferAmount = Number(payment.amount) - platformFee;
-
-                    if (transferAmount > 0) {
-                        try {
-                            await stripeCreateTransfer(
-                                transferAmount,
-                                tenant.stripeConnectAccountId,
-                                `Payment for appointment ${appointment.id}`,
-                                { paymentId: payment.id, transferGroup: payment.id }
-                            );
-                        } catch (e) {
-                            logger.logAction("completePayment", "error", { paymentId: payment.id }, e as Error);
-                            // We don't fail the whole transaction if transfer fails, 
-                            // but we should log it for manual retry.
-                        }
-                    }
-                }
-
-                // TODO: Logic for Staff transfer if they have an account
-                // const staff = await tx.query.users.findFirst({ where: eq(users.id, appointment.staffId) });
-                // if (staff?.stripeConnectAccountId) { ... }
-            }
         }
 
         return updatedPayment;
@@ -410,6 +431,61 @@ export async function processPayment(paymentId: string) {
         return { payment: updated, clientSecret: intent.client_secret };
     } catch (error) {
         logger.logAction("processPayment", "error", { paymentId }, error as Error);
+        throw error;
+    }
+}
+
+/**
+ * Marca un pago como fallido explícitamente.
+ * Uso: cuando Stripe falla, webhooks reportan fallo, o retry manual determina que no se puede completar.
+ */
+export async function markPaymentFailed(
+    paymentId: string,
+    reason?: string
+) {
+    try {
+        logger.logAction("markPaymentFailed", "start", { paymentId, reason });
+
+        return db.transaction(async (tx) => {
+            const payment = await tx.query.payments.findFirst({
+                where: eq(payments.id, paymentId),
+            });
+
+            if (!payment) {
+                throw new ActionError("Payment not found", "PAYMENT_NOT_FOUND");
+            }
+
+            if (payment.status === "completed" || payment.status === "refunded") {
+                throw new ActionError(
+                    `Cannot mark a ${payment.status} payment as failed`,
+                    "INVALID_STATUS"
+                );
+            }
+
+            const [updated] = await tx
+                .update(payments)
+                .set({ status: "failed" })
+                .where(eq(payments.id, paymentId))
+                .returning();
+
+            // Also revert the appointment to pending if it was linked
+            if (payment.referenceType === "appointment") {
+                await tx
+                    .update(appointments)
+                    .set({ status: "pending", updatedAt: new Date() })
+                    .where(
+                        and(
+                            eq(appointments.id, payment.referenceId),
+                            eq(appointments.tenantId, payment.tenantId)
+                        )
+                    );
+            }
+
+            logger.logAction("markPaymentFailed", "success", { paymentId, reason });
+            return updated;
+        });
+    } catch (error) {
+        logger.logAction("markPaymentFailed", "error", { paymentId }, error as Error);
         throw error;
     }
 }

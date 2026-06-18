@@ -112,10 +112,10 @@ function LoginForm() {
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.1, duration: 0.5 }}
-                    className="mx-auto mb-2 flex flex-col items-center gap-3"
+                    className="mx-auto mb-2 flex flex-col items-center gap-3 text-foreground"
                 >
-                    <RenriMark size={56} theme="dark" />
-                    <h1 className="text-3xl font-bold tracking-tight text-white/90">
+                    <RenriMark size={56} />
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
                         RENRI
                     </h1>
                 </motion.div>
@@ -124,8 +124,8 @@ function LoginForm() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                    <h2 className="text-2xl text-white font-semibold tracking-tight">Iniciar Sesión</h2>
-                    <p className="text-white/50 text-sm mt-1">
+                    <h2 className="text-2xl text-foreground font-semibold tracking-tight">Iniciar Sesión</h2>
+                    <p className="text-muted-foreground text-sm mt-1">
                         Ingresa a tu cuenta para continuar
                     </p>
                 </motion.div>
@@ -138,7 +138,7 @@ function LoginForm() {
                 className="space-y-6"
             >
                 <div className="space-y-3">
-                    <Label className="text-white/90 font-medium">Módulo</Label>
+                    <Label className="text-foreground font-medium">Módulo</Label>
                     <div className="grid grid-cols-3 gap-3">
                         {ACCOUNT_TYPES.map((type) => (
                             <button
@@ -149,8 +149,8 @@ function LoginForm() {
                                     setValue("accountType", type.value);
                                 }}
                                 className={`rounded-xl border p-3 text-left transition-all duration-300 ${selectedType === type.value
-                                    ? "border-[#08b6ff] bg-[#08b6ff]/5 text-white"
-                                    : "border-white/5 bg-[#121212] text-white/50 hover:border-white/20"
+                                    ? "border-[#08b6ff] bg-[#08b6ff]/10 text-foreground"
+                                    : "border-border bg-card text-muted-foreground hover:border-foreground/20 hover:text-foreground"
                                     }`}
                             >
                                 <div className="text-sm font-semibold">{type.label}</div>
@@ -164,13 +164,13 @@ function LoginForm() {
 
                 <Button
                     variant="outline"
-                    className="w-full border-0 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white h-[52px] rounded-full flex items-center justify-center relative overflow-hidden transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98] group"
+                    className="w-full border-border bg-card hover:bg-accent text-foreground h-[52px] rounded-full flex items-center justify-center relative overflow-hidden transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98] group"
                     onClick={handleGoogleSignIn}
                     disabled={isGoogleLoading}
                 >
-                    <div className="absolute left-1.5 bg-white rounded-full p-2 flex items-center justify-center shadow-sm">
+                    <div className="absolute left-1.5 bg-background rounded-full p-2 flex items-center justify-center shadow-sm">
                         {isGoogleLoading ? (
-                            <Loader2 className="h-5 w-5 animate-spin text-zinc-900" />
+                            <Loader2 className="h-5 w-5 animate-spin text-foreground" />
                         ) : (
                             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-[18px] h-[18px]">
                                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
@@ -185,8 +185,8 @@ function LoginForm() {
                 </Button>
 
                 <div className="relative py-2">
-                    <Separator className="bg-white/5" />
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-[13px] text-white/40">
+                    <Separator className="bg-border" />
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-3 text-[13px] text-muted-foreground">
                         o con email
                     </span>
                 </div>
@@ -199,14 +199,14 @@ function LoginForm() {
                     )}
 
                     <div className="space-y-2">
-                        <Label htmlFor="email" className="text-white/90 font-medium">
+                        <Label htmlFor="email" className="text-foreground font-medium">
                             Correo electrónico
                         </Label>
                         <Input
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-[#121212] border-white/5 text-white placeholder:text-white/30 focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
@@ -215,14 +215,14 @@ function LoginForm() {
                     </div>
 
                     <div className="space-y-2 pt-2">
-                        <Label htmlFor="password" className="text-white/90 font-medium">
+                        <Label htmlFor="password" className="text-foreground font-medium">
                             Contraseña
                         </Label>
                         <Input
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-[#121212] border-white/5 text-white placeholder:text-white/30 focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
@@ -234,7 +234,7 @@ function LoginForm() {
 
                     <Button
                         type="submit"
-                        className="w-full h-12 bg-white text-black hover:bg-white/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
+                        className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? (
@@ -244,11 +244,11 @@ function LoginForm() {
                     </Button>
                 </form>
 
-                <p className="text-center text-[13px] text-white/50 pt-4">
+                <p className="text-center text-[13px] text-muted-foreground pt-4">
                     ¿No tienes cuenta?{" "}
                     <Link
                         href="/register"
-                        className="text-white font-medium hover:text-[#08b6ff] transition-colors"
+                        className="text-foreground font-medium hover:text-[#08b6ff] transition-colors"
                     >
                         Regístrate
                     </Link>
@@ -263,13 +263,13 @@ export default function LoginPage() {
         <div className="min-h-screen flex items-center justify-center bg-transparent relative px-4 overflow-hidden">
             <Suspense fallback={
                 <div className="w-full max-w-md flex flex-col items-center justify-center space-y-8">
-                    <div className="flex flex-col items-center gap-3">
-                        <RenriMark size={56} theme="dark" />
-                        <h1 className="text-3xl font-bold tracking-tight text-white/90">
+                    <div className="flex flex-col items-center gap-3 text-foreground">
+                        <RenriMark size={56} />
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">
                             RENRI
                         </h1>
                     </div>
-                    <Loader2 className="h-6 w-6 animate-spin text-white/50" />
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
             }>
                 <LoginForm />

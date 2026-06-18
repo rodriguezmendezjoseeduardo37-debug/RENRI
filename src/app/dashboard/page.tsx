@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { and, count, eq, gte, lt, sum } from "drizzle-orm";
+import { and, count, eq, gte, lt, sum, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { Store, Truck, Repeat, Syringe, Sparkles, SmilePlus, Calendar, CreditCard, Users } from "lucide-react";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { appointments, payments, tenants, users } from "@/db/schema";
+import { appointments, payments, tenants, users, orders } from "@/db/schema";
 import {
     normalizeEnabledModules,
     type BusinessModule,
@@ -120,7 +120,7 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    const [citasHoy, ingresosHoy, totalClientes] = await Promise.all([
+    const [citasHoy, ingresosHoy, totalClientes, recientesCitas] = await Promise.all([
         db
             .select({ count: count() })
             .from(appointments)
@@ -153,9 +153,50 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                 )
             )
             .then((rows) => rows[0]),
+        db
+            .select({
+                id: appointments.id,
+                serviceName: appointments.serviceName,
+                startTime: appointments.startTime,
+                status: appointments.status,
+                clientName: users.name,
+            })
+            .from(appointments)
+            .leftJoin(users, eq(appointments.clientId, users.id))
+            .where(
+                and(
+                    eq(appointments.tenantId, businessId),
+                    eq(appointments.date, todayStr)
+                )
+            )
+            .orderBy(desc(appointments.createdAt))
+            .limit(5),
     ]);
 
     const ingresos = Number(ingresosHoy?.total ?? 0);
+
+    const translateAppointmentStatus = (status: string) => {
+        const map: Record<string, string> = {
+            pending: "Pendiente",
+            confirmed: "Confirmado",
+            waiting: "En espera",
+            in_progress: "En progreso",
+            completed: "Completado",
+            cancelled: "Cancelado",
+            no_show: "No asistió",
+        };
+        return map[status] || status;
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case "completed": return "text-[#10b981]";
+            case "waiting": return "text-amber-500";
+            case "in_progress": return "text-blue-500";
+            case "cancelled": case "no_show": return "text-destructive";
+            default: return "text-primary";
+        }
+    };
 
     return (
         <>
@@ -215,18 +256,35 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                   </div>
                   
                   <div className="flex flex-col">
-                    <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
-                      <div className="text-foreground text-[13px] font-medium">Carlos Ruiz</div>
-                      <div className="text-muted-foreground text-[13px]">Pago de Consulta</div>
-                      <div className="text-muted-foreground text-[13px]">12:00 PM</div>
-                      <div className="text-primary text-[13px] font-medium">Completado</div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-4 px-8 py-5 items-center hover:bg-accent/30 transition-colors">
-                      <div className="text-foreground text-[13px] font-medium">Ana Gómez</div>
-                      <div className="text-muted-foreground text-[13px]">Reserva Online</div>
-                      <div className="text-muted-foreground text-[13px]">02:30 PM</div>
-                      <div className="text-amber-500 text-[13px] font-medium">En espera</div>
-                    </div>
+                    {recientesCitas.length === 0 ? (
+                        <div className="py-8 text-center text-muted-foreground text-sm">
+                            No hay citas recientes registradas.
+                        </div>
+                    ) : (
+                        recientesCitas.map((cita) => {
+                            // Simple formatting for start time (assuming "HH:MM:SS" or "HH:MM" format)
+                            let timeFormatted = cita.startTime;
+                            if (timeFormatted) {
+                                const parts = timeFormatted.split(":");
+                                if (parts.length >= 2) {
+                                    let h = parseInt(parts[0], 10);
+                                    const ampm = h >= 12 ? 'PM' : 'AM';
+                                    h = h % 12;
+                                    h = h ? h : 12; 
+                                    timeFormatted = `${h}:${parts[1]} ${ampm}`;
+                                }
+                            }
+
+                            return (
+                                <div key={cita.id} className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
+                                  <div className="text-foreground text-[13px] font-medium">{cita.clientName || 'Cliente Anónimo'}</div>
+                                  <div className="text-muted-foreground text-[13px]">{cita.serviceName}</div>
+                                  <div className="text-muted-foreground text-[13px]">{timeFormatted}</div>
+                                  <div className={`${getStatusColor(cita.status)} text-[13px] font-medium`}>{translateAppointmentStatus(cita.status)}</div>
+                                </div>
+                            );
+                        })
+                    )}
                   </div>
               </div>
             </div>
@@ -249,10 +307,45 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
 }
 
 async function PymeDashboard({ businessId }: { businessId: string }) {
-    const [orderStats, inventoryStats] = await Promise.all([
+    const [orderStats, inventoryStats, recientesPedidos] = await Promise.all([
         getOrderStats(businessId),
         getInventoryStats(businessId),
+        db
+            .select({
+                id: orders.id,
+                status: orders.status,
+                clientName: orders.clientName,
+                clientUser: users.name,
+                total: orders.total,
+                createdAt: orders.createdAt,
+            })
+            .from(orders)
+            .leftJoin(users, eq(orders.clientId, users.id))
+            .where(eq(orders.tenantId, businessId))
+            .orderBy(desc(orders.createdAt))
+            .limit(5),
     ]);
+
+    const translateOrderStatus = (status: string) => {
+        const map: Record<string, string> = {
+            pending: "Pendiente",
+            processing: "Procesando",
+            completed: "Completado",
+            cancelled: "Cancelado",
+            refunded: "Reembolsado",
+        };
+        return map[status] || status;
+    };
+
+    const getOrderStatusColor = (status: string) => {
+        switch (status) {
+            case "completed": return "text-[#10b981]";
+            case "processing": return "text-blue-500";
+            case "pending": return "text-amber-500";
+            case "cancelled": case "refunded": return "text-destructive";
+            default: return "text-primary";
+        }
+    };
 
     return (
         <>
@@ -312,18 +405,33 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
                   </div>
                   
                   <div className="flex flex-col">
-                    <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
-                      <div className="text-foreground text-[13px] font-medium">Juan Pérez</div>
-                      <div className="text-muted-foreground text-[13px]">Pago de Consulta</div>
-                      <div className="text-muted-foreground text-[13px]">10:00 AM</div>
-                      <div className="text-[#10b981] text-[13px] font-medium">Completado</div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-4 px-8 py-5 items-center hover:bg-accent/30 transition-colors">
-                      <div className="text-foreground text-[13px] font-medium">María López</div>
-                      <div className="text-muted-foreground text-[13px]">Reserva Online</div>
-                      <div className="text-muted-foreground text-[13px]">11:30 AM</div>
-                      <div className="text-amber-500 text-[13px] font-medium">En preparación</div>
-                    </div>
+                    {recientesPedidos.length === 0 ? (
+                        <div className="py-8 text-center text-muted-foreground text-sm">
+                            No hay pedidos recientes registrados.
+                        </div>
+                    ) : (
+                        recientesPedidos.map((pedido) => {
+                            let timeFormatted = "";
+                            if (pedido.createdAt) {
+                                const d = new Date(pedido.createdAt);
+                                let h = d.getHours();
+                                const ampm = h >= 12 ? 'PM' : 'AM';
+                                h = h % 12;
+                                h = h ? h : 12; 
+                                const m = d.getMinutes().toString().padStart(2, '0');
+                                timeFormatted = `${h}:${m} ${ampm}`;
+                            }
+
+                            return (
+                                <div key={pedido.id} className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
+                                  <div className="text-foreground text-[13px] font-medium">{pedido.clientName || pedido.clientUser || 'Cliente Anónimo'}</div>
+                                  <div className="text-muted-foreground text-[13px]">Pedido • ${Number(pedido.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</div>
+                                  <div className="text-muted-foreground text-[13px]">{timeFormatted}</div>
+                                  <div className={`${getOrderStatusColor(pedido.status)} text-[13px] font-medium`}>{translateOrderStatus(pedido.status)}</div>
+                                </div>
+                            );
+                        })
+                    )}
                   </div>
               </div>
             </div>

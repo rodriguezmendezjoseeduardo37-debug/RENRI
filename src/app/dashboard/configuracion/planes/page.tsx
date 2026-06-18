@@ -56,20 +56,22 @@ export default async function PlanesPage({
     return (
         <div className="max-w-5xl mx-auto space-y-10">
             {isSuccess && <SessionUpdater planToUpdate="pro" />}
-            <div className="border-b border-border pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
+                <div>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                        PLANES Y FACTURACIÓN
+                    </h1>
+                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                        PLANES TRANSPARENTES DISEÑADOS PARA ESCALAR JUNTO CON TU CRECIMIENTO PROFESIONAL.
+                    </p>
+                </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors uppercase mb-4"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
-                    CONFIGURACIÓN
+                    VOLVER
                 </Link>
-                <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
-                    PLANES Y FACTURACIÓN
-                </h1>
-                <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
-                    PLANES TRANSPARENTES DISEÑADOS PARA ESCALAR JUNTO CON TU CRECIMIENTO PROFESIONAL.
-                </p>
             </div>
 
             {isSuccess && (

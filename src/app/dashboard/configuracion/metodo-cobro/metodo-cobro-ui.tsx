@@ -285,7 +285,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                             value={holderName}
                             onChange={(e) => setHolderName(e.target.value)}
                             placeholder="Juan Pérez García"
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#08b6ff] transition-colors"
+                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50"
                         />
                     </div>
 
@@ -300,7 +300,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                             onChange={(e) => formatClabe(e.target.value)}
                             placeholder="012 345 678 901 234 567"
                             maxLength={23} // 18 digits + 5 spaces
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground/50 tracking-widest focus:outline-none focus:border-[#08b6ff] transition-colors"
+                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground/50 tracking-widest focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50"
                         />
                         <div className="flex items-center justify-between">
                             <p className="text-[9px] text-muted-foreground tracking-wide">
@@ -317,7 +317,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 <button
                     onClick={handleSetup}
                     disabled={isPending || clabe.length !== 18 || holderName.trim().length < 2}
-                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isPending ? (
                         <>

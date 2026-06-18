@@ -4,10 +4,11 @@ import { and, asc, desc, eq, sql, gte, lte } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { appointments, payments, profiles, tenants, users, clientBusinesses } from "@/db/schema";
+import { appointments, payments, profiles, tenants, users, clientBusinesses, orders } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
 import { getPortalAvailableSlots } from "@/actions/portal";
 import { verifyCancelToken } from "@/lib/tokens";
+import { refundPayment } from "@/lib/stripe";
 import type { Appointment } from "@/types/appointments";
 
 const staffUser = alias(users, "client_portal_staff");
@@ -408,6 +409,95 @@ export async function getClientPayments() {
         appointmentTime: row.appointmentTime,
         staffName: row.staffName ?? "Sin asignar",
     }));
+}
+
+export async function getClientOrders() {
+    const user = await requireBusinessLinkedUser();
+
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const diffToMonday = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+    
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(diffToMonday);
+    const startStr = startOfWeek.toISOString().split("T")[0];
+    
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    const endStr = endOfWeek.toISOString().split("T")[0];
+
+    const rows = await db.query.orders.findMany({
+        where: and(
+            eq(orders.clientId, user.id),
+            gte(orders.createdAt, new Date(startStr)),
+            lte(orders.createdAt, new Date(endStr))
+        ),
+        orderBy: [desc(orders.createdAt)],
+        with: {
+            items: {
+                with: {
+                    product: true
+                }
+            }
+        }
+    });
+
+    return rows;
+}
+
+export async function cancelClientOrder(orderId: string) {
+    const user = await requireBusinessLinkedUser();
+
+    // Verify order exists and belongs to client
+    const order = await db.query.orders.findFirst({
+        where: and(
+            eq(orders.id, orderId),
+            eq(orders.clientId, user.id)
+        ),
+    });
+
+    if (!order) {
+        throw new Error("Pedido no encontrado.");
+    }
+
+    if (!["pending", "completed"].includes(order.status)) {
+        throw new Error(`El pedido no se puede cancelar (Estado actual: ${order.status}).`);
+    }
+
+    // Find the associated payment
+    const payment = await db.query.payments.findFirst({
+        where: and(
+            eq(payments.referenceType, "order"),
+            eq(payments.referenceId, order.id)
+        ),
+        orderBy: [desc(payments.createdAt)],
+    });
+
+    if (payment && payment.stripePaymentIntentId) {
+        try {
+            await refundPayment(payment.stripePaymentIntentId);
+            // Update payment status
+            await db.update(payments)
+                .set({ status: "refunded" })
+                .where(eq(payments.id, payment.id));
+        } catch (error: any) {
+            console.error("Stripe refund failed:", error);
+            throw new Error(`Error al procesar el reembolso en Stripe: ${error.message}`);
+        }
+    } else if (payment) {
+        // If there's a payment but no stripe ID (e.g. cash), just mark it as refunded/failed
+        await db.update(payments)
+            .set({ status: "refunded" })
+            .where(eq(payments.id, payment.id));
+    }
+
+    // Update the order status
+    await db.update(orders)
+        .set({ status: "cancelled", updatedAt: new Date() })
+        .where(eq(orders.id, orderId));
+
+    revalidatePath("/cliente/mis-compras");
+    return { ok: true };
 }
 
 export async function getClientPaymentDetail(id: string) {

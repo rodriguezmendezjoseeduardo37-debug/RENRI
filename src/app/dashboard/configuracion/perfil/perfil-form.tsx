@@ -56,20 +56,21 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
         }
     };
 
-    const inputClass = "w-full bg-card border border-border text-foreground text-sm px-4 py-3 focus:outline-none focus:border-white transition-colors";
+    const inputClass = "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50";
     const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex items-center gap-6 pb-8 border-b border-border">
+            <div className="flex items-center gap-6 pb-8 border-b border-border relative">
+                <div className="absolute top-0 left-0 w-[100px] h-[100px] bg-[#08b6ff]/5 blur-[30px] rounded-full -z-10" />
                 <div className="relative group cursor-pointer">
-                    <div className="w-20 h-20 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden">
-                        <Camera className="w-6 h-6 text-foreground group-hover:text-foreground transition-colors" />
+                    <div className="w-20 h-20 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden hover:border-[#08b6ff] transition-colors relative z-10">
+                        <Camera className="w-6 h-6 text-muted-foreground group-hover:text-[#08b6ff] transition-colors" />
                     </div>
                 </div>
                 <div>
-                    <h2 className="text-foreground font-bold tracking-tight">{user.name}</h2>
-                    <p className="text-[11px] text-muted-foreground font-mono">{user.email}</p>
+                    <h2 className="text-foreground font-[family-name:var(--font-heading)] text-2xl tracking-[0.05em] uppercase">{user.name}</h2>
+                    <p className="text-[11px] text-muted-foreground font-mono mt-1">{user.email}</p>
                 </div>
             </div>
 
@@ -104,7 +105,7 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 hover:shadow transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR PERFIL"}
