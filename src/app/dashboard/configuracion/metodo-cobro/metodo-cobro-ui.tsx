@@ -58,11 +58,16 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     clabe,
                 });
 
+                if (result.error) {
+                    toast.error(`Stripe Error: ${result.error}`);
+                    return;
+                }
+
                 if (result.onboardingUrl) {
                     // Redirect to Stripe's hosted onboarding for KYC
                     toast.success("Redirigiendo a verificación...");
                     window.location.href = result.onboardingUrl;
-                } else {
+                } else if (result.accountId) {
                     // Mock mode: account is instantly active
                     toast.success("¡Cobros con tarjeta activados!");
                     setStatus({
@@ -73,9 +78,8 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                         displayName: holderName,
                     });
                 }
-            } catch (error: unknown) {
-                const message = error instanceof Error ? error.message : "Error desconocido";
-                toast.error(message);
+            } catch (error: any) {
+                toast.error(error.message || "Error desconocido");
             }
         });
     };

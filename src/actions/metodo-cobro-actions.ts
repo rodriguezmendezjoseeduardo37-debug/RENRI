@@ -199,7 +199,7 @@ export async function setupAutoConnect(data: {
     } catch (error: unknown) {
         console.error("Error creating Express Account:", error);
         const message = error instanceof Error ? error.message : "Error desconocido";
-        throw new Error(`Error al configurar cobros: ${message}`);
+        return { success: false, error: `Error al configurar cobros: ${message}` };
     }
 }
 
