@@ -140,7 +140,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 {/* Details Grid */}
                 <div className="grid grid-cols-2 gap-4">
                     {[
-                        { label: "Cuenta ID", value: status.accountId.slice(0, 16) + "..." },
+                        { label: "Cuenta ID", value: status.accountId ? (status.accountId.slice(0, 16) + "...") : "—" },
                         { label: "Nombre", value: status.displayName ?? "—" },
                         { label: "Cobros", value: status.chargesEnabled ? "✅ Activos" : "❌ Inactivos" },
                         { label: "Depósitos", value: status.payoutsEnabled ? "✅ Activos" : "❌ Inactivos" },
