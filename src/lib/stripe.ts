@@ -1,11 +1,48 @@
 import Stripe from "stripe";
-import { signSignedToken } from "@/lib/signed-token";
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
+// Inicialización lazy del cliente de Stripe.
+//
+// No usamos un fallback placeholder (p. ej. "sk_test_placeholder"): eso
+// enmascara una configuración faltante y provoca errores crípticos de
+// autenticación de Stripe en runtime. En su lugar, fallamos con un mensaje
+// claro la primera vez que se intenta usar el cliente sin clave.
+//
+// La inicialización es lazy (no a nivel de módulo) para no romper builds ni
+// entornos donde el módulo se importa pero nunca se llama (CI sin secretos,
+// análisis estático, etc.).
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-export const stripeServer = new Stripe(stripeSecretKey, {
-    apiVersion: "2026-02-25.clover",
-    typescript: true,
+let stripeClient: Stripe | null = null;
+
+function getStripeServer(): Stripe {
+    if (!stripeSecretKey) {
+        throw new Error(
+            "STRIPE_SECRET_KEY no está configurada. Define la variable de entorno " +
+            "para poder procesar pagos con Stripe."
+        );
+    }
+    if (!stripeClient) {
+        stripeClient = new Stripe(stripeSecretKey, {
+            apiVersion: "2026-02-25.clover",
+            typescript: true,
+        });
+    }
+    return stripeClient;
+}
+
+/**
+ * Cliente de Stripe (server-side).
+ *
+ * Proxy que inicializa el cliente real de forma perezosa en el primer acceso
+ * a una propiedad. Conserva la API habitual: `stripeServer.paymentIntents.create(...)`.
+ * Lanza un error claro si `STRIPE_SECRET_KEY` no está configurada.
+ */
+export const stripeServer = new Proxy({} as Stripe, {
+    get(_target, prop, receiver) {
+        const client = getStripeServer();
+        const value = Reflect.get(client, prop, receiver);
+        return typeof value === "function" ? value.bind(client) : value;
+    },
 });
 
 export const getStripeClient = () => {
@@ -63,58 +100,127 @@ export async function createTransfer(
     });
 }
 
-export async function createConnectOnboardingLink(
-    tenantId: string,
-    userId: string,
-    redirectUrl: string
-): Promise<string> {
-    const state = signSignedToken(
-        {
-            kind: "stripe-connect",
-            tenantId,
-            userId,
+// ─── Stripe Connect — Accounts v2 (recipient config) ──────
+// Modelo: Destination Charges SIN on_behalf_of → la cuenta conectada actúa
+// como "recipient" (recibe transfers a su Stripe Balance y hace payouts a su
+// banco). RENRI es el Merchant of Record y cobra la comisión vía
+// application_fee_amount. Ver createPaymentIntent (transfer_data.destination).
+
+/**
+ * Crea una cuenta conectada Accounts **v2** con configuración de *recipient*.
+ * El KYC y la cuenta bancaria se recogen después vía el onboarding alojado
+ * de Stripe (createAccountOnboardingLinkV2).
+ */
+export async function createConnectedAccountV2(params: {
+    email: string;
+    displayName?: string;
+    tenantId: string;
+    userId: string;
+}): Promise<string> {
+    const account = await stripeServer.v2.core.accounts.create({
+        contact_email: params.email,
+        display_name: params.displayName,
+        identity: {
+            country: "mx",
+            entity_type: "individual",
         },
-        60 * 15
-    );
-
-    const params = new URLSearchParams({
-        response_type: "code",
-        client_id: process.env.STRIPE_CONNECT_CLIENT_ID!,
-        scope: "read_write",
-        redirect_uri: redirectUrl,
-        state,
-        "stripe_user[business_type]": "company",
+        configuration: {
+            recipient: {
+                capabilities: {
+                    stripe_balance: {
+                        // Recibir transfers (Destination Charges) a su Stripe Balance.
+                        // El payout al banco se habilita durante el onboarding.
+                        stripe_transfers: { requested: true },
+                    },
+                },
+            },
+        },
+        defaults: {
+            currency: "mxn",
+            responsibilities: {
+                // RENRI cobra la comisión y asume las pérdidas (Merchant of Record)
+                fees_collector: "application",
+                losses_collector: "application",
+            },
+        },
+        dashboard: "none", // cuenta gestionada por la plataforma, sin dashboard propio
+        metadata: {
+            tenantId: params.tenantId,
+            userId: params.userId,
+            platform: "renri",
+        },
     });
 
-    return `https://connect.stripe.com/express/oauth/authorize?${params.toString()}`;
+    return account.id;
 }
 
-export async function exchangeConnectCode(code: string): Promise<{
-    stripeAccountId: string;
-    stripeAccountEnabled: boolean;
-}> {
-    const response = await stripeServer.oauth.token({
-        grant_type: "authorization_code",
-        code,
+/**
+ * Genera un enlace de onboarding alojado por Stripe (Accounts v2) para que el
+ * negocio complete su verificación de identidad y datos bancarios.
+ */
+export async function createAccountOnboardingLinkV2(
+    accountId: string,
+    refreshUrl: string,
+    returnUrl: string
+): Promise<string> {
+    const accountLink = await stripeServer.v2.core.accountLinks.create({
+        account: accountId,
+        use_case: {
+            type: "account_onboarding",
+            account_onboarding: {
+                configurations: ["recipient"],
+                refresh_url: refreshUrl,
+                return_url: returnUrl,
+            },
+        },
     });
 
-    const account = await stripeServer.accounts.retrieve(response.stripe_user_id!);
-
-    return {
-        stripeAccountId: response.stripe_user_id!,
-        stripeAccountEnabled: account.charges_enabled ?? false,
-    };
+    return accountLink.url;
 }
 
+/**
+ * Lee el estado de una cuenta conectada v2.
+ *
+ * `chargesEnabled` aquí significa "la cuenta puede recibir fondos" (capability
+ * stripe_transfers activa), que es lo relevante en el modelo recipient/
+ * Destination Charges. Se mantiene el nombre para compatibilidad con la UI.
+ */
 export async function getConnectAccountStatus(stripeAccountId: string) {
-    const account = await stripeServer.accounts.retrieve(stripeAccountId);
+    const account = await stripeServer.v2.core.accounts.retrieve(stripeAccountId, {
+        include: ["configuration.recipient"],
+    });
+
+    const balance = account.configuration?.recipient?.capabilities?.stripe_balance;
+    const transfersActive = balance?.stripe_transfers?.status === "active";
+    const payoutsActive = balance?.payouts?.status === "active";
+
     return {
         id: account.id,
-        chargesEnabled: account.charges_enabled,
-        payoutsEnabled: account.payouts_enabled,
-        detailsSubmitted: account.details_submitted,
-        displayName: account.settings?.dashboard?.display_name ?? null,
+        chargesEnabled: transfersActive,
+        payoutsEnabled: payoutsActive,
+        detailsSubmitted: transfersActive,
+        displayName: account.display_name ?? null,
     };
+}
+
+/**
+ * Indica si `accountId` es una cuenta válida y accesible vía la API v2.
+ *
+ * Devuelve `false` para cuentas legacy creadas con la API v1 (antes de la
+ * migración) o inexistentes — Stripe responde con un invalid_request_error.
+ * Los errores transitorios (red, etc.) se relanzan para NO descartar por
+ * error una cuenta válida.
+ */
+export async function isV2Account(accountId: string): Promise<boolean> {
+    try {
+        await stripeServer.v2.core.accounts.retrieve(accountId);
+        return true;
+    } catch (err) {
+        if (err instanceof Stripe.errors.StripeInvalidRequestError) {
+            return false;
+        }
+        throw err;
+    }
 }
 
 export async function createStripeCustomer(email: string, name?: string, tenantId?: string) {

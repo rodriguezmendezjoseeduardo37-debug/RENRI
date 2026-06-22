@@ -2,17 +2,11 @@
 
 import { and, eq, isNotNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
-import {
-    createConnectOnboardingLink,
-    exchangeConnectCode,
-    getConnectAccountStatus,
-    stripeServer
-} from "@/lib/stripe";
-import { canPerformAction } from "@/lib/plan-limits";
+import { getConnectAccountStatus, stripeServer } from "@/lib/stripe";
+import { setupAutoConnect } from "@/actions/metodo-cobro-actions";
 
 // Commission rates are defined in @/lib/constants (COMMISSION_RATES)
 // They live there so they can be imported from non-server files too.
@@ -53,48 +47,19 @@ export async function getStripeConnectStatus() {
     }
 }
 
-// ─── Generate connect oauth link ──────────────────────────
+// ─── Generate connect onboarding link (Accounts v2) ───────
+// Flujo unificado: delega en setupAutoConnect (crea la cuenta v2 recipient si
+// hace falta y devuelve el enlace de onboarding alojado por Stripe).
+// El antiguo flujo OAuth (connect.stripe.com/express/oauth) quedó deprecado.
 export async function generateConnectOnboardingUrl() {
-    const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
-    if (!user) throw new Error("Unauthorized");
+    const result = await setupAutoConnect();
 
-    if (!canPerformAction(user.plan, "stripeConnect")) {
-        throw new Error("PLAN_LIMIT_REACHED: Stripe Connect requiere el plan PRO.");
+    if (!result.success) {
+        throw new Error(result.error ?? "No se pudo generar el enlace de onboarding.");
     }
 
-    const requestHeaders = await headers();
-    const host = requestHeaders.get("host") ?? "localhost:3000";
-    const protocol = host.includes("localhost") ? "http" : "https";
-    const redirectUrl = `${protocol}://${host}/api/stripe/connect/callback`;
-
-    const url = await createConnectOnboardingLink(user.tenantId, user.id, redirectUrl);
-    return { url };
-}
-
-// ─── Handle connect oauth callback ────────────────────────
-// Called from the API route after Stripe redirects back
-export async function saveConnectAccount(tenantId: string, code: string) {
-    const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
-    if (!user) throw new Error("Unauthorized");
-    if (user.tenantId !== tenantId && user.role !== "SUPER_ADMIN") {
-        throw new Error("Unauthorized");
-    }
-
-    const { stripeAccountId, stripeAccountEnabled } = await exchangeConnectCode(code);
-
-    await db
-        .update(tenants)
-        .set({
-            stripeConnectAccountId: stripeAccountId,
-            stripeConnectEnabled: stripeAccountEnabled,
-            updatedAt: new Date(),
-        })
-        .where(eq(tenants.id, tenantId));
-
-    revalidatePath("/dashboard/configuracion");
-    revalidatePath("/dashboard/configuracion/stripe-connect");
-
-    return { stripeAccountId, stripeAccountEnabled };
+    // En mock mode no hay onboardingUrl (la cuenta queda activa al instante).
+    return { url: result.onboardingUrl ?? "/dashboard/configuracion/stripe-connect?success=true" };
 }
 
 // ─── Disconnect stripe account ────────────────────────────

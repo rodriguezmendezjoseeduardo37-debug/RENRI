@@ -26,37 +26,17 @@ interface MetodoCobroUIProps {
 
 export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
     const [status, setStatus] = useState(initialStatus);
-    const [holderName, setHolderName] = useState("");
-    const [clabe, setClabe] = useState("");
     const [isPending, startTransition] = useTransition();
     const [isDisconnecting, setIsDisconnecting] = useState(false);
     const router = useRouter();
 
-    // ─── Format CLABE with spaces for readability ─────────
-    const formatClabe = (value: string) => {
-        const digits = value.replace(/\D/g, "").slice(0, 18);
-        setClabe(digits);
-    };
-
-    const displayClabe = clabe.replace(/(\d{3})(?=\d)/g, "$1 ");
-
-    // ─── Handle form submit ──────────────────────────────
+    // ─── Handle setup ────────────────────────────────────
+    // Crea la cuenta conectada (Accounts v2) y redirige al onboarding alojado
+    // de Stripe, donde el negocio captura su identidad y datos bancarios.
     const handleSetup = () => {
-        if (clabe.length !== 18) {
-            toast.error("La CLABE debe tener 18 dígitos.");
-            return;
-        }
-        if (holderName.trim().length < 2) {
-            toast.error("Ingresa el nombre del titular.");
-            return;
-        }
-
         startTransition(async () => {
             try {
-                const result = await setupAutoConnect({
-                    holderName: holderName.trim(),
-                    clabe,
-                });
+                const result = await setupAutoConnect();
 
                 if (result.error) {
                     toast.error(`Stripe Error: ${result.error}`);
@@ -64,7 +44,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 }
 
                 if (result.onboardingUrl) {
-                    // Redirect to Stripe's hosted onboarding for KYC
+                    // Redirect to Stripe's hosted onboarding for KYC + bank
                     toast.success("Redirigiendo a verificación...");
                     window.location.href = result.onboardingUrl;
                 } else if (result.accountId) {
@@ -75,7 +55,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                         accountId: result.accountId,
                         chargesEnabled: true,
                         payoutsEnabled: true,
-                        displayName: holderName,
+                        displayName: null,
                     });
                 }
             } catch (error: any) {
@@ -240,8 +220,8 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     {
                         step: "01",
                         icon: Banknote,
-                        label: "Ingresa tu CLABE",
-                        desc: "Tu cuenta bancaria donde recibirás los depósitos",
+                        label: "Conecta con Stripe",
+                        desc: "Captura tu cuenta bancaria de forma segura en Stripe",
                     },
                     {
                         step: "02",
@@ -271,60 +251,22 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 ))}
             </div>
 
-            {/* Form */}
+            {/* Setup */}
             <div className="border border-border bg-card rounded-2xl p-8 space-y-6">
                 <div>
                     <h2 className="text-sm font-bold tracking-[0.2em] text-foreground uppercase mb-1">
-                        DATOS BANCARIOS
+                        ACTIVAR COBROS
                     </h2>
                     <p className="text-[10px] text-muted-foreground tracking-[0.1em]">
-                        Estos datos se usan para depositar tus pagos. RENRI nunca cobra de tu cuenta.
+                        Stripe recogerá de forma segura tu identidad y tu cuenta bancaria (CLABE)
+                        durante la verificación. RENRI nunca cobra de tu cuenta.
                     </p>
-                </div>
-
-                <div className="space-y-4">
-                    {/* Holder Name */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                            NOMBRE DEL TITULAR
-                        </label>
-                        <input
-                            type="text"
-                            value={holderName}
-                            onChange={(e) => setHolderName(e.target.value)}
-                            placeholder="Juan Pérez García"
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50"
-                        />
-                    </div>
-
-                    {/* CLABE */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                            CLABE INTERBANCARIA
-                        </label>
-                        <input
-                            type="text"
-                            value={displayClabe}
-                            onChange={(e) => formatClabe(e.target.value)}
-                            placeholder="012 345 678 901 234 567"
-                            maxLength={23} // 18 digits + 5 spaces
-                            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-sm font-mono text-foreground placeholder:text-muted-foreground/50 tracking-widest focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50"
-                        />
-                        <div className="flex items-center justify-between">
-                            <p className="text-[9px] text-muted-foreground tracking-wide">
-                                18 dígitos — Encuéntrala en tu banca en línea
-                            </p>
-                            <p className={`text-[9px] font-mono tracking-wide ${clabe.length === 18 ? "text-[#08b6ff]" : "text-muted-foreground"}`}>
-                                {clabe.length}/18
-                            </p>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Submit */}
                 <button
                     onClick={handleSetup}
-                    disabled={isPending || clabe.length !== 18 || holderName.trim().length < 2}
+                    disabled={isPending}
                     className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isPending ? (
@@ -341,8 +283,8 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 </button>
 
                 <p className="text-[9px] text-muted-foreground text-center leading-relaxed tracking-wide">
-                    Al continuar, serás redirigido a Stripe para una verificación rápida de identidad.
-                    Este proceso es seguro y toma menos de 2 minutos.
+                    Al continuar, serás redirigido a Stripe para una verificación rápida de identidad
+                    y captura de tu cuenta bancaria. Este proceso es seguro y toma unos minutos.
                 </p>
             </div>
         </div>

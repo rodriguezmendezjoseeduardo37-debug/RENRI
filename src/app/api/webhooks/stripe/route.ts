@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
+import { claimEvent, releaseEvent } from "@/lib/webhook-idempotency";
 import {
     appointments,
     orders,
@@ -23,11 +24,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 // ─── Idempotency guard ───────────────────────────────────
-// Prevents double-processing if Stripe retries an event.
-// A production system would use Redis SET NX; here we use a
-// lightweight in-memory Set that is acceptable for serverless
-// since each cold start gets a fresh instance anyway.
-const processedEvents = new Set<string>();
+// La lógica de reclamo/liberación de eventos vive en @/lib/webhook-idempotency
+// (Redis SET NX con fallback en memoria). Ver ese módulo para el detalle.
+const EVENT_KEY_PREFIX = "stripe:evt:";
 
 // ─── POST Handler ─────────────────────────────────────────
 export async function POST(req: Request) {
@@ -54,16 +53,15 @@ export async function POST(req: Request) {
         return new Response(`Webhook Error: ${msg}`, { status: 400 });
     }
 
-    // ── Idempotency check ─────────────────────────────────
-    if (processedEvents.has(event.id)) {
-        console.log(`⏭ Evento ya procesado, ignorando: ${event.id}`);
+    // ── Idempotency claim ─────────────────────────────────
+    // Reclamamos el evento de forma atómica. Si ya estaba reclamado por
+    // otra instancia o por una entrega previa exitosa, lo ignoramos.
+    // En caso de fallo del handler, la marca se libera (ver catch) para
+    // permitir el reintento de Stripe.
+    const claimed = await claimEvent(event.id, EVENT_KEY_PREFIX);
+    if (!claimed) {
+        console.log(`⏭ Evento ya procesado/en proceso, ignorando: ${event.id}`);
         return new Response("Already processed", { status: 200 });
-    }
-    processedEvents.add(event.id);
-    // Keep set bounded to avoid memory growth
-    if (processedEvents.size > 500) {
-        const first = processedEvents.values().next().value;
-        if (first) processedEvents.delete(first);
     }
 
     console.log(`📨 Stripe webhook recibido: ${event.type} [${event.id}]`);
@@ -300,10 +298,15 @@ export async function POST(req: Request) {
                 console.log(`⏭ Evento Stripe no manejado: ${event.type}`);
         }
 
+        // Manejo exitoso: la marca reclamada en claimEvent() persiste
+        // (24h en Redis), por lo que futuras entregas del mismo evento
+        // se ignorarán correctamente.
         return new Response("OK", { status: 200 });
     } catch (error) {
         console.error(`❌ Error procesando webhook ${event.type} [${event.id}]:`, error);
-        // Retornar 500 para que Stripe reintente el evento
+        // Liberar la marca para que el reintento de Stripe vuelva a entrar
+        // al handler. Retornamos 500 para forzar dicho reintento.
+        await releaseEvent(event.id, EVENT_KEY_PREFIX);
         return new Response("Webhook handler failed", { status: 500 });
     }
 }

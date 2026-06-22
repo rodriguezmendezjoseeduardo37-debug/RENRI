@@ -6,7 +6,12 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
-import { stripeServer, getConnectAccountStatus } from "@/lib/stripe";
+import {
+    getConnectAccountStatus,
+    createConnectedAccountV2,
+    createAccountOnboardingLinkV2,
+    isV2Account,
+} from "@/lib/stripe";
 import { canPerformAction } from "@/lib/plan-limits";
 
 // ─── Types ────────────────────────────────────────────────
@@ -67,11 +72,10 @@ export async function getPaymentMethodStatus(): Promise<PaymentMethodStatus> {
     }
 }
 
-// ─── Setup automatic Stripe Express account ──────────────
-export async function setupAutoConnect(data: {
-    holderName: string;
-    clabe: string;
-}) {
+// ─── Setup Stripe connected account (Accounts v2, recipient) ──
+// El KYC y los datos bancarios (CLABE) se recogen en el onboarding alojado
+// de Stripe, así que ya no se piden en nuestro formulario.
+export async function setupAutoConnect() {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
     if (!user) throw new Error("No autorizado");
 
@@ -79,20 +83,9 @@ export async function setupAutoConnect(data: {
         throw new Error("PLAN_LIMIT: Esta función requiere el plan PRO.");
     }
 
-    const { holderName, clabe } = data;
-
-    // Validate CLABE (18 digits)
-    if (!/^\d{18}$/.test(clabe)) {
-        throw new Error("La CLABE interbancaria debe tener exactamente 18 dígitos.");
-    }
-
-    if (!holderName || holderName.trim().length < 2) {
-        throw new Error("El nombre del titular es requerido.");
-    }
-
     // ── Mock mode (no Stripe keys configured) ─────────────
     if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "sk_test_placeholder") {
-        console.warn("⚠️ STRIPE_SECRET_KEY no configurada. Usando mock mode para Express Account.");
+        console.warn("⚠️ STRIPE_SECRET_KEY no configurada. Usando mock mode para cuenta conectada.");
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         const mockAccountId = `acct_mock_${Date.now()}`;
@@ -112,9 +105,13 @@ export async function setupAutoConnect(data: {
         return { success: true, accountId: mockAccountId, onboardingUrl: null };
     }
 
-    // ── Production mode: Create Stripe Express Account ────
+    if (!user.email) {
+        return { success: false, error: "Tu usuario no tiene un email asociado; agrégalo antes de configurar cobros." };
+    }
+
+    // ── Production mode: Create Accounts v2 (recipient) ────
     try {
-        // Check if tenant already has an account
+        // Reutilizar la cuenta si el tenant ya tiene una
         const [tenant] = await db
             .select({ stripeConnectAccountId: tenants.stripeConnectAccountId })
             .from(tenants)
@@ -123,124 +120,66 @@ export async function setupAutoConnect(data: {
 
         let accountId = tenant?.stripeConnectAccountId;
 
+        // Auto-reparación: si hay una cuenta guardada pero es legacy (creada con
+        // la API v1 antes de la migración) o ya no existe, la descartamos para
+        // crear una nueva cuenta v2. Evita el error "account not connected".
+        if (accountId && !(await isV2Account(accountId))) {
+            console.warn(`Cuenta ${accountId} no es una cuenta v2 válida; recreando en v2.`);
+            accountId = null;
+        }
+
         if (!accountId) {
-            // Create new Express Account
-            const account = await stripeServer.accounts.create({
-                type: "express",
-                country: "MX",
-                email: user.email || undefined,
-                business_type: "individual",
-                capabilities: {
-                    card_payments: { requested: true },
-                    transfers: { requested: true },
-                },
-                business_profile: {
-                    mcc: "7299", // Miscellaneous services
-                },
-                metadata: {
-                    tenantId: user.tenantId,
-                    userId: user.id,
-                    platform: "renri",
-                },
+            accountId = await createConnectedAccountV2({
+                email: user.email,
+                displayName: user.name ?? undefined,
+                tenantId: user.tenantId,
+                userId: user.id,
             });
 
-            accountId = account.id;
-
-            // Save account ID to tenant
             await db
                 .update(tenants)
                 .set({
                     stripeConnectAccountId: accountId,
-                    stripeConnectEnabled: false, // Will be true after verification
+                    stripeConnectEnabled: false, // se activará tras la verificación (webhook)
                     updatedAt: new Date(),
                 })
                 .where(eq(tenants.id, user.tenantId));
         }
 
-        // Try to add external account (bank)
-        try {
-            await stripeServer.accounts.createExternalAccount(accountId, {
-                external_account: {
-                    object: "bank_account",
-                    country: "MX",
-                    currency: "mxn",
-                    account_holder_name: holderName,
-                    account_number: clabe,
-                    account_holder_type: "individual",
-                },
-            });
-        } catch (bankError: unknown) {
-            // Bank account might already exist or CLABE might be invalid
-            const message = bankError instanceof Error ? bankError.message : "Error al agregar cuenta bancaria";
-            console.warn("Bank account creation warning:", message);
-        }
-
-        // Generate Account Link for Stripe's hosted onboarding (KYC)
+        // Enlace de onboarding alojado por Stripe (recoge identidad + banco)
         const requestHeaders = await headers();
         const host = requestHeaders.get("host") ?? "localhost:3000";
         const protocol = host.includes("localhost") ? "http" : "https";
         const baseUrl = `${protocol}://${host}`;
 
-        const accountLink = await stripeServer.accountLinks.create({
-            account: accountId,
-            refresh_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
-            return_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`,
-            type: "account_onboarding",
-        });
+        const onboardingUrl = await createAccountOnboardingLinkV2(
+            accountId,
+            `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
+            `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`
+        );
 
         revalidatePath("/dashboard/configuracion");
         revalidatePath("/dashboard/configuracion/metodo-cobro");
 
-        return {
-            success: true,
-            accountId,
-            onboardingUrl: accountLink.url,
-        };
+        return { success: true, accountId, onboardingUrl };
     } catch (error: unknown) {
-        console.error("Error creating Express Account:", error);
+        console.error("Error creating connected account (v2):", error);
         const message = error instanceof Error ? error.message : "Error desconocido";
         return { success: false, error: `Error al configurar cobros: ${message}` };
     }
 }
 
 // ─── Refresh onboarding link (if KYC incomplete) ─────────
+// Reutiliza setupAutoConnect, que ya auto-repara cuentas legacy/inexistentes y
+// genera un enlace de onboarding v2 fresco.
 export async function refreshOnboardingLink() {
-    const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
-    if (!user) throw new Error("No autorizado");
+    const result = await setupAutoConnect();
 
-    const [tenant] = await db
-        .select({ stripeConnectAccountId: tenants.stripeConnectAccountId })
-        .from(tenants)
-        .where(eq(tenants.id, user.tenantId))
-        .limit(1);
-
-    if (!tenant?.stripeConnectAccountId) {
-        throw new Error("No hay cuenta de cobro configurada.");
+    if (!result.success) {
+        return { error: result.error ?? "Error al generar enlace." };
     }
 
-    // Mock mode
-    if (!process.env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY === "sk_test_placeholder") {
-        return { url: "/dashboard/configuracion/metodo-cobro?success=true" };
-    }
-
-    const requestHeaders = await headers();
-    const host = requestHeaders.get("host") ?? "localhost:3000";
-    const protocol = host.includes("localhost") ? "http" : "https";
-    const baseUrl = `${protocol}://${host}`;
-
-    try {
-        const accountLink = await stripeServer.accountLinks.create({
-            account: tenant.stripeConnectAccountId,
-            refresh_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
-            return_url: `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`,
-            type: "account_onboarding",
-        });
-
-        return { url: accountLink.url };
-    } catch (error: any) {
-        console.error("Stripe accountLinks error:", error);
-        return { error: error.message };
-    }
+    return { url: result.onboardingUrl ?? "/dashboard/configuracion/metodo-cobro?success=true" };
 }
 
 // ─── Disconnect payment method ────────────────────────────

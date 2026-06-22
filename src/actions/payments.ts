@@ -16,7 +16,6 @@ import {
 import {
     createPaymentIntent as stripeCreatePaymentIntent,
     refundPayment as stripeRefundPayment,
-    createTransfer as stripeCreateTransfer,
 } from "@/lib/stripe";
 import {
     getTenantStripeAccountId,
@@ -92,65 +91,15 @@ async function completePayment(
             );
         }
 
-        // ─── Stripe Transfer (MUST succeed before marking completed) ───
-        // If this is an appointment payment, attempt the Stripe transfer FIRST.
-        // Only mark as completed if the transfer succeeds.
-        if (payment.referenceType === "appointment") {
-            const appointment = await tx.query.appointments.findFirst({
-                where: eq(appointments.id, payment.referenceId),
-            });
+        // NOTA: Aquí NO se hace ninguna transferencia a la cuenta conectada.
+        // Esta función solo cubre marcados manuales/offline (efectivo, registro
+        // manual desde el dashboard), donde la plataforma no cobró nada online,
+        // así que no hay fondos que reenviar. Los pagos online (citas y pedidos)
+        // usan Destination Charges (transfer_data.destination), que transfieren
+        // automáticamente al confirmarse el cargo. Ver processPayment /
+        // createPaymentIntent.
 
-            if (appointment) {
-                const tenant = await tx.query.tenants.findFirst({
-                    where: eq(tenants.id, payment.tenantId),
-                });
-
-                if (tenant?.stripeConnectAccountId) {
-                    const platformFee = Math.round(Number(payment.amount) * Number(tenant.commissionRate || 0));
-                    const transferAmount = Number(payment.amount) - platformFee;
-
-                    if (transferAmount > 0) {
-                        try {
-                            await stripeCreateTransfer(
-                                transferAmount,
-                                tenant.stripeConnectAccountId,
-                                `Payment for appointment ${appointment.id}`,
-                                {
-                                    paymentId: payment.id,
-                                    transferGroup: payment.id,
-                                    idempotencyKey: `transfer_${payment.id}`,
-                                }
-                            );
-                        } catch (transferError) {
-                            // Transfer failed → mark payment as FAILED, NOT completed
-                            logger.logAction(
-                                "completePayment",
-                                "error",
-                                { paymentId: payment.id, transferAmount, reason: "transfer_failed" },
-                                transferError as Error
-                            );
-
-                            await tx
-                                .update(payments)
-                                .set({
-                                    status: "failed",
-                                    ...(validated.stripePaymentIntentId
-                                        ? { stripePaymentIntentId: validated.stripePaymentIntentId }
-                                        : {}),
-                                })
-                                .where(eq(payments.id, validated.paymentId));
-
-                            throw new ActionError(
-                                "Stripe transfer failed — payment marked as failed for manual retry",
-                                "TRANSFER_FAILED"
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        // ─── Transfer succeeded (or not applicable) → mark completed ───
+        // ─── Marcar como completado ───
         const [updatedPayment] = await tx
             .update(payments)
             .set({
@@ -403,6 +352,11 @@ export async function processPayment(paymentId: string) {
         const effectiveRate = Math.max(baseRate, tenantCommissionRate);
         const applicationFeeAmount = Math.round(Number(payment.amount) * 100 * effectiveRate);
 
+        // Tanto citas como pedidos usan Destination Charges: el cargo se crea en
+        // la plataforma con transfer_data.destination → los fondos (menos la
+        // application_fee de RENRI) se transfieren automáticamente a la cuenta
+        // conectada al confirmarse el pago. Sin transfer_group ni transferencias
+        // manuales posteriores.
         const intent = await stripeCreatePaymentIntent(
             Number(payment.amount),
             payment.currency,
@@ -413,9 +367,7 @@ export async function processPayment(paymentId: string) {
                 referenceType: payment.referenceType,
             },
             connectAccountId,
-            applicationFeeAmount,
-            // Use paymentId as transfer group for appointments to allow multi-party splits later
-            payment.referenceType === "appointment" ? payment.id : undefined
+            applicationFeeAmount
         );
 
         const [updated] = await db

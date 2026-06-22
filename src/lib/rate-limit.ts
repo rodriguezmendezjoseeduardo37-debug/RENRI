@@ -8,7 +8,7 @@
 
 import { headers } from "next/headers";
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { redis } from "@/lib/redis";
 
 // ─── Tipos ───────────────────────────────────────────────
 interface RateLimitEntry {
@@ -43,12 +43,7 @@ export const RATE_LIMIT_CONFIGS = {
 export type RateLimitType = keyof typeof RATE_LIMIT_CONFIGS;
 
 // ─── Inicialización de Upstash ───────────────────────────
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-const redis = (redisUrl && redisToken)
-    ? new Redis({ url: redisUrl, token: redisToken })
-    : null;
+// El cliente Redis se importa de @/lib/redis (compartido en toda la app).
 
 // Caché para las instancias de Ratelimit para no crearlas por cada request
 const ratelimiters = new Map<RateLimitType, Ratelimit>();
