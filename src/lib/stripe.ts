@@ -137,11 +137,9 @@ export async function createConnectedAccountV2(params: {
         },
         defaults: {
             currency: "mxn",
-            responsibilities: {
-                // RENRI cobra la comisión y asume las pérdidas (Merchant of Record)
-                fees_collector: "application",
-                losses_collector: "application",
-            },
+            // No fijamos `responsibilities` aquí: se heredan del perfil de
+            // plataforma de Connect (Dashboard → Settings → Connect → Platform
+            // profile). Así evitamos conflictos con lo configurado allí.
         },
         dashboard: "none", // cuenta gestionada por la plataforma, sin dashboard propio
         metadata: {
