@@ -206,17 +206,23 @@ export async function getConnectAccountStatus(stripeAccountId: string) {
 /**
  * Indica si `accountId` es una cuenta válida y accesible vía la API v2.
  *
- * Devuelve `false` para cuentas legacy creadas con la API v1 (antes de la
- * migración) o inexistentes — Stripe responde con un invalid_request_error.
- * Los errores transitorios (red, etc.) se relanzan para NO descartar por
- * error una cuenta válida.
+ * Devuelve `false` cuando la cuenta no es usable por esta plataforma en v2:
+ *   - Cuenta legacy creada con la API v1 / inexistente → StripeInvalidRequestError
+ *   - Cuenta a la que la API key no tiene acceso         → StripePermissionError
+ * En ambos casos hay que recrear la cuenta en v2.
+ *
+ * Los errores transitorios (red, 5xx, rate limit, etc.) se relanzan para NO
+ * descartar por error una cuenta válida.
  */
 export async function isV2Account(accountId: string): Promise<boolean> {
     try {
         await stripeServer.v2.core.accounts.retrieve(accountId);
         return true;
     } catch (err) {
-        if (err instanceof Stripe.errors.StripeInvalidRequestError) {
+        if (
+            err instanceof Stripe.errors.StripeInvalidRequestError ||
+            err instanceof Stripe.errors.StripePermissionError
+        ) {
             return false;
         }
         throw err;
