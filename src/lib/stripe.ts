@@ -137,16 +137,16 @@ export async function createConnectedAccountV2(params: {
         },
         defaults: {
             currency: "mxn",
-            // Stripe EXIGE fijar ambos cuando la cuenta es recipient con la
-            // capability stripe_transfers. Deben ser coherentes con el perfil
-            // de plataforma de Connect:
-            //  - losses_collector "stripe": Stripe asume el saldo negativo
-            //    (coincide con el perfil de plataforma).
-            //  - fees_collector "application": RENRI (la plataforma) cobra su
-            //    comisión vía application_fee_amount en los Destination Charges.
+            // Stripe EXIGE fijar ambos para una cuenta recipient con la
+            // capability stripe_transfers, y para ESTE conjunto de
+            // configuraciones solo admite "application" en ambos:
+            //  - losses_collector "application": RENRI asume el saldo negativo
+            //    (es el Merchant of Record de los Destination Charges).
+            //  - fees_collector "application": RENRI cobra su comisión vía
+            //    application_fee_amount.
             responsibilities: {
                 fees_collector: "application",
-                losses_collector: "stripe",
+                losses_collector: "application",
             },
         },
         dashboard: "none", // cuenta gestionada por la plataforma, sin dashboard propio
