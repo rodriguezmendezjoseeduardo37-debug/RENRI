@@ -125,6 +125,14 @@ export async function createConnectedAccountV2(params: {
             entity_type: "individual",
         },
         configuration: {
+            // La plataforma exige que la cuenta pueda cobrar con tarjeta
+            // (capability merchant.card_payments) para poder solicitar también
+            // recipient.stripe_transfers.
+            merchant: {
+                capabilities: {
+                    card_payments: { requested: true },
+                },
+            },
             recipient: {
                 capabilities: {
                     stripe_balance: {
@@ -174,7 +182,8 @@ export async function createAccountOnboardingLinkV2(
         use_case: {
             type: "account_onboarding",
             account_onboarding: {
-                configurations: ["recipient"],
+                // La cuenta tiene config merchant + recipient: recoger requisitos de ambas.
+                configurations: ["merchant", "recipient"],
                 refresh_url: refreshUrl,
                 return_url: returnUrl,
             },
