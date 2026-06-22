@@ -137,9 +137,17 @@ export async function createConnectedAccountV2(params: {
         },
         defaults: {
             currency: "mxn",
-            // No fijamos `responsibilities` aquí: se heredan del perfil de
-            // plataforma de Connect (Dashboard → Settings → Connect → Platform
-            // profile). Así evitamos conflictos con lo configurado allí.
+            // Stripe EXIGE fijar ambos cuando la cuenta es recipient con la
+            // capability stripe_transfers. Deben ser coherentes con el perfil
+            // de plataforma de Connect:
+            //  - losses_collector "stripe": Stripe asume el saldo negativo
+            //    (coincide con el perfil de plataforma).
+            //  - fees_collector "application": RENRI (la plataforma) cobra su
+            //    comisión vía application_fee_amount en los Destination Charges.
+            responsibilities: {
+                fees_collector: "application",
+                losses_collector: "stripe",
+            },
         },
         dashboard: "none", // cuenta gestionada por la plataforma, sin dashboard propio
         metadata: {
