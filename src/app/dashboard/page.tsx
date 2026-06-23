@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { and, count, eq, gte, lt, sum, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { Store, Truck, Repeat, Syringe, Sparkles, SmilePlus, Calendar, CreditCard, Users } from "lucide-react";
+import { Store, Truck, Repeat, Syringe, Sparkles, SmilePlus, Calendar, CreditCard, Users, Plus, Package, ShoppingCart } from "lucide-react";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,7 @@ import {
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { PlanUsageMeters } from "@/components/dashboard/plan-usage-meters";
 
-function getGreeting(): string {
-    const hour = new Date().getHours();
-    if (hour < 12) return "BUENOS DIAS";
-    if (hour < 18) return "BUENAS TARDES";
-    return "BUENAS NOCHES";
-}
+import { ClientGreeting } from "@/components/dashboard/client-greeting";
 
 function formatDate(): string {
     return new Date()
@@ -56,14 +51,19 @@ export default async function DashboardPage() {
     }
 
     return (
-        <div className="space-y-10">
-            <div>
-                <h1 className="text-5xl md:text-7xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)]">
-                    {getGreeting()}, {firstName}
-                </h1>
-                <p className="mt-3 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
-                    RESUMEN DEL DIA · {formatDate()}
-                </p>
+        <div className="space-y-8">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-2">
+                <div>
+                    <p className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase mb-2">
+                        RESUMEN DEL DÍA · {formatDate()}
+                    </p>
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)] mb-2">
+                        <ClientGreeting firstName={firstName} />
+                    </h1>
+                    <p className="text-[14px] font-medium text-muted-foreground">
+                        Módulo {accountType.toUpperCase()} · {tenant?.name ?? "RENRI"}
+                    </p>
+                </div>
             </div>
 
             <PlanUsageMeters tenantId={user.tenantId} plan={user.plan} />
@@ -96,13 +96,7 @@ async function BusinessDashboard({
             : "servicios";
 
     return (
-        <div className="space-y-10">
-            <div className="border-b border-border pb-6">
-                <p className="text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
-                    BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · MODULO {activeAccountType.toUpperCase()}
-                </p>
-            </div>
-
+        <div className="space-y-8">
             {activeAccountType === "pyme" ? (
                 <PymeDashboard businessId={businessId} />
             ) : (
@@ -200,57 +194,77 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            {/* Wide Stats Card */}
-            <div className="bg-card rounded-2xl ring-1 ring-border p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm mb-8 gap-6 xl:gap-0">
-              <div className="flex-1 w-full">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{citasHoy?.count ?? 0}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Citas / Hoy</span>
+            {/* 4 Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Ingresos Hoy</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{`$${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 0 })}`}</span>
+                </div>
+                <span className="text-muted-foreground text-[13px] font-medium mt-4">MXN · Módulo Servicios</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
               
-              <div className="flex-[1.5] w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Ingresos / MXN</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Citas / Hoy</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{citasHoy?.count ?? 0}</span>
+                </div>
+                <span className="text-[#10b981] text-[13px] font-medium mt-4 flex items-center gap-1">↗ +2 vs ayer</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
 
-              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{totalClientes?.count ?? 0}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Clientes / Registrados</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Clientes Registrados</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{totalClientes?.count ?? 0}</span>
+                </div>
+                <span className="text-muted-foreground text-[13px] font-medium mt-4">Sin cambios</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
 
-              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">0</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">En Espera / Hoy</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">En Espera / Hoy</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">0</span>
+                </div>
+                <span className="text-[#10b981] text-[13px] font-medium mt-4">
+                    Todo en orden
+                </span>
               </div>
             </div>
 
             {/* Middle Row (3 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon: <Calendar className="w-5 h-5 text-primary" />, title: "Agenda Inteligente", sub: "24 citas activas" },
-                { icon: <CreditCard className="w-5 h-5 text-[#10b981]" />, title: "Pagos Procesados", sub: "8 transacciones" },
-                { icon: <Users className="w-5 h-5 text-amber-500" />, title: "Portal de Clientes", sub: "3 registrados hoy" },
+                { icon: <Calendar className="w-5 h-5 text-muted-foreground" />, title: "Agenda inteligente", sub: "Citas programadas para hoy", pillText: "24 activas", pillColor: "text-[#10b981] bg-[#10b981]/10" },
+                { icon: <CreditCard className="w-5 h-5 text-muted-foreground" />, title: "Pagos procesados", sub: "Última: hace 12 min", pillText: "8 transacciones", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
+                { icon: <Users className="w-5 h-5 text-muted-foreground" />, title: "Portal de clientes", sub: "3 registros nuevos", pillText: "+3 hoy", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
               ].map((card, i) => (
-                <div key={i} className="bg-card rounded-2xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-4 hover:ring-border/80 transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-foreground/5 ring-1 ring-foreground/10 flex items-center justify-center">
-                    {card.icon}
+                <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
+                  <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
+                        {card.icon}
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
                   </div>
                   <div>
-                    <h3 className="text-foreground text-[15px] font-bold mb-1">{card.title}</h3>
-                    <p className="text-muted-foreground text-[12px] font-medium">{card.sub}</p>
+                    <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
+                    <p className="text-muted-foreground text-[13px] font-medium">{card.sub}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Bottom Table */}
-            <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
+            <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
               <div className="min-w-[600px]">
-                  <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">
+                  <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                      <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">Actividad Reciente</h3>
+                      <button className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+                          Ver todos <span className="text-lg leading-none">→</span>
+                      </button>
+                  </div>
+                  <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
                     <div>Cliente</div>
-                    <div>Servicio / Interacción</div>
+                    <div>Servicio</div>
                     <div>Hora</div>
                     <div>Estado</div>
                   </div>
@@ -262,7 +276,6 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                         </div>
                     ) : (
                         recientesCitas.map((cita) => {
-                            // Simple formatting for start time (assuming "HH:MM:SS" or "HH:MM" format)
                             let timeFormatted = cita.startTime;
                             if (timeFormatted) {
                                 const parts = timeFormatted.split(":");
@@ -276,11 +289,21 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                             }
 
                             return (
-                                <div key={cita.id} className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
-                                  <div className="text-foreground text-[13px] font-medium">{cita.clientName || 'Cliente Anónimo'}</div>
-                                  <div className="text-muted-foreground text-[13px]">{cita.serviceName}</div>
-                                  <div className="text-muted-foreground text-[13px]">{timeFormatted}</div>
-                                  <div className={`${getStatusColor(cita.status)} text-[13px] font-medium`}>{translateAppointmentStatus(cita.status)}</div>
+                                <div key={cita.id} className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0">
+                                  <div className="text-foreground text-[14px] font-bold">{cita.clientName || 'Cliente Anónimo'}</div>
+                                  <div className="text-muted-foreground text-[14px]">{cita.serviceName}</div>
+                                  <div className="text-muted-foreground text-[14px]">{timeFormatted}</div>
+                                  <div>
+                                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
+                                          cita.status === 'completed' ? 'text-[#10b981] bg-[#10b981]/10' :
+                                          cita.status === 'waiting' ? 'text-amber-500 bg-amber-500/10' :
+                                          cita.status === 'in_progress' ? 'text-blue-500 bg-blue-500/10' :
+                                          'text-destructive bg-destructive/10'
+                                      }`}>
+                                          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                          {translateAppointmentStatus(cita.status)}
+                                      </span>
+                                  </div>
                                 </div>
                             );
                         })
@@ -290,15 +313,17 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
             </div>
 
             <div className="flex flex-wrap gap-4 mt-6">
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
                     <Link href="/dashboard/citas">
-                        NUEVA CITA
+                        <Plus className="w-5 h-5 text-foreground" />
+                        <span className="text-[15px] font-semibold tracking-wide">Nueva Cita</span>
                     </Link>
                 </Button>
 
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
                     <Link href="/dashboard/horarios">
-                        HORARIOS
+                        <Calendar className="w-5 h-5 text-foreground" />
+                        <span className="text-[15px] font-semibold tracking-wide">Horarios</span>
                     </Link>
                 </Button>
             </div>
@@ -349,57 +374,77 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
 
     return (
         <>
-            {/* Wide Stats Card */}
-            <div className="bg-card rounded-2xl ring-1 ring-border p-8 flex flex-col xl:flex-row items-start xl:items-center justify-between shadow-sm mb-8 gap-6 xl:gap-0">
-              <div className="flex-1 w-full">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{orderStats.pending}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Pedidos hoy / Pendientes</span>
+            {/* 4 Stats Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Ingresos Hoy</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{`$${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 0 })}`}</span>
+                </div>
+                <span className="text-muted-foreground text-[13px] font-medium mt-4">MXN · Módulo PYME</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
               
-              <div className="flex-[1.5] w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Ingresos / MXN</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Pedidos / Pendientes</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{orderStats.pending}</span>
+                </div>
+                <span className="text-[#10b981] text-[13px] font-medium mt-4 flex items-center gap-1">↗ +4 vs ayer</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
 
-              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{inventoryStats.totalProducts}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Productos / En Inventario</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Productos en Inventario</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.totalProducts}</span>
+                </div>
+                <span className="text-muted-foreground text-[13px] font-medium mt-4">Sin cambios</span>
               </div>
-              <div className="hidden xl:block w-px h-12 bg-border mx-6"></div>
 
-              <div className="flex-1 w-full border-t border-border pt-4 xl:border-0 xl:pt-0">
-                <span className="text-foreground text-3xl md:text-4xl font-bold tracking-tight block mb-1">{inventoryStats.lowStockCount}</span>
-                <span className="text-muted-foreground text-[10px] font-bold tracking-[0.15em] uppercase">Bajo Stock / Productos</span>
+              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Bajo Stock</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.lowStockCount}</span>
+                </div>
+                <span className={inventoryStats.lowStockCount === 0 ? "text-[#10b981] text-[13px] font-medium mt-4" : "text-destructive text-[13px] font-medium mt-4"}>
+                    {inventoryStats.lowStockCount === 0 ? "Todo en orden" : "Atención requerida"}
+                </span>
               </div>
             </div>
 
             {/* Middle Row (3 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon: <Calendar className="w-5 h-5 text-primary" />, title: "Agenda Inteligente", sub: "24 citas activas" },
-                { icon: <CreditCard className="w-5 h-5 text-[#10b981]" />, title: "Pagos Procesados", sub: "8 transacciones" },
-                { icon: <Users className="w-5 h-5 text-amber-500" />, title: "Portal de Clientes", sub: "3 registrados hoy" },
+                { icon: <Calendar className="w-5 h-5 text-muted-foreground" />, title: "Agenda inteligente", sub: "Citas programadas para hoy", pillText: "24 activas", pillColor: "text-[#10b981] bg-[#10b981]/10" },
+                { icon: <CreditCard className="w-5 h-5 text-muted-foreground" />, title: "Pagos procesados", sub: "Última: hace 12 min", pillText: "8 transacciones", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
+                { icon: <Users className="w-5 h-5 text-muted-foreground" />, title: "Portal de clientes", sub: "3 registros nuevos", pillText: "+3 hoy", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
               ].map((card, i) => (
-                <div key={i} className="bg-card rounded-2xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-4 hover:ring-border/80 transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-foreground/5 ring-1 ring-foreground/10 flex items-center justify-center">
-                    {card.icon}
+                <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
+                  <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
+                        {card.icon}
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
                   </div>
                   <div>
-                    <h3 className="text-foreground text-[15px] font-bold mb-1">{card.title}</h3>
-                    <p className="text-muted-foreground text-[12px] font-medium">{card.sub}</p>
+                    <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
+                    <p className="text-muted-foreground text-[13px] font-medium">{card.sub}</p>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Bottom Table */}
-            <div className="bg-card rounded-2xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
+            <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
               <div className="min-w-[600px]">
-                  <div className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border text-[11px] font-bold tracking-[0.1em] text-muted-foreground uppercase">
+                  <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                      <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">Actividad Reciente</h3>
+                      <button className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+                          Ver todos <span className="text-lg leading-none">→</span>
+                      </button>
+                  </div>
+                  <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
                     <div>Cliente</div>
-                    <div>Servicio / Interacción</div>
+                    <div>Servicio</div>
                     <div>Hora</div>
                     <div>Estado</div>
                   </div>
@@ -423,11 +468,21 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
                             }
 
                             return (
-                                <div key={pedido.id} className="grid grid-cols-4 gap-4 px-8 py-5 border-b border-border items-center hover:bg-accent/30 transition-colors">
-                                  <div className="text-foreground text-[13px] font-medium">{pedido.clientName || pedido.clientUser || 'Cliente Anónimo'}</div>
-                                  <div className="text-muted-foreground text-[13px]">Pedido • ${Number(pedido.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</div>
-                                  <div className="text-muted-foreground text-[13px]">{timeFormatted}</div>
-                                  <div className={`${getOrderStatusColor(pedido.status)} text-[13px] font-medium`}>{translateOrderStatus(pedido.status)}</div>
+                                <div key={pedido.id} className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0">
+                                  <div className="text-foreground text-[14px] font-bold">{pedido.clientName || pedido.clientUser || 'Cliente Anónimo'}</div>
+                                  <div className="text-muted-foreground text-[14px]">Pedido <span className="mx-1">•</span> ${Number(pedido.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</div>
+                                  <div className="text-muted-foreground text-[14px]">{timeFormatted}</div>
+                                  <div>
+                                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
+                                          pedido.status === 'completed' ? 'text-[#10b981] bg-[#10b981]/10' :
+                                          pedido.status === 'pending' ? 'text-amber-500 bg-amber-500/10' :
+                                          pedido.status === 'processing' ? 'text-blue-500 bg-blue-500/10' :
+                                          'text-destructive bg-destructive/10'
+                                      }`}>
+                                          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                          {translateOrderStatus(pedido.status)}
+                                      </span>
+                                  </div>
                                 </div>
                             );
                         })
@@ -450,19 +505,22 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             )}
 
             <div className="flex flex-wrap gap-4 mt-6">
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
                     <Link href="/dashboard/pedidos/nuevo">
-                        NUEVO PEDIDO
+                        <Plus className="w-5 h-5 text-foreground" />
+                        <span className="text-[15px] font-semibold tracking-wide">Nuevo Pedido</span>
                     </Link>
                 </Button>
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
                     <Link href="/dashboard/inventario">
-                        VER INVENTARIO
+                        <Package className="w-5 h-5 text-foreground" />
+                        <span className="text-[15px] font-semibold tracking-wide">Ver Inventario</span>
                     </Link>
                 </Button>
-                <Button asChild variant="secondary" size="lg" className="text-[11px] font-bold tracking-[0.2em] uppercase">
+                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
                     <Link href="/dashboard/pedidos">
-                        VER PEDIDOS
+                        <ShoppingCart className="w-5 h-5 text-foreground" />
+                        <span className="text-[15px] font-semibold tracking-wide">Ver Pedidos</span>
                     </Link>
                 </Button>
             </div>

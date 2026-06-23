@@ -5,6 +5,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/components/providers";
 import { SkipLinks } from "@/components/skip-links";
+import { AdSense } from "@/components/adsense";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -63,6 +64,7 @@ export default function RootLayout({
           </div>
           <Toaster richColors position="top-right" />
         </Providers>
+        <AdSense />
       </body>
     </html>
   );

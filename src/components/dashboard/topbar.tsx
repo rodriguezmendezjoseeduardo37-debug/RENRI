@@ -56,7 +56,7 @@ export function Topbar({
     }, [mobileMenuOpen]);
 
     return (
-        <div className="relative z-30 mx-3 sticky top-3" ref={menuRef}>
+        <div className="relative z-30 mx-3 mt-4 md:mt-6 sticky top-4 md:top-6" ref={menuRef}>
             <header className="flex h-14 items-center justify-between rounded-2xl glass-panel px-4 md:px-5 transition-all duration-300">
                 {/* Left: hamburger (mobile) + tenant name */}
                 <div className="flex items-center gap-3 min-w-0">
