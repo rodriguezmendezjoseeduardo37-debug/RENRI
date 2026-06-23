@@ -12,6 +12,12 @@
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
 
+export interface ProtectedRouteContext {
+    userId: string;
+    tenantId: string;
+    role: string;
+}
+
 // ─── Error Types ──────────────────────────────────────────
 
 export class RLSError extends Error {
@@ -161,7 +167,6 @@ export async function getCurrentTenantId(): Promise<string> {
 
 // ─── API Routes: protectApiRoute ──────────────────────────
 
-export interface ProtectedRouteContext extends TenantContext {}
 
 /**
  * Protege una ruta API validando autenticación + tenant.
