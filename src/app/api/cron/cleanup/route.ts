@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cleanupExpiredResources } from "@/actions/cleanup";
 import { db } from "@/db";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,21 @@ export async function GET(req: Request) {
     try {
         // Simple security check using Authorization header
         const authHeader = req.headers.get("authorization");
-        if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && process.env.NODE_ENV !== "development") {
+        let isAuthorized = false;
+
+        if (process.env.NODE_ENV === "development") {
+            isAuthorized = true;
+        } else if (authHeader && process.env.CRON_SECRET) {
+            const expectedToken = `Bearer ${process.env.CRON_SECRET}`;
+            const authHeaderBuffer = Buffer.from(authHeader);
+            const expectedTokenBuffer = Buffer.from(expectedToken);
+
+            if (authHeaderBuffer.length === expectedTokenBuffer.length) {
+                isAuthorized = crypto.timingSafeEqual(authHeaderBuffer, expectedTokenBuffer);
+            }
+        }
+
+        if (!isAuthorized) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
