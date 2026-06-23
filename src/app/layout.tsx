@@ -37,6 +37,9 @@ export const metadata: Metadata = {
     title: 'RENRI',
     description: 'Gestión para profesionistas y negocios de México.',
   },
+  other: {
+    "google-adsense-account": "ca-pub-1980082261486602",
+  },
 };
 
 export default function RootLayout({
