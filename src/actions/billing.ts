@@ -51,3 +51,39 @@ export async function createCheckoutSession(planName: string) {
         throw new Error("Error al contactar la pasarela de pagos.");
     }
 }
+
+export async function createCustomerPortalSession() {
+    const user = await getCurrentUser();
+    if (!user) {
+        throw new Error("No autenticado");
+    }
+
+    if (!user.tenantId) {
+        throw new Error("El usuario no pertenece a ningún negocio.");
+    }
+
+    const stripe = getStripe();
+    if (!stripe) {
+        throw new Error("Las credenciales de Stripe no están configuradas.");
+    }
+
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, user.tenantId),
+    });
+
+    if (!tenant || !tenant.stripeCustomerId) {
+        throw new Error("No hay un cliente de Stripe asociado a este negocio.");
+    }
+
+    try {
+        const session = await stripe.billingPortal.sessions.create({
+            customer: tenant.stripeCustomerId,
+            return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes`,
+        });
+
+        return { url: session.url };
+    } catch (error) {
+        console.error("Error creando sesión del Customer Portal:", error);
+        throw new Error("Error al contactar el portal de Stripe.");
+    }
+}

@@ -3,7 +3,7 @@
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
-import { createCheckoutSession } from "@/actions/billing";
+import { createCheckoutSession, createCustomerPortalSession } from "@/actions/billing";
 import { useRouter } from "next/navigation";
 
 type PlansActionsProps = {
@@ -24,7 +24,35 @@ export function PlansActions({
     const [isPending, startTransition] = useTransition();
     const router = useRouter();
 
+    const handleCustomerPortal = () => {
+        startTransition(async () => {
+            try {
+                const { url } = await createCustomerPortalSession();
+                if (url) {
+                    router.push(url);
+                }
+            } catch (error) {
+                toast.error("Hubo un error al abrir el portal.");
+            }
+        });
+    };
+
     if (isCurrentPlan) {
+        if (planName === "PRO") {
+            return (
+                <button
+                    type="button"
+                    onClick={handleCustomerPortal}
+                    disabled={isPending}
+                    title="Gestionar mi suscripción"
+                    className="w-full flex items-center justify-center gap-2 border border-[#08b6ff] bg-[#08b6ff]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#08b6ff] rounded-xl hover:bg-[#08b6ff]/20 transition-colors"
+                >
+                    {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {isPending ? "ABRIENDO..." : "GESTIONAR SUSCRIPCIÓN"}
+                </button>
+            );
+        }
+
         return (
             <button
                 type="button"
