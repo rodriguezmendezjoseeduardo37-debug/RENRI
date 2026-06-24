@@ -54,9 +54,6 @@ export default {
                         | undefined) ?? [];
                 token.plan = ((user as Record<string, unknown>).plan as "starter" | "pro" | "business" | "enterprise" | undefined) ?? "starter";
             }
-            if (trigger === "update" && session) {
-                token = { ...token, ...session };
-            }
             return token;
         },
         async session({ session, token }) {

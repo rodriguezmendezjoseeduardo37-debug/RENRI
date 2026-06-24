@@ -17,7 +17,7 @@ const PLANS = [
     },
     {
         name: "PRO",
-        price: ["$210", "MXN / mes"],
+        price: ["$2", "MXN / mes"],
         desc: "PARA EMPRESAS Y NEGOCIOS ESTABLECIDOS CON ALTO VOLUMEN.",
         features: [
             "Clientes ilimitados",

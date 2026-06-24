@@ -31,8 +31,8 @@ export function PlansActions({
                 if (url) {
                     router.push(url);
                 }
-            } catch (error) {
-                toast.error("Hubo un error al abrir el portal.");
+            } catch (error: any) {
+                toast.error(error.message || "Hubo un error al abrir el portal.");
             }
         });
     };
@@ -86,8 +86,8 @@ export function PlansActions({
                 if (url) {
                     router.push(url);
                 }
-            } catch (error) {
-                toast.error("Hubo un error al iniciar el pago.");
+            } catch (error: any) {
+                toast.error(error.message || "Hubo un error al iniciar el pago.");
             }
         });
     };

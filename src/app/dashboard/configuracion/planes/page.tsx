@@ -1,35 +1,37 @@
-import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth-helpers";
-import { Check, ArrowLeft } from "lucide-react";
+import { syncSubscriptionCheckoutSession } from "@/actions/billing";
+import { SessionUpdater } from "@/components/dashboard/session-updater";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
+import { getCurrentUser } from "@/lib/auth-helpers";
 import { eq } from "drizzle-orm";
+import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { PlansActions } from "./plans-actions";
 
 const PLANS = [
     {
         name: "STARTER",
         price: "Gratis",
-        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU PRÁCTICA.",
+        desc: "PARA NEGOCIOS Y SERVICIOS INDEPENDIENTES COMENZANDO SU PRACTICA.",
         features: [
-            "Gestión de hasta 50 clientes",
-            "Portal público básico",
+            "Gestion de hasta 50 clientes",
+            "Portal publico basico",
             "Agendamiento manual",
-            "Soporte por correo electrónico",
+            "Soporte por correo electronico",
         ],
         buttonText: "COMENZAR GRATIS",
     },
     {
         name: "PRO",
-        price: "$210 MXN / mes",
+        price: "$2 MXN / mes",
         desc: "PARA SERVICIOS Y NEGOCIOS ESTABLECIDOS CON VOLUMEN.",
         features: [
             "Clientes ilimitados",
-            "Portal público personalizado",
-            "Agendamiento en línea automático",
+            "Portal publico personalizado",
+            "Agendamiento en linea automatico",
             "Recordatorios por WhatsApp",
-            "Cobros con tarjeta (Sin configuración)",
+            "Cobros con tarjeta (Sin configuracion)",
             "Soporte prioritario 24/7",
         ],
         buttonText: "ACTUALIZAR A PRO",
@@ -37,39 +39,46 @@ const PLANS = [
     },
 ];
 
-import { SessionUpdater } from "@/components/dashboard/session-updater";
-
 export default async function PlanesPage({
     searchParams,
 }: {
-    searchParams: Promise<{ success?: string; canceled?: string }>;
+    searchParams: Promise<{ success?: string; canceled?: string; session_id?: string }>;
 }) {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const params = await searchParams;
-    const isSuccess = params.success === "true";
+    const checkoutReturned = params.success === "true";
     const isCanceled = params.canceled === "true";
+
+    if (checkoutReturned && params.session_id) {
+        try {
+            await syncSubscriptionCheckoutSession(params.session_id);
+        } catch (error) {
+            console.error("No se pudo sincronizar la sesion de Stripe:", error);
+        }
+    }
+
     const tenant = await db.query.tenants.findFirst({
         where: eq(tenants.id, user.tenantId),
     });
 
-    const realPlan = tenant?.plan ? tenant.plan.toUpperCase() : "STARTER";
-    const currentPlan = isSuccess ? "PRO" : realPlan;
-
-    // Sincronizar la sesión si está desincronizada con la BD, o forzar si es success
-    const shouldUpdateSession = isSuccess || user.plan !== tenant?.plan;
+    const tenantPlan = tenant?.plan ?? "starter";
+    const currentPlan = tenantPlan.toUpperCase();
+    const isSuccess = checkoutReturned && tenantPlan !== "starter";
+    const isActivationPending = checkoutReturned && tenantPlan === "starter";
+    const shouldUpdateSession = user.plan !== tenantPlan;
 
     return (
         <div className="max-w-5xl mx-auto space-y-10">
-            {shouldUpdateSession && <SessionUpdater planToUpdate={isSuccess ? "pro" : tenant?.plan} />}
+            {shouldUpdateSession && <SessionUpdater />}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
-                        PLANES Y FACTURACIÓN
+                        PLANES Y FACTURACION
                     </h1>
                     <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
-                        PLANES TRANSPARENTES DISEÑADOS PARA ESCALAR JUNTO CON TU CRECIMIENTO PROFESIONAL.
+                        PLANES TRANSPARENTES DISENADOS PARA ESCALAR JUNTO CON TU CRECIMIENTO PROFESIONAL.
                     </p>
                 </div>
                 <Link
@@ -85,8 +94,17 @@ export default async function PlanesPage({
                 <div className="bg-[#3A7D44]/10 border border-[#3A7D44]/30 text-[#3A7D44] px-4 py-3 rounded-lg flex items-center gap-3">
                     <Check className="w-5 h-5" />
                     <div>
-                        <p className="text-sm font-bold tracking-wide">¡PAGO REALIZADO CON ÉXITO!</p>
+                        <p className="text-sm font-bold tracking-wide">PAGO REALIZADO CON EXITO</p>
                         <p className="text-xs opacity-80 mt-0.5">Tu cuenta ha sido actualizada al plan PRO. Ya tienes acceso a todas las funcionalidades.</p>
+                    </div>
+                </div>
+            )}
+
+            {isActivationPending && (
+                <div className="bg-[#08b6ff]/10 border border-[#08b6ff]/30 text-[#08b6ff] px-4 py-3 rounded-lg flex items-center gap-3">
+                    <div>
+                        <p className="text-sm font-bold tracking-wide">PAGO RECIBIDO</p>
+                        <p className="text-xs opacity-80 mt-0.5">Estamos confirmando la suscripcion con Stripe. Actualiza esta pagina en unos segundos si el plan aun no aparece activo.</p>
                     </div>
                 </div>
             )}

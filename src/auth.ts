@@ -140,6 +140,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     callbacks: {
         ...authConfig.callbacks,
+        async jwt(params) {
+            const token = authConfig.callbacks?.jwt
+                ? await authConfig.callbacks.jwt(params)
+                : params.token;
+
+            if (params.trigger === "update" && token.tenantId) {
+                const [tenant] = await db
+                    .select({
+                        plan: tenants.plan,
+                        accountType: tenants.accountType,
+                    })
+                    .from(tenants)
+                    .where(eq(tenants.id, token.tenantId as string))
+                    .limit(1);
+
+                if (tenant) {
+                    const role = token.role ?? "CLIENT";
+                    token.plan = tenant.plan;
+                    token.accountType = role === "CLIENT" ? "cliente" : tenant.accountType;
+                    token.enabledModules = normalizeEnabledModules(
+                        undefined,
+                        token.accountType,
+                        role
+                    );
+                }
+            }
+
+            return token;
+        },
         async signIn({ user, account }) {
             if (account?.provider === "google" && user.email) {
                 const userEmail = user.email;
