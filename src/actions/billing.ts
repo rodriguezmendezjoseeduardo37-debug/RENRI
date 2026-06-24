@@ -17,6 +17,34 @@ function getAppUrl() {
     );
 }
 
+function getProLineItem(): Stripe.Checkout.SessionCreateParams.LineItem {
+    const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
+
+    if (proPriceId) {
+        return {
+            price: proPriceId,
+            quantity: 1,
+        };
+    }
+
+    return {
+        price_data: {
+            currency: "mxn",
+            product_data: {
+                name: "RENRI PRO",
+                metadata: {
+                    plan: "pro",
+                },
+            },
+            recurring: {
+                interval: "month",
+            },
+            unit_amount: FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS,
+        },
+        quantity: 1,
+    };
+}
+
 function getStripe() {
     const key = process.env.STRIPE_SECRET_KEY;
     if (!key) return null;
@@ -29,6 +57,15 @@ function isMissingStripeResource(error: unknown) {
         stripeError?.code === "resource_missing" ||
         stripeError?.message?.includes("No such customer") ||
         stripeError?.message?.includes("No such subscription")
+    );
+}
+
+function isMissingConfiguredPrice(error: unknown) {
+    const stripeError = error as { code?: string; message?: string; param?: string } | null;
+    return (
+        stripeError?.code === "resource_missing" &&
+        (stripeError.param === "line_items[0][price]" ||
+            stripeError.message?.includes("No such price"))
     );
 }
 
@@ -84,111 +121,62 @@ export async function createCheckoutSession(planName: string) {
                 .where(eq(tenants.id, user.tenantId));
         }
 
-        const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
-        const proLineItem: Stripe.Checkout.SessionCreateParams.LineItem =
-            proPriceId
-                ? {
-                      price: proPriceId,
-                      quantity: 1,
-                  }
-                : {
-                      price_data: {
-                          currency: "mxn",
-                          product_data: {
-                              name: "RENRI PRO",
-                              metadata: {
-                                  plan: "pro",
-                              },
-                          },
-                          recurring: {
-                              interval: "month",
-                          },
-                          unit_amount: FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS,
-                      },
-                      quantity: 1,
-                  };
-
         const appUrl = getAppUrl();
-
-        const session = await stripe.checkout.sessions.create({
+        const checkoutParams: Stripe.Checkout.SessionCreateParams = {
             mode: "subscription",
             payment_method_types: ["card"],
             ...(existingCustomerId
                 ? { customer: existingCustomerId }
                 : { customer_email: user.email || undefined }),
-            line_items: [proLineItem],
+            line_items: [getProLineItem()],
             metadata: {
                 userId: user.id,
                 tenantId: user.tenantId,
                 plan: "pro",
             },
-            success_url: `${appUrl}/api/stripe/subscription/sync?session_id={CHECKOUT_SESSION_ID}`,
+            success_url: `${appUrl}/dashboard/configuracion/planes?success=true`,
             cancel_url: `${appUrl}/dashboard/configuracion/planes?canceled=true`,
-        });
+        };
+
+        let session: Stripe.Checkout.Session;
+        try {
+            session = await stripe.checkout.sessions.create(checkoutParams);
+        } catch (error) {
+            if (!process.env.STRIPE_PRO_PRICE_ID || !isMissingConfiguredPrice(error)) {
+                throw error;
+            }
+
+            console.warn(
+                "STRIPE_PRO_PRICE_ID no existe en la cuenta de Stripe activa; usando precio dinamico."
+            );
+            session = await stripe.checkout.sessions.create({
+                ...checkoutParams,
+                line_items: [
+                    {
+                        price_data: {
+                            currency: "mxn",
+                            product_data: {
+                                name: "RENRI PRO",
+                                metadata: {
+                                    plan: "pro",
+                                },
+                            },
+                            recurring: {
+                                interval: "month",
+                            },
+                            unit_amount: FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS,
+                        },
+                        quantity: 1,
+                    },
+                ],
+            });
+        }
 
         return { url: session.url };
     } catch (error) {
         console.error("Error creando sesion de Stripe:", error);
         return { error: "Error al contactar la pasarela de pagos." };
     }
-}
-
-export async function syncSubscriptionCheckoutSession(sessionId: string) {
-    const user = await getCurrentUser();
-    if (!user?.tenantId) {
-        throw new Error("No autenticado");
-    }
-
-    const stripe = getStripe();
-    if (!stripe) {
-        throw new Error("Las credenciales de Stripe no estan configuradas.");
-    }
-
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-        expand: ["subscription"],
-    });
-
-    if (session.mode !== "subscription" || session.status !== "complete") {
-        return { status: "pending" as const };
-    }
-
-    if (session.metadata?.tenantId !== user.tenantId || session.metadata?.userId !== user.id) {
-        throw new Error("La sesion de Stripe no corresponde al usuario actual.");
-    }
-
-    const customerId =
-        typeof session.customer === "string" ? session.customer : session.customer?.id;
-    const subscriptionId =
-        typeof session.subscription === "string"
-            ? session.subscription
-            : session.subscription?.id;
-    const subscriptionStatus =
-        typeof session.subscription === "string"
-            ? undefined
-            : session.subscription?.status;
-
-    if (!customerId || !subscriptionId) {
-        return { status: "pending" as const };
-    }
-
-    if (subscriptionStatus && !["active", "trialing"].includes(subscriptionStatus)) {
-        return { status: "pending" as const };
-    }
-
-    await db
-        .update(tenants)
-        .set({
-            plan: "pro",
-            stripeCustomerId: customerId,
-            stripeSubscriptionId: subscriptionId,
-            updatedAt: new Date(),
-        })
-        .where(eq(tenants.id, user.tenantId));
-
-    revalidatePath("/dashboard/configuracion/planes");
-    revalidatePath("/dashboard");
-
-    return { status: "active" as const };
 }
 
 export async function createCustomerPortalSession() {
