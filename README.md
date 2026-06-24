@@ -26,22 +26,6 @@ RENRI es una plataforma SaaS multi-tenant para profesionistas y negocios en Mexi
 - `tests`: pruebas E2E y visuales con Playwright.
 - `src/tests` y `src/**/__tests__`: pruebas unitarias con Vitest.
 
-## Variables de Entorno
-
-El proyecto carga `.env.local`. Como minimo, revisa estas variables segun el flujo que quieras probar:
-
-```env
-DATABASE_URL=
-DIRECT_URL=
-AUTH_SECRET=
-NEXTAUTH_URL=
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-STRIPE_SECRET_KEY=
-STRIPE_PRO_PRICE_ID=
-NEXT_PUBLIC_APP_URL=
-RESEND_API_KEY=
-```
 
 Algunos flujos tienen modo mock si Stripe no esta configurado, pero base de datos y auth si requieren valores validos para pruebas completas.
 
