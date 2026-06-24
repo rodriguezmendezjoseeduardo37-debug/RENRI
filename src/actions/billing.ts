@@ -7,7 +7,15 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import Stripe from "stripe";
 
-const PRO_SUBSCRIPTION_PRICE_CENTS = 1000;
+const FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS = 1000;
+
+function getAppUrl() {
+    return (
+        process.env.NEXT_PUBLIC_APP_URL ||
+        process.env.NEXTAUTH_URL ||
+        "http://localhost:3000"
+    );
+}
 
 function getStripe() {
     const key = process.env.STRIPE_SECRET_KEY;
@@ -76,37 +84,46 @@ export async function createCheckoutSession(planName: string) {
                 .where(eq(tenants.id, user.tenantId));
         }
 
+        const proPriceId = process.env.STRIPE_PRO_PRICE_ID;
+        const proLineItem: Stripe.Checkout.SessionCreateParams.LineItem =
+            proPriceId
+                ? {
+                      price: proPriceId,
+                      quantity: 1,
+                  }
+                : {
+                      price_data: {
+                          currency: "mxn",
+                          product_data: {
+                              name: "RENRI PRO",
+                              metadata: {
+                                  plan: "pro",
+                              },
+                          },
+                          recurring: {
+                              interval: "month",
+                          },
+                          unit_amount: FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS,
+                      },
+                      quantity: 1,
+                  };
+
+        const appUrl = getAppUrl();
+
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
             payment_method_types: ["card"],
             ...(existingCustomerId
                 ? { customer: existingCustomerId }
                 : { customer_email: user.email || undefined }),
-            line_items: [
-                {
-                    price_data: {
-                        currency: "mxn",
-                        product_data: {
-                            name: "RENRI PRO",
-                            metadata: {
-                                plan: "pro",
-                            },
-                        },
-                        recurring: {
-                            interval: "month",
-                        },
-                        unit_amount: PRO_SUBSCRIPTION_PRICE_CENTS,
-                    },
-                    quantity: 1,
-                },
-            ],
+            line_items: [proLineItem],
             metadata: {
                 userId: user.id,
                 tenantId: user.tenantId,
                 plan: "pro",
             },
-            success_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/stripe/subscription/sync?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes?canceled=true`,
+            success_url: `${appUrl}/api/stripe/subscription/sync?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${appUrl}/dashboard/configuracion/planes?canceled=true`,
         });
 
         return { url: session.url };
@@ -239,7 +256,7 @@ export async function createCustomerPortalSession() {
 
         const session = await stripe.billingPortal.sessions.create({
             customer: customerId,
-            return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes`,
+            return_url: `${getAppUrl()}/dashboard/configuracion/planes`,
         });
 
         return { url: session.url };
