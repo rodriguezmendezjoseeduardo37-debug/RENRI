@@ -1,4 +1,3 @@
-import { syncSubscriptionCheckoutSession } from "@/actions/billing";
 import { SessionUpdater } from "@/components/dashboard/session-updater";
 import { db } from "@/db";
 import { tenants } from "@/db/schema";
@@ -42,7 +41,7 @@ const PLANS = [
 export default async function PlanesPage({
     searchParams,
 }: {
-    searchParams: Promise<{ success?: string; canceled?: string; session_id?: string }>;
+    searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
@@ -50,14 +49,6 @@ export default async function PlanesPage({
     const params = await searchParams;
     const checkoutReturned = params.success === "true";
     const isCanceled = params.canceled === "true";
-
-    if (checkoutReturned && params.session_id) {
-        try {
-            await syncSubscriptionCheckoutSession(params.session_id);
-        } catch (error) {
-            console.error("No se pudo sincronizar la sesion de Stripe:", error);
-        }
-    }
 
     const tenant = await db.query.tenants.findFirst({
         where: eq(tenants.id, user.tenantId),
