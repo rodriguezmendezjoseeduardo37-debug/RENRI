@@ -79,7 +79,13 @@ export async function setupAutoConnect() {
     const user = await requireAuth(["SUPER_ADMIN", "OWNER"]);
     if (!user) throw new Error("No autorizado");
 
-    if (!canPerformAction(user.plan, "stripeConnect")) {
+    const [currentTenant] = await db
+        .select({ plan: tenants.plan })
+        .from(tenants)
+        .where(eq(tenants.id, user.tenantId))
+        .limit(1);
+
+    if (!canPerformAction(currentTenant?.plan ?? user.plan, "stripeConnect")) {
         throw new Error("PLAN_LIMIT: Esta función requiere el plan PRO.");
     }
 
@@ -155,7 +161,7 @@ export async function setupAutoConnect() {
         const onboardingUrl = await createAccountOnboardingLinkV2(
             accountId,
             `${baseUrl}/dashboard/configuracion/metodo-cobro?refresh=true`,
-            `${baseUrl}/dashboard/configuracion/metodo-cobro?success=true`
+            `${baseUrl}/api/stripe/connect/sync`
         );
 
         revalidatePath("/dashboard/configuracion");

@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { db } from "@/db";
+import { tenants } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function ConfiguracionPage() {
     const user = await getCurrentUser();
@@ -67,6 +70,11 @@ export default async function ConfiguracionPage() {
         );
     }
 
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, user.tenantId),
+    });
+    const currentPlan = tenant?.plan ?? user.plan;
+
     const SETTINGS_SECTIONS = [
         {
             title: "PERFIL PERSONAL",
@@ -93,7 +101,7 @@ export default async function ConfiguracionPage() {
             desc: "Habilita la recepción de pagos con tarjeta de forma automática. Sin configuraciones técnicas.",
             icon: CreditCard,
             href: "/dashboard/configuracion/metodo-cobro",
-            restricted: user.plan !== "pro",
+            restricted: !["pro", "business", "enterprise"].includes(currentPlan),
         },
     ];
 

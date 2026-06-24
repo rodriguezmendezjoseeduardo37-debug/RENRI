@@ -15,6 +15,28 @@ function getStripe() {
     return new Stripe(key, { apiVersion: "2026-02-25.clover" });
 }
 
+function isMissingStripeResource(error: unknown) {
+    const stripeError = error as { code?: string; message?: string } | null;
+    return (
+        stripeError?.code === "resource_missing" ||
+        stripeError?.message?.includes("No such customer") ||
+        stripeError?.message?.includes("No such subscription")
+    );
+}
+
+async function getValidCustomerId(stripe: Stripe, customerId: string | null) {
+    if (!customerId) return null;
+
+    try {
+        const customer = await stripe.customers.retrieve(customerId);
+        if ("deleted" in customer && customer.deleted) return null;
+        return customer.id;
+    } catch (error) {
+        if (isMissingStripeResource(error)) return null;
+        throw error;
+    }
+}
+
 export async function createCheckoutSession(planName: string) {
     const user = await getCurrentUser();
     if (!user) {
@@ -45,11 +67,20 @@ export async function createCheckoutSession(planName: string) {
     }
 
     try {
+        const existingCustomerId = await getValidCustomerId(stripe, tenant.stripeCustomerId);
+
+        if (tenant.stripeCustomerId && !existingCustomerId) {
+            await db
+                .update(tenants)
+                .set({ stripeCustomerId: null, updatedAt: new Date() })
+                .where(eq(tenants.id, user.tenantId));
+        }
+
         const session = await stripe.checkout.sessions.create({
             mode: "subscription",
             payment_method_types: ["card"],
-            ...(tenant.stripeCustomerId
-                ? { customer: tenant.stripeCustomerId }
+            ...(existingCustomerId
+                ? { customer: existingCustomerId }
                 : { customer_email: user.email || undefined }),
             line_items: [
                 {
@@ -162,13 +193,52 @@ export async function createCustomerPortalSession() {
         where: eq(tenants.id, user.tenantId),
     });
 
-    if (!tenant || !tenant.stripeCustomerId) {
+    if (!tenant || (!tenant.stripeCustomerId && !tenant.stripeSubscriptionId)) {
         return { error: "No hay un cliente de Stripe asociado a este negocio." };
     }
 
     try {
+        let customerId = await getValidCustomerId(stripe, tenant.stripeCustomerId);
+
+        if (!customerId && tenant.stripeSubscriptionId) {
+            try {
+                const subscription = await stripe.subscriptions.retrieve(
+                    tenant.stripeSubscriptionId
+                );
+                customerId =
+                    typeof subscription.customer === "string"
+                        ? subscription.customer
+                        : subscription.customer.id;
+
+                await db
+                    .update(tenants)
+                    .set({ stripeCustomerId: customerId, updatedAt: new Date() })
+                    .where(eq(tenants.id, user.tenantId));
+            } catch (error) {
+                if (!isMissingStripeResource(error)) throw error;
+            }
+        }
+
+        if (!customerId) {
+            await db
+                .update(tenants)
+                .set({
+                    stripeCustomerId: null,
+                    stripeSubscriptionId: null,
+                    updatedAt: new Date(),
+                })
+                .where(eq(tenants.id, user.tenantId));
+
+            revalidatePath("/dashboard/configuracion/planes");
+
+            return {
+                error:
+                    "No encontramos tu suscripcion en la cuenta de Stripe activa. Vuelve a iniciar el pago o revisa que STRIPE_SECRET_KEY sea del mismo entorno donde se creo la suscripcion.",
+            };
+        }
+
         const session = await stripe.billingPortal.sessions.create({
-            customer: tenant.stripeCustomerId,
+            customer: customerId,
             return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/configuracion/planes`,
         });
 

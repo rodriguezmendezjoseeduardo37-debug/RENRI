@@ -2,8 +2,11 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import Link from "next/link";
 import { ArrowLeft, Lock } from "lucide-react";
-import { getPaymentMethodStatus, syncConnectAccountStatus } from "@/actions/metodo-cobro-actions";
+import { getPaymentMethodStatus } from "@/actions/metodo-cobro-actions";
 import { MetodoCobroUI } from "./metodo-cobro-ui";
+import { db } from "@/db";
+import { tenants } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export default async function MetodoCobroPage({
     searchParams,
@@ -18,8 +21,13 @@ export default async function MetodoCobroPage({
         redirect("/dashboard/configuracion");
     }
 
+    const tenant = await db.query.tenants.findFirst({
+        where: eq(tenants.id, user.tenantId),
+    });
+    const currentPlan = tenant?.plan ?? user.plan;
+
     // Plan gate: only PRO+ can use this
-    if (user.plan !== "pro" && user.plan !== "business" && user.plan !== "enterprise") {
+    if (!["pro", "business", "enterprise"].includes(currentPlan)) {
         return (
             <div className="max-w-3xl mx-auto space-y-10">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
@@ -60,11 +68,6 @@ export default async function MetodoCobroPage({
     }
 
     const params = await searchParams;
-
-    // If returning from Stripe onboarding, sync status
-    if (params.success === "true") {
-        await syncConnectAccountStatus();
-    }
 
     const status = await getPaymentMethodStatus();
 
