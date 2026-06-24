@@ -11,7 +11,9 @@ export function SessionUpdater() {
         if (hasUpdated.current) return;
         hasUpdated.current = true;
 
-        update();
+        update().catch((error) => {
+            console.error("No se pudo actualizar la sesion:", error);
+        });
     }, [update]);
 
     return null;

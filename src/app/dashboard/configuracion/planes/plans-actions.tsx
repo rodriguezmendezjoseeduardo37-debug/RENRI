@@ -27,10 +27,13 @@ export function PlansActions({
     const handleCustomerPortal = () => {
         startTransition(async () => {
             try {
-                const { url } = await createCustomerPortalSession();
-                if (url) {
-                    router.push(url);
+                const result = await createCustomerPortalSession();
+                if (result.error) {
+                    toast.error(result.error);
+                    return;
                 }
+
+                if (result.url) router.push(result.url);
             } catch (error: any) {
                 toast.error(error.message || "Hubo un error al abrir el portal.");
             }
@@ -82,10 +85,13 @@ export function PlansActions({
         startTransition(async () => {
             try {
                 // Creates a Stripe checkout session (mocked in billing.ts)
-                const { url } = await createCheckoutSession(planName);
-                if (url) {
-                    router.push(url);
+                const result = await createCheckoutSession(planName);
+                if (result.error) {
+                    toast.error(result.error);
+                    return;
                 }
+
+                if (result.url) router.push(result.url);
             } catch (error: any) {
                 toast.error(error.message || "Hubo un error al iniciar el pago.");
             }

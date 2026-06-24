@@ -18,22 +18,22 @@ function getStripe() {
 export async function createCheckoutSession(planName: string) {
     const user = await getCurrentUser();
     if (!user) {
-        throw new Error("No autenticado");
+        return { error: "Inicia sesion para cambiar de plan." };
     }
 
     if (!user.tenantId) {
-        throw new Error("El usuario no pertenece a ningun negocio.");
+        return { error: "El usuario no pertenece a ningun negocio." };
     }
 
     if (planName.toUpperCase() !== "PRO") {
-        throw new Error("Plan no soportado.");
+        return { error: "Plan no soportado." };
     }
 
     const stripe = getStripe();
     if (!stripe) {
-        throw new Error(
-            "Las credenciales de Stripe (STRIPE_SECRET_KEY) no estan configuradas en el entorno. No se puede procesar el pago."
-        );
+        return {
+            error: "Las credenciales de Stripe no estan configuradas. No se puede procesar el pago.",
+        };
     }
 
     const tenant = await db.query.tenants.findFirst({
@@ -41,7 +41,7 @@ export async function createCheckoutSession(planName: string) {
     });
 
     if (!tenant) {
-        throw new Error("No se encontro el negocio asociado al usuario.");
+        return { error: "No se encontro el negocio asociado al usuario." };
     }
 
     try {
@@ -81,7 +81,7 @@ export async function createCheckoutSession(planName: string) {
         return { url: session.url };
     } catch (error) {
         console.error("Error creando sesion de Stripe:", error);
-        throw new Error("Error al contactar la pasarela de pagos.");
+        return { error: "Error al contactar la pasarela de pagos." };
     }
 }
 
@@ -146,16 +146,16 @@ export async function syncSubscriptionCheckoutSession(sessionId: string) {
 export async function createCustomerPortalSession() {
     const user = await getCurrentUser();
     if (!user) {
-        throw new Error("No autenticado");
+        return { error: "Inicia sesion para gestionar tu suscripcion." };
     }
 
     if (!user.tenantId) {
-        throw new Error("El usuario no pertenece a ningun negocio.");
+        return { error: "El usuario no pertenece a ningun negocio." };
     }
 
     const stripe = getStripe();
     if (!stripe) {
-        throw new Error("Las credenciales de Stripe no estan configuradas.");
+        return { error: "Las credenciales de Stripe no estan configuradas." };
     }
 
     const tenant = await db.query.tenants.findFirst({
@@ -163,7 +163,7 @@ export async function createCustomerPortalSession() {
     });
 
     if (!tenant || !tenant.stripeCustomerId) {
-        throw new Error("No hay un cliente de Stripe asociado a este negocio.");
+        return { error: "No hay un cliente de Stripe asociado a este negocio." };
     }
 
     try {
@@ -175,6 +175,10 @@ export async function createCustomerPortalSession() {
         return { url: session.url };
     } catch (error: any) {
         console.error("Error creando sesion del Customer Portal:", error);
-        throw new Error(error.message || "Error al contactar el portal de Stripe.");
+        return {
+            error:
+                error.message ||
+                "No se pudo abrir el portal de Stripe. Revisa la configuracion del Customer Portal.",
+        };
     }
 }
