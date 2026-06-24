@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import Stripe from "stripe";
 
-const FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS = 1000;
+const FALLBACK_PRO_SUBSCRIPTION_PRICE_CENTS = 19900;
 
 function getAppUrl() {
     return (
