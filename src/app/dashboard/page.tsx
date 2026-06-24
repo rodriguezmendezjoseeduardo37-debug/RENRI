@@ -1,20 +1,26 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { and, count, eq, gte, lt, sum, desc } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt, sum } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { Store, Truck, Repeat, Syringe, Sparkles, SmilePlus, Calendar, CreditCard, Users, Plus, Package, ShoppingCart } from "lucide-react";
+import {
+    ArrowRight,
+    Calendar,
+    Clock,
+    CreditCard,
+    Package,
+    Plus,
+    ShoppingCart,
+    Users,
+} from "lucide-react";
 import { getOrderStats } from "@/actions/orders";
 import { getInventoryStats } from "@/actions/products";
 import { Button } from "@/components/ui/button";
 import { db } from "@/db";
-import { appointments, payments, tenants, users, orders } from "@/db/schema";
-import {
-    normalizeEnabledModules,
-    type BusinessModule,
-} from "@/lib/business";
+import { appointments, orders, payments, tenants, users } from "@/db/schema";
+import { normalizeEnabledModules } from "@/lib/business";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import { PlanUsageMeters } from "@/components/dashboard/plan-usage-meters";
-
 import { ClientGreeting } from "@/components/dashboard/client-greeting";
 
 function formatDate(): string {
@@ -28,12 +34,34 @@ function formatDate(): string {
         .toUpperCase();
 }
 
+function formatMoney(value: number): string {
+    return `$${value.toLocaleString("es-MX", { minimumFractionDigits: 0 })}`;
+}
+
+function formatTime(value: string | Date | null): string {
+    if (!value) return "";
+
+    if (value instanceof Date) {
+        return value.toLocaleTimeString("es-MX", {
+            hour: "numeric",
+            minute: "2-digit",
+        });
+    }
+
+    const parts = value.split(":");
+    if (parts.length < 2) return value;
+
+    let hour = Number.parseInt(parts[0], 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour %= 12;
+    return `${hour || 12}:${parts[1]} ${ampm}`;
+}
+
 export default async function DashboardPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
 
     const firstName = user.name?.split(" ")[0]?.toUpperCase() ?? "USUARIO";
-
     const [tenant] = await db
         .select()
         .from(tenants)
@@ -43,70 +71,173 @@ export default async function DashboardPage() {
     const cookieStore = await cookies();
     const activeModule = cookieStore.get("renri_active_module")?.value;
 
-    let accountType = (user.role === "CLIENT" ? "cliente" : tenant?.accountType ?? "servicios") as "servicios" | "pyme" | "cliente";
-    if (activeModule && ["servicios", "pyme", "cliente"].includes(activeModule)) {
-        if (user.role !== "CLIENT") {
-            accountType = activeModule as "servicios" | "pyme" | "cliente";
-        }
+    let accountType = (
+        user.role === "CLIENT" ? "cliente" : tenant?.accountType ?? "servicios"
+    ) as "servicios" | "pyme" | "cliente";
+
+    if (
+        activeModule &&
+        ["servicios", "pyme", "cliente"].includes(activeModule) &&
+        user.role !== "CLIENT"
+    ) {
+        accountType = activeModule as "servicios" | "pyme" | "cliente";
     }
+
+    const enabledModules = normalizeEnabledModules(
+        user.enabledModules,
+        user.accountType,
+        user.role
+    );
+    const activeAccountType =
+        accountType === "pyme" && enabledModules.includes("pyme")
+            ? "pyme"
+            : "servicios";
+    const currentPlan = tenant?.plan ?? user.plan;
+    const primaryAction =
+        activeAccountType === "pyme"
+            ? { href: "/dashboard/pedidos/nuevo", label: "Nuevo pedido" }
+            : { href: "/dashboard/citas", label: "Nueva cita" };
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-2">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
                 <div>
                     <p className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase mb-2">
-                        RESUMEN DEL DÍA · {formatDate()}
+                        RESUMEN DEL DIA · {formatDate()}
                     </p>
                     <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)] mb-2">
                         <ClientGreeting firstName={firstName} />
                     </h1>
                     <p className="text-[14px] font-medium text-muted-foreground">
-                        Módulo {accountType.toUpperCase()} · {tenant?.name ?? "RENRI"}
+                        Modulo {activeAccountType.toUpperCase()} · {tenant?.name ?? "RENRI"}
                     </p>
                 </div>
+
+                <Button
+                    asChild
+                    className="h-12 px-5 shrink-0 rounded-xl bg-[#08b6ff] text-black hover:bg-[#08b6ff]/90 shadow-sm"
+                >
+                    <Link href={primaryAction.href} className="flex items-center gap-2">
+                        <Plus className="w-4 h-4" />
+                        <span className="text-[12px] font-bold tracking-[0.12em] uppercase">
+                            {primaryAction.label}
+                        </span>
+                    </Link>
+                </Button>
             </div>
 
-            <PlanUsageMeters tenantId={user.tenantId} plan={user.plan} />
-
-            <BusinessDashboard
-                businessId={user.businessId ?? user.tenantId}
-                accountType={accountType as "servicios" | "pyme"}
-                enabledModules={normalizeEnabledModules(
-                    user.enabledModules,
-                    user.accountType,
-                    user.role
-                )}
-            />
-        </div>
-    );
-}
-
-async function BusinessDashboard({
-    businessId,
-    accountType,
-    enabledModules,
-}: {
-    businessId: string;
-    accountType: "servicios" | "pyme" | "cliente";
-    enabledModules: BusinessModule[];
-}) {
-    const activeAccountType =
-        accountType === "pyme" && enabledModules.includes("pyme")
-            ? "pyme"
-            : "servicios";
-
-    return (
-        <div className="space-y-8">
             {activeAccountType === "pyme" ? (
-                <PymeDashboard businessId={businessId} />
+                <PymeDashboard
+                    businessId={user.businessId ?? user.tenantId}
+                    tenantId={user.tenantId}
+                    plan={currentPlan}
+                />
             ) : (
-                <ServiciosDashboard businessId={businessId} />
+                <ServiciosDashboard
+                    businessId={user.businessId ?? user.tenantId}
+                    tenantId={user.tenantId}
+                    plan={currentPlan}
+                />
             )}
         </div>
     );
 }
 
-async function ServiciosDashboard({ businessId }: { businessId: string }) {
+function StatCard({
+    icon,
+    label,
+    value,
+    footer,
+}: {
+    icon: ReactNode;
+    label: string;
+    value: string | number;
+    footer?: string | null;
+}) {
+    return (
+        <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+            <div className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center shrink-0">
+                    {icon}
+                </div>
+                <div>
+                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">
+                        {label}
+                    </span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">
+                        {value}
+                    </span>
+                </div>
+            </div>
+            {footer ? (
+                <span className="text-muted-foreground text-[13px] font-medium mt-4">
+                    {footer}
+                </span>
+            ) : null}
+        </div>
+    );
+}
+
+function EmptyActivity({ message }: { message: string }) {
+    return (
+        <div className="py-16 flex flex-col items-center justify-center text-center text-muted-foreground">
+            <Package className="w-10 h-10 mb-4 opacity-40" />
+            <p className="text-sm font-semibold text-foreground">No hay actividad reciente</p>
+            <p className="text-xs mt-2">{message}</p>
+        </div>
+    );
+}
+
+function QuickAccessPanel({
+    items,
+}: {
+    items: Array<{
+        href: string;
+        title: string;
+        description: string;
+        icon: ReactNode;
+    }>;
+}) {
+    return (
+        <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm p-6 flex flex-col gap-5">
+            <h3 className="text-[16px] font-bold tracking-tight text-foreground">
+                Acceso rapido
+            </h3>
+            <div className="space-y-3">
+                {items.map((item) => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className="flex items-center justify-between gap-4 rounded-2xl border border-border/70 bg-background/20 px-4 py-4 hover:border-[#08b6ff]/60 transition-colors"
+                    >
+                        <div className="flex items-center gap-4 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center shrink-0">
+                                {item.icon}
+                            </div>
+                            <div className="min-w-0">
+                                <p className="text-sm font-bold text-foreground">{item.title}</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {item.description}
+                                </p>
+                            </div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+async function ServiciosDashboard({
+    businessId,
+    tenantId,
+    plan,
+}: {
+    businessId: string;
+    tenantId: string;
+    plan: string;
+}) {
     const now = new Date();
     const todayStr = now.toISOString().split("T")[0];
     const startOfDay = new Date(now);
@@ -114,253 +245,218 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
     const endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
 
-    const [citasHoy, ingresosHoy, totalClientes, recientesCitas] = await Promise.all([
-        db
-            .select({ count: count() })
-            .from(appointments)
-            .where(
-                and(
-                    eq(appointments.tenantId, businessId),
-                    eq(appointments.date, todayStr)
+    const [citasHoy, citasEnEspera, ingresosHoy, totalClientes, recientesCitas] =
+        await Promise.all([
+            db
+                .select({ count: count() })
+                .from(appointments)
+                .where(
+                    and(
+                        eq(appointments.tenantId, businessId),
+                        eq(appointments.date, todayStr)
+                    )
                 )
-            )
-            .then((rows) => rows[0]),
-        db
-            .select({ total: sum(payments.amount) })
-            .from(payments)
-            .where(
-                and(
-                    eq(payments.tenantId, businessId),
-                    eq(payments.status, "completed"),
-                    gte(payments.paidAt, startOfDay),
-                    lt(payments.paidAt, endOfDay)
+                .then((rows) => rows[0]),
+            db
+                .select({ count: count() })
+                .from(appointments)
+                .where(
+                    and(
+                        eq(appointments.tenantId, businessId),
+                        eq(appointments.date, todayStr),
+                        eq(appointments.status, "waiting")
+                    )
                 )
-            )
-            .then((rows) => rows[0]),
-        db
-            .select({ count: count() })
-            .from(users)
-            .where(
-                and(
-                    eq(users.tenantId, businessId),
-                    eq(users.role, "CLIENT")
+                .then((rows) => rows[0]),
+            db
+                .select({ total: sum(payments.amount) })
+                .from(payments)
+                .where(
+                    and(
+                        eq(payments.tenantId, businessId),
+                        eq(payments.status, "completed"),
+                        gte(payments.paidAt, startOfDay),
+                        lt(payments.paidAt, endOfDay)
+                    )
                 )
-            )
-            .then((rows) => rows[0]),
-        db
-            .select({
-                id: appointments.id,
-                serviceName: appointments.serviceName,
-                startTime: appointments.startTime,
-                status: appointments.status,
-                clientName: users.name,
-            })
-            .from(appointments)
-            .leftJoin(users, eq(appointments.clientId, users.id))
-            .where(
-                and(
-                    eq(appointments.tenantId, businessId),
-                    eq(appointments.date, todayStr)
-                )
-            )
-            .orderBy(desc(appointments.createdAt))
-            .limit(5),
-    ]);
+                .then((rows) => rows[0]),
+            db
+                .select({ count: count() })
+                .from(users)
+                .where(and(eq(users.tenantId, businessId), eq(users.role, "CLIENT")))
+                .then((rows) => rows[0]),
+            db
+                .select({
+                    id: appointments.id,
+                    serviceName: appointments.serviceName,
+                    startTime: appointments.startTime,
+                    status: appointments.status,
+                    clientName: users.name,
+                })
+                .from(appointments)
+                .leftJoin(users, eq(appointments.clientId, users.id))
+                .where(eq(appointments.tenantId, businessId))
+                .orderBy(desc(appointments.createdAt))
+                .limit(5),
+        ]);
 
     const ingresos = Number(ingresosHoy?.total ?? 0);
     const citasHoyCount = Number(citasHoy?.count ?? 0);
+    const citasEnEsperaCount = Number(citasEnEspera?.count ?? 0);
     const totalClientesCount = Number(totalClientes?.count ?? 0);
 
-    const translateAppointmentStatus = (status: string) => {
-        const map: Record<string, string> = {
-            pending: "Pendiente",
-            confirmed: "Confirmado",
-            waiting: "En espera",
-            in_progress: "En progreso",
-            completed: "Completado",
-            cancelled: "Cancelado",
-            no_show: "No asistió",
-        };
-        return map[status] || status;
+    const statusLabel: Record<string, string> = {
+        pending: "Pendiente",
+        confirmed: "Confirmado",
+        waiting: "En espera",
+        in_progress: "En progreso",
+        completed: "Completado",
+        cancelled: "Cancelado",
+        no_show: "No asistio",
     };
 
-    const getStatusColor = (status: string) => {
+    const statusClass = (status: string) => {
         switch (status) {
-            case "completed": return "text-[#10b981]";
-            case "waiting": return "text-amber-500";
-            case "in_progress": return "text-blue-500";
-            case "cancelled": case "no_show": return "text-destructive";
-            default: return "text-primary";
+            case "completed":
+                return "text-[#10b981] bg-[#10b981]/10";
+            case "waiting":
+                return "text-amber-500 bg-amber-500/10";
+            case "in_progress":
+                return "text-blue-500 bg-blue-500/10";
+            case "cancelled":
+            case "no_show":
+                return "text-destructive bg-destructive/10";
+            default:
+                return "text-muted-foreground bg-foreground/5 dark:bg-white/5";
         }
     };
 
     return (
         <>
-            {/* 4 Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Ingresos Hoy</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{`$${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 0 })}`}</span>
-                </div>
-                <span className="text-muted-foreground text-[13px] font-medium mt-4">MXN · Módulo Servicios</span>
-              </div>
-              
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Citas / Hoy</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{citasHoyCount}</span>
-                </div>
-                {citasHoyCount > 0 && (
-                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Citas programadas para hoy</span>
-                )}
-              </div>
-
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Clientes Registrados</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{totalClientesCount}</span>
-                </div>
-                {totalClientesCount > 0 && (
-                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Clientes vinculados</span>
-                )}
-              </div>
-
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">En Espera / Hoy</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">0</span>
-                </div>
-                {citasHoyCount > 0 && (
-                    <span className="text-muted-foreground text-[13px] font-medium mt-4">
-                        Sin pacientes en espera
-                    </span>
-                )}
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <StatCard
+                    icon={<CreditCard className="w-5 h-5 text-muted-foreground" />}
+                    label="Ingresos hoy"
+                    value={formatMoney(ingresos)}
+                    footer="MXN · Modulo Servicios"
+                />
+                <StatCard
+                    icon={<Calendar className="w-5 h-5 text-muted-foreground" />}
+                    label="Citas de hoy"
+                    value={citasHoyCount}
+                    footer={citasHoyCount > 0 ? "Citas programadas para hoy" : null}
+                />
+                <StatCard
+                    icon={<Users className="w-5 h-5 text-muted-foreground" />}
+                    label="Clientes registrados"
+                    value={totalClientesCount}
+                    footer={totalClientesCount > 0 ? "Clientes vinculados" : null}
+                />
+                <StatCard
+                    icon={<Clock className="w-5 h-5 text-muted-foreground" />}
+                    label="En espera hoy"
+                    value={citasEnEsperaCount}
+                    footer={citasEnEsperaCount > 0 ? "Atencion pendiente" : null}
+                />
             </div>
 
-            {/* Middle Row (3 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {[
-                {
-                    icon: <Calendar className="w-5 h-5 text-muted-foreground" />,
-                    title: "Agenda inteligente",
-                    sub: citasHoyCount > 0 ? "Citas programadas para hoy" : "Sin citas programadas hoy",
-                    pillText: citasHoyCount > 0 ? `${citasHoyCount} activas` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-                {
-                    icon: <CreditCard className="w-5 h-5 text-muted-foreground" />,
-                    title: "Pagos procesados",
-                    sub: ingresos > 0 ? "Ingresos confirmados hoy" : "Sin pagos procesados hoy",
-                    pillText: ingresos > 0 ? `$${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 0 })}` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-                {
-                    icon: <Users className="w-5 h-5 text-muted-foreground" />,
-                    title: "Portal de clientes",
-                    sub: totalClientesCount > 0 ? "Clientes registrados" : "Sin clientes registrados",
-                    pillText: totalClientesCount > 0 ? `${totalClientesCount} clientes` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-              ].map((card, i) => (
-                <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
-                  <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
-                        {card.icon}
-                      </div>
-                      {card.pillText && (
-                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
-                      )}
-                  </div>
-                  <div>
-                    <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
-                    <p className="text-muted-foreground text-[13px] font-medium">{card.sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PlanUsageMeters tenantId={tenantId} plan={plan} />
 
-            {/* Bottom Table */}
-            <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
-              <div className="min-w-[600px]">
-                  <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
-                      <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">Actividad Reciente</h3>
-                      <button className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
-                          Ver todos <span className="text-lg leading-none">→</span>
-                      </button>
-                  </div>
-                  <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
-                    <div>Cliente</div>
-                    <div>Servicio</div>
-                    <div>Hora</div>
-                    <div>Estado</div>
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    {recientesCitas.length === 0 ? (
-                        <div className="py-8 text-center text-muted-foreground text-sm">
-                            No hay citas recientes registradas.
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)] gap-6">
+                <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col overflow-x-auto">
+                    <div className="min-w-[600px]">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                            <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
+                                Actividad reciente
+                            </h3>
+                            <Link
+                                href="/dashboard/citas"
+                                className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                            >
+                                Ver todos <ArrowRight className="w-4 h-4" />
+                            </Link>
                         </div>
-                    ) : (
-                        recientesCitas.map((cita) => {
-                            let timeFormatted = cita.startTime;
-                            if (timeFormatted) {
-                                const parts = timeFormatted.split(":");
-                                if (parts.length >= 2) {
-                                    let h = parseInt(parts[0], 10);
-                                    const ampm = h >= 12 ? 'PM' : 'AM';
-                                    h = h % 12;
-                                    h = h ? h : 12; 
-                                    timeFormatted = `${h}:${parts[1]} ${ampm}`;
-                                }
-                            }
+                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
+                            <div>Cliente</div>
+                            <div>Servicio</div>
+                            <div>Hora</div>
+                            <div>Estado</div>
+                        </div>
 
-                            return (
-                                <div key={cita.id} className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0">
-                                  <div className="text-foreground text-[14px] font-bold">{cita.clientName || 'Cliente Anónimo'}</div>
-                                  <div className="text-muted-foreground text-[14px]">{cita.serviceName}</div>
-                                  <div className="text-muted-foreground text-[14px]">{timeFormatted}</div>
-                                  <div>
-                                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
-                                          cita.status === 'completed' ? 'text-[#10b981] bg-[#10b981]/10' :
-                                          cita.status === 'waiting' ? 'text-amber-500 bg-amber-500/10' :
-                                          cita.status === 'in_progress' ? 'text-blue-500 bg-blue-500/10' :
-                                          'text-destructive bg-destructive/10'
-                                      }`}>
-                                          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                          {translateAppointmentStatus(cita.status)}
-                                      </span>
-                                  </div>
+                        {recientesCitas.length === 0 ? (
+                            <EmptyActivity message="Las citas y actividades apareceran aqui." />
+                        ) : (
+                            recientesCitas.map((cita) => (
+                                <div
+                                    key={cita.id}
+                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
+                                >
+                                    <div className="text-foreground text-[14px] font-bold">
+                                        {cita.clientName || "Cliente anonimo"}
+                                    </div>
+                                    <div className="text-muted-foreground text-[14px]">
+                                        {cita.serviceName}
+                                    </div>
+                                    <div className="text-muted-foreground text-[14px]">
+                                        {formatTime(cita.startTime)}
+                                    </div>
+                                    <div>
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${statusClass(cita.status)}`}
+                                        >
+                                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                            {statusLabel[cita.status] || cita.status}
+                                        </span>
+                                    </div>
                                 </div>
-                            );
-                        })
-                    )}
-                  </div>
-              </div>
-            </div>
+                            ))
+                        )}
+                    </div>
+                </div>
 
-            <div className="flex flex-wrap gap-4 mt-6">
-                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
-                    <Link href="/dashboard/citas">
-                        <Plus className="w-5 h-5 text-foreground" />
-                        <span className="text-[15px] font-semibold tracking-wide">Nueva Cita</span>
-                    </Link>
-                </Button>
-
-                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
-                    <Link href="/dashboard/horarios">
-                        <Calendar className="w-5 h-5 text-foreground" />
-                        <span className="text-[15px] font-semibold tracking-wide">Horarios</span>
-                    </Link>
-                </Button>
+                <QuickAccessPanel
+                    items={[
+                        {
+                            href: "/dashboard/citas",
+                            title: "Ver citas",
+                            description: "Gestiona la agenda y seguimiento",
+                            icon: <Calendar className="w-5 h-5 text-muted-foreground" />,
+                        },
+                        {
+                            href: "/dashboard/horarios",
+                            title: "Horarios",
+                            description: "Configura disponibilidad del negocio",
+                            icon: <Clock className="w-5 h-5 text-muted-foreground" />,
+                        },
+                        {
+                            href: "/dashboard/clientes",
+                            title: "Ver clientes",
+                            description: "Administra tu base de clientes",
+                            icon: <Users className="w-5 h-5 text-muted-foreground" />,
+                        },
+                    ]}
+                />
             </div>
         </>
     );
 }
 
-async function PymeDashboard({ businessId }: { businessId: string }) {
-    const [orderStats, inventoryStats, recientesPedidos] = await Promise.all([
+async function PymeDashboard({
+    businessId,
+    tenantId,
+    plan,
+}: {
+    businessId: string;
+    tenantId: string;
+    plan: string;
+}) {
+    const now = new Date();
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const [orderStats, inventoryStats, recientesPedidos, ingresosHoy] = await Promise.all([
         getOrderStats(businessId),
         getInventoryStats(businessId),
         db
@@ -377,208 +473,158 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             .where(eq(orders.tenantId, businessId))
             .orderBy(desc(orders.createdAt))
             .limit(5),
+        db
+            .select({ total: sum(orders.total) })
+            .from(orders)
+            .where(
+                and(
+                    eq(orders.tenantId, businessId),
+                    eq(orders.status, "completed"),
+                    gte(orders.createdAt, startOfDay),
+                    lt(orders.createdAt, endOfDay)
+                )
+            )
+            .then((rows) => rows[0]),
     ]);
+
+    const revenue = Number(ingresosHoy?.total ?? 0);
     const hasOrders = orderStats.total > 0;
     const hasProducts = inventoryStats.totalProducts > 0;
 
-    const translateOrderStatus = (status: string) => {
-        const map: Record<string, string> = {
-            pending: "Pendiente",
-            processing: "Procesando",
-            completed: "Completado",
-            cancelled: "Cancelado",
-            refunded: "Reembolsado",
-        };
-        return map[status] || status;
+    const statusLabel: Record<string, string> = {
+        pending: "Pendiente",
+        processing: "Procesando",
+        completed: "Completado",
+        cancelled: "Cancelado",
+        refunded: "Reembolsado",
     };
 
-    const getOrderStatusColor = (status: string) => {
+    const statusClass = (status: string) => {
         switch (status) {
-            case "completed": return "text-[#10b981]";
-            case "processing": return "text-blue-500";
-            case "pending": return "text-amber-500";
-            case "cancelled": case "refunded": return "text-destructive";
-            default: return "text-primary";
+            case "completed":
+                return "text-[#10b981] bg-[#10b981]/10";
+            case "pending":
+                return "text-amber-500 bg-amber-500/10";
+            case "processing":
+                return "text-blue-500 bg-blue-500/10";
+            case "cancelled":
+            case "refunded":
+                return "text-destructive bg-destructive/10";
+            default:
+                return "text-muted-foreground bg-foreground/5 dark:bg-white/5";
         }
     };
 
     return (
         <>
-            {/* 4 Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Ingresos Hoy</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{`$${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 0 })}`}</span>
-                </div>
-                <span className="text-muted-foreground text-[13px] font-medium mt-4">MXN · Módulo PYME</span>
-              </div>
-              
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Pedidos / Pendientes</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{orderStats.pending}</span>
-                </div>
-                {hasOrders && (
-                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Pedidos pendientes</span>
-                )}
-              </div>
-
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Productos en Inventario</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.totalProducts}</span>
-                </div>
-                {hasProducts && (
-                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Productos activos</span>
-                )}
-              </div>
-
-              <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
-                <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Bajo Stock</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.lowStockCount}</span>
-                </div>
-                {hasProducts && (
-                    <span className={inventoryStats.lowStockCount > 0 ? "text-destructive text-[13px] font-medium mt-4" : "text-muted-foreground text-[13px] font-medium mt-4"}>
-                        {inventoryStats.lowStockCount > 0 ? "Atencion requerida" : "Sin alertas de stock"}
-                    </span>
-                )}
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <StatCard
+                    icon={<CreditCard className="w-5 h-5 text-muted-foreground" />}
+                    label="Ingresos hoy"
+                    value={formatMoney(revenue)}
+                    footer="MXN · Modulo PYME"
+                />
+                <StatCard
+                    icon={<ShoppingCart className="w-5 h-5 text-muted-foreground" />}
+                    label="Pedidos pendientes"
+                    value={orderStats.pending}
+                    footer={hasOrders ? "Pedidos pendientes" : null}
+                />
+                <StatCard
+                    icon={<Package className="w-5 h-5 text-muted-foreground" />}
+                    label="Productos en inventario"
+                    value={inventoryStats.totalProducts}
+                    footer={hasProducts ? "Productos activos" : null}
+                />
+                <StatCard
+                    icon={<Package className="w-5 h-5 text-muted-foreground" />}
+                    label="Bajo stock"
+                    value={inventoryStats.lowStockCount}
+                    footer={
+                        hasProducts && inventoryStats.lowStockCount > 0
+                            ? "Atencion requerida"
+                            : null
+                    }
+                />
             </div>
 
-            {/* Middle Row (3 Cards) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              {[
-                {
-                    icon: <ShoppingCart className="w-5 h-5 text-muted-foreground" />,
-                    title: "Pedidos",
-                    sub: hasOrders ? "Pedidos registrados" : "Sin pedidos registrados",
-                    pillText: hasOrders ? `${orderStats.total} pedidos` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-                {
-                    icon: <CreditCard className="w-5 h-5 text-muted-foreground" />,
-                    title: "Pagos procesados",
-                    sub: Number(orderStats.revenue) > 0 ? "Ingresos confirmados" : "Sin pagos procesados",
-                    pillText: Number(orderStats.revenue) > 0 ? `$${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 0 })}` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-                {
-                    icon: <Package className="w-5 h-5 text-muted-foreground" />,
-                    title: "Inventario",
-                    sub: hasProducts ? "Productos registrados" : "Sin productos registrados",
-                    pillText: hasProducts ? `${inventoryStats.totalProducts} productos` : null,
-                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
-                },
-              ].map((card, i) => (
-                <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
-                  <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
-                        {card.icon}
-                      </div>
-                      {card.pillText && (
-                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
-                      )}
-                  </div>
-                  <div>
-                    <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
-                    <p className="text-muted-foreground text-[13px] font-medium">{card.sub}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <PlanUsageMeters tenantId={tenantId} plan={plan} />
 
-            {/* Bottom Table */}
-            <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col mb-8 overflow-x-auto">
-              <div className="min-w-[600px]">
-                  <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
-                      <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">Actividad Reciente</h3>
-                      <button className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
-                          Ver todos <span className="text-lg leading-none">→</span>
-                      </button>
-                  </div>
-                  <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
-                    <div>Cliente</div>
-                    <div>Servicio</div>
-                    <div>Hora</div>
-                    <div>Estado</div>
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    {recientesPedidos.length === 0 ? (
-                        <div className="py-8 text-center text-muted-foreground text-sm">
-                            No hay pedidos recientes registrados.
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)] gap-6">
+                <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col overflow-x-auto">
+                    <div className="min-w-[600px]">
+                        <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                            <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
+                                Actividad reciente
+                            </h3>
+                            <Link
+                                href="/dashboard/pedidos"
+                                className="text-[13px] font-medium text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+                            >
+                                Ver todos <ArrowRight className="w-4 h-4" />
+                            </Link>
                         </div>
-                    ) : (
-                        recientesPedidos.map((pedido) => {
-                            let timeFormatted = "";
-                            if (pedido.createdAt) {
-                                const d = new Date(pedido.createdAt);
-                                let h = d.getHours();
-                                const ampm = h >= 12 ? 'PM' : 'AM';
-                                h = h % 12;
-                                h = h ? h : 12; 
-                                const m = d.getMinutes().toString().padStart(2, '0');
-                                timeFormatted = `${h}:${m} ${ampm}`;
-                            }
+                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
+                            <div>Cliente</div>
+                            <div>Pedido</div>
+                            <div>Hora</div>
+                            <div>Estado</div>
+                        </div>
 
-                            return (
-                                <div key={pedido.id} className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0">
-                                  <div className="text-foreground text-[14px] font-bold">{pedido.clientName || pedido.clientUser || 'Cliente Anónimo'}</div>
-                                  <div className="text-muted-foreground text-[14px]">Pedido <span className="mx-1">•</span> ${Number(pedido.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}</div>
-                                  <div className="text-muted-foreground text-[14px]">{timeFormatted}</div>
-                                  <div>
-                                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${
-                                          pedido.status === 'completed' ? 'text-[#10b981] bg-[#10b981]/10' :
-                                          pedido.status === 'pending' ? 'text-amber-500 bg-amber-500/10' :
-                                          pedido.status === 'processing' ? 'text-blue-500 bg-blue-500/10' :
-                                          'text-destructive bg-destructive/10'
-                                      }`}>
-                                          <span className="w-1.5 h-1.5 rounded-full bg-current"></span>
-                                          {translateOrderStatus(pedido.status)}
-                                      </span>
-                                  </div>
+                        {recientesPedidos.length === 0 ? (
+                            <EmptyActivity message="Los pedidos y actividades apareceran aqui." />
+                        ) : (
+                            recientesPedidos.map((pedido) => (
+                                <div
+                                    key={pedido.id}
+                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
+                                >
+                                    <div className="text-foreground text-[14px] font-bold">
+                                        {pedido.clientName || pedido.clientUser || "Cliente anonimo"}
+                                    </div>
+                                    <div className="text-muted-foreground text-[14px]">
+                                        Pedido <span className="mx-1">·</span>{" "}
+                                        {formatMoney(Number(pedido.total))}
+                                    </div>
+                                    <div className="text-muted-foreground text-[14px]">
+                                        {formatTime(pedido.createdAt)}
+                                    </div>
+                                    <div>
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold ${statusClass(pedido.status)}`}
+                                        >
+                                            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                                            {statusLabel[pedido.status] || pedido.status}
+                                        </span>
+                                    </div>
                                 </div>
-                            );
-                        })
-                    )}
-                  </div>
-              </div>
-            </div>
-
-            {inventoryStats.lowStockCount > 0 && (
-                <div className="border-l-4 border-destructive bg-card rounded-2xl shadow-sm p-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-[0.2em] text-foreground uppercase">
-                        {inventoryStats.lowStockCount} PRODUCTOS CON STOCK BAJO
-                    </span>
-                    <Button asChild variant="outline" size="sm" className="text-[10px] font-bold tracking-[0.2em] uppercase">
-                        <Link href="/dashboard/inventario?lowStock=true">
-                            VER
-                        </Link>
-                    </Button>
+                            ))
+                        )}
+                    </div>
                 </div>
-            )}
 
-            <div className="flex flex-wrap gap-4 mt-6">
-                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
-                    <Link href="/dashboard/pedidos/nuevo">
-                        <Plus className="w-5 h-5 text-foreground" />
-                        <span className="text-[15px] font-semibold tracking-wide">Nuevo Pedido</span>
-                    </Link>
-                </Button>
-                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
-                    <Link href="/dashboard/inventario">
-                        <Package className="w-5 h-5 text-foreground" />
-                        <span className="text-[15px] font-semibold tracking-wide">Ver Inventario</span>
-                    </Link>
-                </Button>
-                <Button asChild className="rounded-full bg-card/40 dark:bg-white/5 backdrop-blur-md border border-border/50 shadow-[inset_0_1px_1px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] hover:bg-card/60 dark:hover:bg-white/10 text-foreground transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(0,0,0,0.05)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95 h-12 px-6 flex items-center gap-2">
-                    <Link href="/dashboard/pedidos">
-                        <ShoppingCart className="w-5 h-5 text-foreground" />
-                        <span className="text-[15px] font-semibold tracking-wide">Ver Pedidos</span>
-                    </Link>
-                </Button>
+                <QuickAccessPanel
+                    items={[
+                        {
+                            href: "/dashboard/pedidos",
+                            title: "Ver pedidos",
+                            description: "Gestiona y da seguimiento a tus pedidos",
+                            icon: <ShoppingCart className="w-5 h-5 text-muted-foreground" />,
+                        },
+                        {
+                            href: "/dashboard/inventario",
+                            title: "Ver inventario",
+                            description: "Revisa tu inventario de productos",
+                            icon: <Package className="w-5 h-5 text-muted-foreground" />,
+                        },
+                        {
+                            href: "/dashboard/clientes",
+                            title: "Ver clientes",
+                            description: "Administra tu base de clientes",
+                            icon: <Users className="w-5 h-5 text-muted-foreground" />,
+                        },
+                    ]}
+                />
             </div>
         </>
     );
