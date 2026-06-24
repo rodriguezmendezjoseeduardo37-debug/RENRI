@@ -168,6 +168,8 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
     ]);
 
     const ingresos = Number(ingresosHoy?.total ?? 0);
+    const citasHoyCount = Number(citasHoy?.count ?? 0);
+    const totalClientesCount = Number(totalClientes?.count ?? 0);
 
     const translateAppointmentStatus = (status: string) => {
         const map: Record<string, string> = {
@@ -207,17 +209,21 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
               <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
                 <div>
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Citas / Hoy</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{citasHoy?.count ?? 0}</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{citasHoyCount}</span>
                 </div>
-                <span className="text-[#10b981] text-[13px] font-medium mt-4 flex items-center gap-1">↗ +2 vs ayer</span>
+                {citasHoyCount > 0 && (
+                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Citas programadas para hoy</span>
+                )}
               </div>
 
               <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
                 <div>
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Clientes Registrados</span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">{totalClientes?.count ?? 0}</span>
+                    <span className="text-foreground text-4xl font-bold tracking-tight block">{totalClientesCount}</span>
                 </div>
-                <span className="text-muted-foreground text-[13px] font-medium mt-4">Sin cambios</span>
+                {totalClientesCount > 0 && (
+                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Clientes vinculados</span>
+                )}
               </div>
 
               <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
@@ -225,25 +231,47 @@ async function ServiciosDashboard({ businessId }: { businessId: string }) {
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">En Espera / Hoy</span>
                     <span className="text-foreground text-4xl font-bold tracking-tight block">0</span>
                 </div>
-                <span className="text-[#10b981] text-[13px] font-medium mt-4">
-                    Todo en orden
-                </span>
+                {citasHoyCount > 0 && (
+                    <span className="text-muted-foreground text-[13px] font-medium mt-4">
+                        Sin pacientes en espera
+                    </span>
+                )}
               </div>
             </div>
 
             {/* Middle Row (3 Cards) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon: <Calendar className="w-5 h-5 text-muted-foreground" />, title: "Agenda inteligente", sub: "Citas programadas para hoy", pillText: "24 activas", pillColor: "text-[#10b981] bg-[#10b981]/10" },
-                { icon: <CreditCard className="w-5 h-5 text-muted-foreground" />, title: "Pagos procesados", sub: "Última: hace 12 min", pillText: "8 transacciones", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
-                { icon: <Users className="w-5 h-5 text-muted-foreground" />, title: "Portal de clientes", sub: "3 registros nuevos", pillText: "+3 hoy", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
+                {
+                    icon: <Calendar className="w-5 h-5 text-muted-foreground" />,
+                    title: "Agenda inteligente",
+                    sub: citasHoyCount > 0 ? "Citas programadas para hoy" : "Sin citas programadas hoy",
+                    pillText: citasHoyCount > 0 ? `${citasHoyCount} activas` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
+                {
+                    icon: <CreditCard className="w-5 h-5 text-muted-foreground" />,
+                    title: "Pagos procesados",
+                    sub: ingresos > 0 ? "Ingresos confirmados hoy" : "Sin pagos procesados hoy",
+                    pillText: ingresos > 0 ? `$${ingresos.toLocaleString("es-MX", { minimumFractionDigits: 0 })}` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
+                {
+                    icon: <Users className="w-5 h-5 text-muted-foreground" />,
+                    title: "Portal de clientes",
+                    sub: totalClientesCount > 0 ? "Clientes registrados" : "Sin clientes registrados",
+                    pillText: totalClientesCount > 0 ? `${totalClientesCount} clientes` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
               ].map((card, i) => (
                 <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
                   <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
                         {card.icon}
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
+                      {card.pillText && (
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
+                      )}
                   </div>
                   <div>
                     <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
@@ -350,6 +378,8 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
             .orderBy(desc(orders.createdAt))
             .limit(5),
     ]);
+    const hasOrders = orderStats.total > 0;
+    const hasProducts = inventoryStats.totalProducts > 0;
 
     const translateOrderStatus = (status: string) => {
         const map: Record<string, string> = {
@@ -389,7 +419,9 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Pedidos / Pendientes</span>
                     <span className="text-foreground text-4xl font-bold tracking-tight block">{orderStats.pending}</span>
                 </div>
-                <span className="text-[#10b981] text-[13px] font-medium mt-4 flex items-center gap-1">↗ +4 vs ayer</span>
+                {hasOrders && (
+                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Pedidos pendientes</span>
+                )}
               </div>
 
               <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
@@ -397,7 +429,9 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Productos en Inventario</span>
                     <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.totalProducts}</span>
                 </div>
-                <span className="text-muted-foreground text-[13px] font-medium mt-4">Sin cambios</span>
+                {hasProducts && (
+                    <span className="text-muted-foreground text-[13px] font-medium mt-4">Productos activos</span>
+                )}
               </div>
 
               <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
@@ -405,25 +439,47 @@ async function PymeDashboard({ businessId }: { businessId: string }) {
                     <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">Bajo Stock</span>
                     <span className="text-foreground text-4xl font-bold tracking-tight block">{inventoryStats.lowStockCount}</span>
                 </div>
-                <span className={inventoryStats.lowStockCount === 0 ? "text-[#10b981] text-[13px] font-medium mt-4" : "text-destructive text-[13px] font-medium mt-4"}>
-                    {inventoryStats.lowStockCount === 0 ? "Todo en orden" : "Atención requerida"}
-                </span>
+                {hasProducts && (
+                    <span className={inventoryStats.lowStockCount > 0 ? "text-destructive text-[13px] font-medium mt-4" : "text-muted-foreground text-[13px] font-medium mt-4"}>
+                        {inventoryStats.lowStockCount > 0 ? "Atencion requerida" : "Sin alertas de stock"}
+                    </span>
+                )}
               </div>
             </div>
 
             {/* Middle Row (3 Cards) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               {[
-                { icon: <Calendar className="w-5 h-5 text-muted-foreground" />, title: "Agenda inteligente", sub: "Citas programadas para hoy", pillText: "24 activas", pillColor: "text-[#10b981] bg-[#10b981]/10" },
-                { icon: <CreditCard className="w-5 h-5 text-muted-foreground" />, title: "Pagos procesados", sub: "Última: hace 12 min", pillText: "8 transacciones", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
-                { icon: <Users className="w-5 h-5 text-muted-foreground" />, title: "Portal de clientes", sub: "3 registros nuevos", pillText: "+3 hoy", pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5" },
+                {
+                    icon: <ShoppingCart className="w-5 h-5 text-muted-foreground" />,
+                    title: "Pedidos",
+                    sub: hasOrders ? "Pedidos registrados" : "Sin pedidos registrados",
+                    pillText: hasOrders ? `${orderStats.total} pedidos` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
+                {
+                    icon: <CreditCard className="w-5 h-5 text-muted-foreground" />,
+                    title: "Pagos procesados",
+                    sub: Number(orderStats.revenue) > 0 ? "Ingresos confirmados" : "Sin pagos procesados",
+                    pillText: Number(orderStats.revenue) > 0 ? `$${Number(orderStats.revenue).toLocaleString("es-MX", { minimumFractionDigits: 0 })}` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
+                {
+                    icon: <Package className="w-5 h-5 text-muted-foreground" />,
+                    title: "Inventario",
+                    sub: hasProducts ? "Productos registrados" : "Sin productos registrados",
+                    pillText: hasProducts ? `${inventoryStats.totalProducts} productos` : null,
+                    pillColor: "text-muted-foreground bg-foreground/5 dark:bg-white/5",
+                },
               ].map((card, i) => (
                 <div key={i} className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col gap-8 hover:ring-border transition-all">
                   <div className="flex items-center justify-between">
                       <div className="w-10 h-10 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center">
                         {card.icon}
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
+                      {card.pillText && (
+                          <span className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ${card.pillColor}`}>{card.pillText}</span>
+                      )}
                   </div>
                   <div>
                     <h3 className="text-foreground text-[16px] font-bold mb-1">{card.title}</h3>
