@@ -7,13 +7,13 @@ describe('Button', () => {
         render(<Button>Click me</Button>);
         const button = screen.getByRole('button', { name: /click me/i });
         expect(button).toBeInTheDocument();
-        expect(button).toHaveClass('bg-primary text-primary-foreground h-12');
+        expect(button).toHaveClass('liquid-button h-12');
     });
 
     it('renders destructive variant', () => {
         render(<Button variant="destructive">Delete</Button>);
         const button = screen.getByRole('button', { name: /delete/i });
-        expect(button).toHaveClass('bg-destructive text-destructive-foreground');
+        expect(button).toHaveClass('liquid-button');
     });
 
     it('can be disabled', () => {

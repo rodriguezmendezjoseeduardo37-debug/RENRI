@@ -20,13 +20,13 @@ export function ServiceCard({
             onClick={onClick}
             className={`w-full text-left p-6 border transition-all duration-300 relative overflow-hidden group hover:-translate-y-1 block rounded-2xl ${
                 selected
-                    ? "border-[#08b6ff] bg-[#08b6ff]/5 shadow-sm"
-                    : "border-border bg-card hover:border-[#08b6ff]/30 hover:bg-muted"
+                    ? "border-foreground bg-foreground/5 shadow-sm"
+                    : "border-border bg-card hover:border-foreground/30 hover:bg-muted"
             }`}
         >
             {/* Ambient inner glow when selected */}
             {selected && (
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#08b6ff]/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-foreground/5 to-transparent pointer-events-none" />
             )}
 
             <div className="flex items-start justify-between relative z-10 w-full">
@@ -38,7 +38,7 @@ export function ServiceCard({
                     >
                         {name}
                     </h3>
-                    
+
                     {price ? (
                         <p
                             className={`mt-3 text-sm font-bold font-mono transition-colors duration-300 ${
@@ -54,10 +54,10 @@ export function ServiceCard({
                     )}
                 </div>
 
-                <div 
+                <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center transition-all duration-500 flex-shrink-0 ${
-                        selected 
-                        ? "bg-[#08b6ff] text-black scale-100 opacity-100" 
+                        selected
+                        ? "liquid-button scale-100 opacity-100"
                         : "bg-muted text-transparent scale-75 opacity-0 group-hover:opacity-50"
                     }`}
                 >

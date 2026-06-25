@@ -11,16 +11,16 @@ export function SocialProof() {
           Diseñado para los profesionistas y negocios de hoy
         </p>
         <div className="flex flex-wrap justify-center items-center gap-8 sm:gap-16 opacity-60">
-          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-[#12b4ff] transition-colors cursor-default">
+          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-foreground transition-colors cursor-default">
             <Stethoscope className="w-6 h-6" /> Clínicas
           </div>
-          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-[#12b4ff] transition-colors cursor-default">
+          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-foreground transition-colors cursor-default">
             <BriefcaseMedical className="w-6 h-6" /> Consultorios
           </div>
-          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-[#12b4ff] transition-colors cursor-default">
+          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-foreground transition-colors cursor-default">
             <Scissors className="w-6 h-6" /> Salones
           </div>
-          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-[#12b4ff] transition-colors cursor-default">
+          <div className="flex items-center gap-2 text-gray-400 font-semibold text-lg hover:text-foreground transition-colors cursor-default">
             <Wrench className="w-6 h-6" /> Servicios
           </div>
         </div>

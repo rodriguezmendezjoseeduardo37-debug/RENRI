@@ -96,7 +96,7 @@ export function UserMenu({ accountType }: { accountType?: string }) {
                 <DropdownMenuSeparator className="bg-border" />
 
                 <DropdownMenuItem
-                    className="cursor-pointer text-red-500 dark:text-red-400 hover:bg-accent focus:text-red-500 dark:focus:text-red-400"
+                    className="cursor-pointer text-foreground dark:text-foreground hover:bg-accent focus:text-foreground dark:focus:text-foreground"
                     onClick={() => signOut({ callbackUrl: "/login" })}
                 >
                     <LogOut className="mr-2 h-4 w-4" />

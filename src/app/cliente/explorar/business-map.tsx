@@ -29,7 +29,7 @@ function createSvgIcon(color: string, isSelected: boolean) {
 function createUserIcon() {
     const svg = `
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-            <circle cx="10" cy="10" r="8" fill="#08b6ff" stroke="#fff" stroke-width="3"/>
+            <circle cx="10" cy="10" r="8" fill="#0a0a0a" stroke="#fff" stroke-width="3"/>
             <circle cx="10" cy="10" r="3" fill="#fff"/>
         </svg>
     `;
@@ -222,8 +222,8 @@ export default function BusinessMap({
             const icon = isSelected
                 ? createSvgIcon("#f59e0b", true)
                 : biz.isLinked
-                ? createSvgIcon("#10b981", false)
-                : createSvgIcon("#08b6ff", false);
+                ? createSvgIcon("#0a0a0a", false)
+                : createSvgIcon("#0a0a0a", false);
 
             const marker = L.marker([biz.lat, biz.lng], { icon })
                 .bindPopup(popupHtml(biz))
@@ -268,11 +268,11 @@ export default function BusinessMap({
             {/* Legend */}
             <div className="flex flex-wrap items-center gap-4 mt-3 px-1">
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#08b6ff]" />
+                    <div className="w-3 h-3 rounded-full bg-foreground" />
                     <span className="text-[10px] text-muted-foreground tracking-wider">NEGOCIO</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#10b981]" />
+                    <div className="w-3 h-3 rounded-full bg-foreground" />
                     <span className="text-[10px] text-muted-foreground tracking-wider">ENLAZADO</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export default function BusinessMap({
                     <span className="text-[10px] text-muted-foreground tracking-wider">SELECCIONADO</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#08b6ff] ring-2 ring-white" />
+                    <div className="w-3 h-3 rounded-full bg-foreground ring-2 ring-white" />
                     <span className="text-[10px] text-muted-foreground tracking-wider">TU UBICACIÓN</span>
                 </div>
             </div>

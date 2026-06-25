@@ -43,12 +43,12 @@ export default async function StripeConnectPage({
 
             {/* Success / Error banners */}
             {params.success && (
-                <div className="border border-border bg-card px-5 py-3 text-sm text-green-400 tracking-wide">
+                <div className="border border-border bg-card px-5 py-3 text-sm text-foreground tracking-wide">
                     ✅ Cuenta Stripe conectada exitosamente. Los pagos ahora van a tu cuenta.
                 </div>
             )}
             {params.error && (
-                <div className="border border-border bg-accent px-5 py-3 text-sm text-red-400 tracking-wide">
+                <div className="border border-border bg-accent px-5 py-3 text-sm text-foreground tracking-wide">
                     ❌ Error al conectar: {decodeURIComponent(params.error)}
                 </div>
             )}

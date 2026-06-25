@@ -21,7 +21,7 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
         return (
             <div className="flex flex-col items-center justify-center h-64 ring-1 ring-border rounded-2xl bg-card shadow-sm">
                 <p className="text-muted-foreground font-mono uppercase tracking-widest text-sm">REFERENCIA NO ENCONTRADA</p>
-                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 ring-1 ring-border rounded-xl hover:ring-[#12b4ff] hover:text-foreground text-muted-foreground transition-all text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
+                <Link href="/dashboard/pagos" className="mt-4 px-4 py-2 liquid-control rounded-full text-muted-foreground hover:text-foreground transition-all text-xs font-bold tracking-[0.2em] uppercase">VOLVER AL LISTADO</Link>
             </div>
         );
     }
@@ -65,7 +65,7 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                                 <div className="flex items-center gap-2 mt-1">
                                     {payment.status === "completed" && <CheckCircle2 className="w-4 h-4 text-foreground" />}
                                     {payment.status === "pending" && <Clock className="w-4 h-4 text-muted-foreground" />}
-                                    {payment.status === "failed" && <XCircle className="w-4 h-4 text-red-500" />}
+                                    {payment.status === "failed" && <XCircle className="w-4 h-4 text-foreground" />}
                                     <span className={`text-[11px] font-bold tracking-[0.2em] uppercase ${payment.status === "completed" ? "text-foreground" : "text-muted-foreground"}`}>
                                         {payment.status}
                                     </span>
@@ -91,7 +91,7 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
 
                         <Link
                             href={`/dashboard/${payment.referenceType === "appointment" ? "citas" : "pedidos"}/${payment.referenceId}`}
-                            className="w-full flex items-center justify-center gap-2 py-3 ring-1 ring-border rounded-xl text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:ring-[#12b4ff] hover:text-foreground transition-all uppercase shadow-sm"
+                            className="w-full flex items-center justify-center gap-2 py-3 liquid-control rounded-full text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground transition-all uppercase shadow-sm"
                         >
                             <FileText className="w-3.5 h-3.5" />
                             VER REFERENCIA ASOCIADA
@@ -129,10 +129,10 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
                         </>
                     ) : (
                         <div className="h-full ring-1 ring-border bg-card rounded-2xl p-8 flex flex-col items-center justify-center text-center space-y-4 shadow-sm">
-                            <div className="w-16 h-16 rounded-full bg-[#12b4ff]/20 flex items-center justify-center ring-1 ring-[#12b4ff]/30">
-                                <CheckCircle2 className="w-8 h-8 text-[#12b4ff]" />
+                            <div className="w-16 h-16 rounded-full bg-foreground/20 flex items-center justify-center ring-1 ring-foreground/30">
+                                <CheckCircle2 className="w-8 h-8 text-foreground" />
                             </div>
-                            <h3 className="text-xl font-bold tracking-[0.2em] text-[#12b4ff] uppercase">
+                            <h3 className="text-xl font-bold tracking-[0.2em] text-foreground uppercase">
                                 PAGO COMPLETADO
                             </h3>
                             <p className="text-muted-foreground text-xs uppercase tracking-widest font-mono">

@@ -85,14 +85,14 @@ export function AppointmentCalendar({
                                     }
                                 >
                                     {slotApts.map((apt) => {
-                                        const bgColor = apt.status === "confirmed" || apt.status === "completed" 
-                                            ? "bg-[#12b4ff]/15 text-[#12b4ff] border-[#12b4ff]/30 rounded-xl" 
-                                            : apt.status === "cancelled" 
-                                            ? "bg-red-600/15 text-red-500 border-red-500/30 rounded-xl"
+                                        const bgColor = apt.status === "confirmed" || apt.status === "completed"
+                                            ? "bg-foreground/15 text-foreground border-foreground/30 rounded-xl"
+                                            : apt.status === "cancelled"
+                                            ? "bg-foreground/15 text-foreground border-border/30 rounded-xl"
                                             : apt.status === "pending"
-                                            ? "bg-[#12b4ff]/10 text-[#12b4ff]/70 border-[#12b4ff]/20 rounded-xl"
+                                            ? "bg-foreground/10 text-foreground/70 border-foreground/20 rounded-xl"
                                             : "bg-foreground/5 text-foreground border-transparent rounded-xl";
-                                        
+
                                         return (
                                         <div
                                             key={apt.id}

@@ -118,7 +118,7 @@ function CheckoutForm({ onSuccess }: CheckoutFormProps) {
             <button
                 type="submit"
                 disabled={isLoading || !stripe || !elements || !elementReady}
-                className="w-full bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#12b4ff]/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
+                className="w-full liquid-button rounded-full shadow-sm hover:bg-foreground/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
             >
                 {isLoading ? "CARGANDO..." : "PAGAR AHORA"}
             </button>
@@ -157,7 +157,7 @@ export function StripeCheckoutWrapper({ paymentId, onSuccess }: { paymentId: str
                 <button
                     onClick={initializePayment}
                     disabled={isInitializing}
-                    className="px-6 py-3 ring-1 ring-border rounded-xl text-foreground text-[10px] font-bold tracking-[0.2em] uppercase hover:ring-[#12b4ff] hover:text-[#12b4ff] transition-all disabled:opacity-50"
+                    className="px-6 py-3 liquid-control rounded-full text-foreground text-[10px] font-bold tracking-[0.2em] uppercase hover:ring-foreground hover:text-foreground transition-all disabled:opacity-50"
                 >
                     {isInitializing ? "CONECTANDO STRIPE..." : "INICIAR TERMINAL DIGITAL"}
                 </button>

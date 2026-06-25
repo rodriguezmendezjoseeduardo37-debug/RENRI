@@ -24,17 +24,17 @@ export function AppointmentCard({
 }: AppointmentCardProps) {
     const borderColor =
         appointment.status === "confirmed" || appointment.status === "completed"
-            ? "border-l-[#12b4ff]"
+            ? "border-l-foreground"
             : appointment.status === "pending"
-                ? "border-l-[#12b4ff]/50"
+                ? "border-l-foreground/50"
                 : appointment.status === "cancelled"
-                    ? "border-l-red-500"
-                    : "border-l-[#333333]";
+                    ? "border-l-foreground"
+                    : "border-l-muted-foreground/70";
 
     return (
         <div className="relative">
             <div
-                className={`bg-card border-l-2 ${borderColor} p-4 md:px-6 md:py-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 ring-1 ring-border hover:ring-[#12b4ff]/30 transition-all`}
+                className={`bg-card border-l-2 ${borderColor} p-4 md:px-6 md:py-5 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 ring-1 ring-border hover:ring-foreground/30 transition-all`}
             >
                 {/* Left: client + service */}
                 <div className="flex-1 min-w-0">
@@ -69,7 +69,7 @@ export function AppointmentCard({
                         {appointment.status === "pending" && onConfirm && (
                             <button
                                 onClick={onConfirm}
-                                className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase bg-[#12b4ff] text-black rounded-xl hover:opacity-90 shadow-[0_0_15px_rgba(18,180,255,0.15)] transition-all"
+                                className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase liquid-button rounded-full hover:opacity-90 shadow-sm transition-all"
                             >
                                 CONFIRMAR
                             </button>
@@ -79,14 +79,14 @@ export function AppointmentCard({
                             onCancel && (
                                 <button
                                     onClick={onCancel}
-                                    className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:border-red-500/50 hover:text-red-400 transition-all"
+                                    className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase liquid-control text-muted-foreground rounded-full hover:border-border/50 hover:text-foreground transition-all"
                                 >
                                     CANCELAR
                                 </button>
                             )}
                         <Link
                             href={`/dashboard/citas/${appointment.id}`}
-                            className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:border-[#12b4ff]/50 hover:text-foreground transition-all"
+                            className="px-3 py-1.5 text-[10px] font-medium tracking-[0.15em] uppercase liquid-control text-muted-foreground rounded-full hover:border-foreground/50 hover:text-foreground transition-all"
                         >
                             VER
                         </Link>
@@ -96,21 +96,21 @@ export function AppointmentCard({
 
             {/* Inline cancel confirmation */}
             {confirmingCancel && (
-                <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm rounded-2xl border border-red-500/30 flex items-center justify-center gap-4 px-6">
-                    <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm rounded-2xl border border-border/30 flex items-center justify-center gap-4 px-6">
+                    <AlertTriangle className="w-5 h-5 text-foreground flex-shrink-0" />
                     <p className="text-xs font-medium text-foreground tracking-wide">
                         ¿Cancelar esta cita?
                     </p>
                     <div className="flex gap-2">
                         <button
                             onClick={onCancelConfirm}
-                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
+                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase liquid-button rounded-full hover:bg-foreground transition-colors"
                         >
                             SÍ, CANCELAR
                         </button>
                         <button
                             onClick={onCancelDismiss}
-                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
+                            className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-all"
                         >
                             NO
                         </button>

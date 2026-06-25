@@ -31,7 +31,7 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
             <button
                 onClick={handleCancel}
                 disabled={isLoading}
-                className="inline-flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-red-500/30 text-red-500 rounded-xl hover:bg-red-500/10 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-border/30 text-foreground rounded-xl hover:bg-foreground/10 transition-all disabled:opacity-50"
             >
                 {isLoading ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -40,7 +40,7 @@ export function CancelOrderButton({ orderId }: { orderId: string }) {
                 )}
                 Cancelar Compra
             </button>
-            {error && <p className="text-xs text-red-500">{error}</p>}
+            {error && <p className="text-xs text-foreground">{error}</p>}
         </div>
     );
 }

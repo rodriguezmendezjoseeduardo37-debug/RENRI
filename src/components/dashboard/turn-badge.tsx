@@ -6,12 +6,12 @@ interface TurnBadgeProps {
 }
 
 const BADGE_STYLES: Record<BadgeStatus, string> = {
-    confirmed: "bg-green-600/20 text-green-500 border border-green-500/30",
+    confirmed: "bg-foreground/20 text-foreground border border-border/30",
     completed: "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80",
-    pending: "bg-blue-600/20 text-blue-500 border border-blue-500/30",
-    waiting: "bg-blue-600/20 text-blue-500 border border-blue-500/30",
+    pending: "bg-foreground/20 text-foreground border border-border/30",
+    waiting: "bg-foreground/20 text-foreground border border-border/30",
     in_progress: "bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80",
-    cancelled: "bg-red-600/20 text-red-500 border border-red-500/30",
+    cancelled: "bg-foreground/20 text-foreground border border-border/30",
     skipped: "bg-secondary text-muted-foreground",
     no_show: "bg-secondary text-muted-foreground",
 };

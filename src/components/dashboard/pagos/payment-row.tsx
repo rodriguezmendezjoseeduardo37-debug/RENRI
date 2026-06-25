@@ -14,13 +14,13 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
     const getStatusStyle = (status: Payment["status"]) => {
         switch (status) {
             case "completed":
-                return "bg-[#12b4ff]/15 text-[#12b4ff] ring-1 ring-[#12b4ff]/30 rounded-xl font-bold";
+                return "bg-foreground/15 text-foreground ring-1 ring-foreground/30 rounded-xl font-bold";
             case "pending":
             case "processing":
                 return "bg-transparent ring-1 ring-border text-foreground rounded-xl";
             case "failed":
             case "refunded":
-                return "bg-red-500/10 text-red-500 ring-1 ring-red-500/30 rounded-xl line-through";
+                return "bg-foreground/10 text-foreground ring-1 ring-border rounded-xl line-through";
             default:
                 return "bg-card text-muted-foreground";
         }
@@ -72,7 +72,7 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
             <td className="px-6 py-4 text-right">
                 <Link
                     href={`/dashboard/pagos/${payment.id}`}
-                    className="inline-block px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase ring-1 ring-border rounded-xl text-muted-foreground group-hover:ring-[#12b4ff] group-hover:text-foreground transition-all"
+                    className="inline-block px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control rounded-full text-muted-foreground group-hover:ring-foreground group-hover:text-foreground transition-all"
                 >
                     VER
                 </Link>

@@ -65,10 +65,10 @@ export function StripeConnectUI({ status }: StripeConnectUIProps) {
                 {/* Connected Badge */}
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5 text-green-400" />
+                        <CheckCircle2 className="w-5 h-5 text-foreground" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold tracking-[0.15em] text-green-400 uppercase">
+                        <p className="text-sm font-bold tracking-[0.15em] text-foreground uppercase">
                             CUENTA CONECTADA
                         </p>
                         <p className="text-[10px] text-muted-foreground tracking-[0.1em]">
@@ -105,7 +105,7 @@ export function StripeConnectUI({ status }: StripeConnectUIProps) {
                     <button
                         onClick={handleDisconnect}
                         disabled={isDisconnecting}
-                        className="flex items-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-red-500 hover:bg-popover transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-foreground hover:bg-popover transition-colors disabled:opacity-50"
                     >
                         {isDisconnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Unlink className="w-3.5 h-3.5" />}
                         {isDisconnecting ? "DESCONECTANDO..." : "DESCONECTAR"}

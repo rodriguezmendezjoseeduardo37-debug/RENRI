@@ -61,7 +61,7 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="flex-1 bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
+                    className="flex-1 bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-foreground transition-all"
                     style={{ colorScheme: "dark" }}
                 />
                 <input
@@ -69,12 +69,12 @@ export function BlockedDatesManager({ tenantId, staffId, blockedDates }: Blocked
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Motivo (opcional)"
-                    className="flex-[2] bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
+                    className="flex-[2] bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-foreground transition-all"
                 />
                 <button
                     type="submit"
                     disabled={isLoading || !date}
-                    className="bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
+                    className="liquid-button rounded-full shadow-sm hover:bg-foreground/90 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
                 >
                     {isLoading ? "BLOQUEANDO..." : "BLOQUEAR DÍA"}
                 </button>

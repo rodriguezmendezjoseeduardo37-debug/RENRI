@@ -72,7 +72,7 @@ export function ServiciosForm({
         }
     };
 
-    const inputClass = "w-full bg-background ring-1 ring-border rounded-xl text-foreground text-sm px-4 h-12 placeholder:text-muted-foreground focus:outline-none focus:ring-[#12b4ff] transition-all";
+    const inputClass = "w-full bg-background liquid-control rounded-full text-foreground text-sm px-4 h-12 placeholder:text-muted-foreground focus:outline-none focus:ring-foreground transition-all";
     const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
@@ -98,7 +98,7 @@ export function ServiciosForm({
                         return (
                             <div
                                 key={service.id}
-                                className={`bg-card ring-1 rounded-2xl shadow-sm p-6 relative group transition-all ${stripeEatsTooMuch ? "ring-red-900/50" : "ring-border hover:ring-[#12b4ff]/30 hover:shadow-md"}`}
+                                className={`bg-card ring-1 rounded-2xl shadow-sm p-6 relative group transition-all ${stripeEatsTooMuch ? "ring-border" : "ring-border hover:ring-foreground/30 hover:shadow-md"}`}
                             >
                                 <div className="absolute top-4 right-4 text-[10px] font-mono text-foreground">
                                     #{index + 1}
@@ -144,7 +144,7 @@ export function ServiciosForm({
                                             <button
                                                 type="button"
                                                 onClick={() => setServiceToDelete(service.id)}
-                                                className="px-4 h-12 ring-1 ring-border rounded-xl text-muted-foreground hover:text-red-500 hover:ring-red-500 hover:bg-red-500/10 transition-all bg-background"
+                                                className="px-4 h-12 liquid-control rounded-full text-muted-foreground hover:text-foreground hover:ring-foreground hover:bg-foreground/10 transition-all bg-background"
                                                 title="Eliminar servicio"
                                             >
                                                 <Trash2 className="w-4 h-4" />
@@ -154,7 +154,7 @@ export function ServiciosForm({
                                 </div>
                                 
                                 <div className="mt-6">
-                                    <label className="flex items-center gap-3 cursor-pointer p-4 ring-1 ring-border rounded-xl bg-background hover:ring-[#12b4ff]/50 transition-all">
+                                    <label className="flex items-center gap-3 cursor-pointer p-4 ring-1 ring-border rounded-xl bg-background hover:ring-foreground/50 transition-all">
                                         <input
                                             type="checkbox"
                                             checked={!!service.passFeeToClient}
@@ -174,12 +174,12 @@ export function ServiciosForm({
 
                                 {/* Stripe Online Payment Calculation */}
                                 {priceNum > 0 && (
-                                    <div className={`mt-2 p-4 ring-1 rounded-xl flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-red-950/20 ring-red-900/50" : "bg-background ring-border"}`}>
+                                    <div className={`mt-2 p-4 ring-1 rounded-xl flex flex-col gap-2 ${stripeEatsTooMuch ? "bg-foreground/5 ring-border" : "bg-background ring-border"}`}>
                                         <div className="flex items-center justify-between">
                                             <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
                                                 GANANCIA NETA (STRIPE EN LÍNEA)
                                             </span>
-                                            <span className={`text-sm font-bold font-mono ${stripeEatsTooMuch ? "text-red-400" : "text-foreground"}`}>
+                                            <span className={`text-sm font-bold font-mono ${stripeEatsTooMuch ? "text-foreground" : "text-foreground"}`}>
                                                 ${Math.max(0, netProfitWithStripe).toFixed(2)} MXN
                                             </span>
                                         </div>
@@ -190,7 +190,7 @@ export function ServiciosForm({
                                             }
                                         </div>
                                         {stripeEatsTooMuch && (
-                                            <div className="text-[10px] text-red-400 font-medium mt-1">
+                                            <div className="text-[10px] text-foreground font-medium mt-1">
                                                 ⚠️ El costo base de procesamiento reduce tu ganancia drásticamente. Considera activar el traspaso de comisión o requerir pago en efectivo.
                                             </div>
                                         )}
@@ -206,7 +206,7 @@ export function ServiciosForm({
                 <button
                     type="button"
                     onClick={addService}
-                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-[#12b4ff] transition-all"
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-foreground transition-all"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     AÑADIR SERVICIO
@@ -215,7 +215,7 @@ export function ServiciosForm({
                 <button
                     onClick={handleSave}
                     disabled={isLoading}
-                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all disabled:opacity-50"
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:bg-foreground/90 transition-all disabled:opacity-50"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     <Save className="w-3.5 h-3.5" />
@@ -238,14 +238,14 @@ export function ServiciosForm({
                             <button
                                 type="button"
                                 onClick={() => setServiceToDelete(null)}
-                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-[#12b4ff] transition-all"
+                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl shadow-sm hover:ring-foreground transition-all"
                             >
                                 CANCELAR
                             </button>
                             <button
                                 type="button"
                                 onClick={handleConfirmDelete}
-                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-red-900/50 text-red-500 rounded-xl hover:bg-red-950/30 hover:text-red-400 transition-all"
+                                className="flex-1 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-foreground rounded-xl hover:bg-foreground/10 hover:text-foreground transition-all"
                             >
                                 ELIMINAR
                             </button>

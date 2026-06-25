@@ -68,7 +68,7 @@ export function CancelButton({ appointmentId, token }: CancelButtonProps) {
             </button>
 
             {result.state === "error" ? (
-                <p className="text-center text-sm text-red-400">{result.message}</p>
+                <p className="text-center text-sm text-foreground">{result.message}</p>
             ) : null}
         </div>
     );

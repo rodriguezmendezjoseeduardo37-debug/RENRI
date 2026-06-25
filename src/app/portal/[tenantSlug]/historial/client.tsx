@@ -28,8 +28,8 @@ const STATUS_MAP: Record<string, { label: string; icon: typeof CheckCircle; colo
     pending: { label: "PENDIENTE", icon: Clock, color: "text-muted-foreground" },
     confirmed: { label: "CONFIRMADA", icon: CheckCircle, color: "text-foreground" },
     completed: { label: "COMPLETADA", icon: CheckCircle, color: "text-muted-foreground" },
-    cancelled: { label: "CANCELADA", icon: XCircle, color: "text-red-500" },
-    no_show: { label: "NO ASISTIÓ", icon: AlertCircle, color: "text-red-500" },
+    cancelled: { label: "CANCELADA", icon: XCircle, color: "text-foreground" },
+    no_show: { label: "NO ASISTIÓ", icon: AlertCircle, color: "text-foreground" },
 };
 
 export function HistorialClient({

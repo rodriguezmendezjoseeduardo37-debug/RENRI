@@ -17,7 +17,7 @@ export function StaffSelector({ allStaff, targetStaffId }: StaffSelectorProps) {
             onChange={(e) => {
                 router.push(`/dashboard/horarios?staffId=${e.target.value}`);
             }}
-            className="bg-card ring-1 ring-border text-foreground text-[10px] font-bold tracking-[0.2em] p-3 uppercase rounded-xl focus:outline-none focus:ring-[#12b4ff] transition-all"
+            className="bg-card ring-1 ring-border text-foreground text-[10px] font-bold tracking-[0.2em] p-3 uppercase rounded-xl focus:outline-none focus:ring-foreground transition-all"
         >
             {allStaff.map(staff => (
                 <option key={staff.id} value={staff.id}>

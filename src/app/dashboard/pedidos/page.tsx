@@ -50,7 +50,7 @@ export default async function PedidosPage({
                 </div>
                 <Link
                     href="/dashboard/pedidos/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
+                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PEDIDO
@@ -85,13 +85,13 @@ export default async function PedidosPage({
                 <div className="flex gap-[1px]">
                     <Link
                         href={`?view=kanban`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "bg-[#08b6ff] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         KANBAN
                     </Link>
                     <Link
                         href={`?view=list`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "bg-[#08b6ff] text-black rounded-xl shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
+                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         LISTA
                     </Link>
@@ -111,7 +111,7 @@ export default async function PedidosPage({
                     </p>
                     <Link
                         href="/dashboard/pedidos/nuevo"
-                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl shadow-sm hover:opacity-90 transition-all"
+                        className="inline-block mt-4 px-5 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:opacity-90 transition-all"
                     >
                         CREAR PRIMER PEDIDO
                     </Link>

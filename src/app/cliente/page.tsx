@@ -127,19 +127,19 @@ export default async function ClienteDashboardPage() {
                         <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pt-2">
                             <Link
                                 href="/cliente/mis-citas"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl hover:bg-[#00a0e6] shadow-[0_0_20px_rgba(18,180,255,0.2)] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:bg-foreground/90 shadow-sm transition-all"
                             >
                                 VER MIS CITAS
                             </Link>
                             <Link
                                 href="/cliente/disponibilidad"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-all"
                             >
                                 VER HORARIOS
                             </Link>
                             <Link
                                 href="/cliente/mis-pagos"
-                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
+                                className="text-center px-5 sm:px-6 py-3 text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-all"
                             >
                                 VER PAGOS
                             </Link>
@@ -177,14 +177,14 @@ export default async function ClienteDashboardPage() {
                                         <Link
                                             href={`/negocio/${businessId}`}
                                             target="_blank"
-                                            className="inline-flex items-center justify-center gap-2 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#00a0e6] transition-all"
+                                            className="inline-flex items-center justify-center gap-2 liquid-button rounded-full shadow-sm px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-foreground/90 transition-all"
                                         >
                                             ABRIR PORTAL
                                         </Link>
                                     ) : null}
                                     <Link
                                         href="/cliente/enlazar-negocio"
-                                        className="inline-flex items-center justify-center gap-2 border border-border text-muted-foreground rounded-xl px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#12b4ff] transition-all"
+                                        className="inline-flex items-center justify-center gap-2 liquid-control text-muted-foreground rounded-full px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-foreground transition-all"
                                     >
                                         CAMBIAR NEGOCIO
                                     </Link>
@@ -199,7 +199,7 @@ export default async function ClienteDashboardPage() {
                                 </p>
                                 <Link
                                     href="/cliente/enlazar-negocio"
-                                    className="inline-flex items-center justify-center gap-2 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-[#00a0e6] transition-all"
+                                    className="inline-flex items-center justify-center gap-2 liquid-button rounded-full shadow-sm px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase hover:bg-foreground/90 transition-all"
                                 >
                                     ENLAZAR NEGOCIO
                                 </Link>

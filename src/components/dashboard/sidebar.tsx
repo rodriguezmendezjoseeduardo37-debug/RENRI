@@ -42,24 +42,24 @@ interface SidebarProps {
 }
 
 export const NAV_SERVICIOS: NavItem[] = [
-    { href: "/dashboard", icon: Home, label: "INICIO", iconColor: "text-[#12b4ff]" },
-    { href: "/dashboard/servicios", icon: Briefcase, label: "SERVICIOS", iconColor: "text-purple-500" },
-    { href: "/dashboard/citas", icon: Calendar, label: "CITAS", iconColor: "text-[#12b4ff]" },
+    { href: "/dashboard", icon: Home, label: "INICIO", iconColor: "text-foreground" },
+    { href: "/dashboard/servicios", icon: Briefcase, label: "SERVICIOS", iconColor: "text-muted-foreground" },
+    { href: "/dashboard/citas", icon: Calendar, label: "CITAS", iconColor: "text-foreground" },
 
-    { href: "/dashboard/horarios", icon: Clock, label: "HORARIOS", iconColor: "text-rose-500" },
-    { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS", iconColor: "text-[#10b981]" },
-    { href: "/dashboard/clientes", icon: Users, label: "CLIENTES", iconColor: "text-amber-500" },
-    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES", iconColor: "text-indigo-500" },
+    { href: "/dashboard/horarios", icon: Clock, label: "HORARIOS", iconColor: "text-muted-foreground" },
+    { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS", iconColor: "text-foreground" },
+    { href: "/dashboard/clientes", icon: Users, label: "CLIENTES", iconColor: "text-foreground" },
+    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES", iconColor: "text-muted-foreground" },
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION", iconColor: "text-zinc-400" },
 ];
 
 export const NAV_PYME: NavItem[] = [
-    { href: "/dashboard", icon: Home, label: "INICIO", iconColor: "text-[#12b4ff]" },
-    { href: "/dashboard/inventario", icon: Package, label: "INVENTARIO", iconColor: "text-purple-500" },
-    { href: "/dashboard/pedidos", icon: ShoppingCart, label: "PEDIDOS", iconColor: "text-rose-500" },
-    { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS", iconColor: "text-[#10b981]" },
-    { href: "/dashboard/clientes", icon: Users, label: "CLIENTES", iconColor: "text-amber-500" },
-    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES", iconColor: "text-indigo-500" },
+    { href: "/dashboard", icon: Home, label: "INICIO", iconColor: "text-foreground" },
+    { href: "/dashboard/inventario", icon: Package, label: "INVENTARIO", iconColor: "text-muted-foreground" },
+    { href: "/dashboard/pedidos", icon: ShoppingCart, label: "PEDIDOS", iconColor: "text-muted-foreground" },
+    { href: "/dashboard/pagos", icon: CreditCard, label: "PAGOS", iconColor: "text-foreground" },
+    { href: "/dashboard/clientes", icon: Users, label: "CLIENTES", iconColor: "text-foreground" },
+    { href: "/dashboard/reportes", icon: BarChart2, label: "REPORTES", iconColor: "text-muted-foreground" },
     { href: "/dashboard/configuracion", icon: Settings, label: "CONFIGURACION", iconColor: "text-zinc-400" },
 ];
 
@@ -206,11 +206,11 @@ export function Sidebar({
               </span>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3 text-muted-foreground text-[12px] font-medium hover:text-foreground transition-colors cursor-pointer">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
                   SMS Activos
                 </div>
                 <div className="flex items-center gap-3 text-muted-foreground text-[12px] font-medium hover:text-foreground transition-colors cursor-pointer">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-foreground" />
                   Emails Enviados
                 </div>
               </div>

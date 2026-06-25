@@ -49,7 +49,7 @@ export default async function PublicBusinessPage({ params }: Props) {
             <div className="absolute top-4 left-4 z-50">
                 <Link
                     href="/cliente"
-                    className="flex items-center gap-2 px-4 py-2 bg-background/50 backdrop-blur-md border border-border text-[10px] font-bold tracking-[0.2em] text-foreground hover:bg-[#12b4ff] hover:text-black shadow-[0_0_20px_rgba(18,180,255,0)] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:border-[#12b4ff] uppercase transition-all rounded-xl"
+                    className="flex items-center gap-2 px-4 py-2 bg-background/50 backdrop-blur-md border border-border text-[10px] font-bold tracking-[0.2em] text-foreground hover:bg-foreground hover:text-background shadow-none hover:shadow-sm hover:border-foreground uppercase transition-all rounded-xl"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -67,8 +67,8 @@ export default async function PublicBusinessPage({ params }: Props) {
                         unoptimized
                     />
                 ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#12b4ff]/10 via-background to-background">
-                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#12b4ff] via-transparent to-transparent blur-3xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-foreground/10 via-background to-background">
+                        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-foreground via-transparent to-transparent blur-3xl"></div>
                     </div>
                 )}
                 <div className="absolute inset-0 border-b border-border"></div>
@@ -93,8 +93,8 @@ export default async function PublicBusinessPage({ params }: Props) {
                                         unoptimized
                                     />
                                 ) : (
-                                    <div className="w-24 h-24 rounded-2xl bg-[#12b4ff]/10 ring-1 ring-border shadow-[0_0_20px_rgba(18,180,255,0.2)] flex items-center justify-center">
-                                        <span className="text-4xl font-bold text-[#12b4ff] font-[family-name:var(--font-heading)] uppercase">
+                                    <div className="w-24 h-24 rounded-2xl bg-foreground/10 ring-1 ring-border shadow-sm flex items-center justify-center">
+                                        <span className="text-4xl font-bold text-foreground font-[family-name:var(--font-heading)] uppercase">
                                             {business.name.charAt(0)}
                                         </span>
                                     </div>
@@ -106,7 +106,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                 <h1 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-heading)] uppercase text-foreground">
                                     {business.name}
                                 </h1>
-                                <p className="text-[10px] text-[#12b4ff] tracking-[0.2em] uppercase mt-2 shadow-[0_0_20px_rgba(18,180,255,0.1)] inline-block">
+                                <p className="text-[10px] text-foreground tracking-[0.2em] uppercase mt-2 shadow-sm inline-block">
                                     {business.accountType === "servicios"
                                         ? "Profesional de Servicios"
                                         : business.accountType === "pyme"
@@ -123,7 +123,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                 
                                 {business.address && (
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-[#12b4ff] flex-shrink-0 mt-0.5" />
+                                        <MapPin className="w-4 h-4 text-foreground flex-shrink-0 mt-0.5" />
                                         <p className="text-xs text-foreground leading-relaxed">
                                             {business.address}
                                         </p>
@@ -132,8 +132,8 @@ export default async function PublicBusinessPage({ params }: Props) {
 
                                 {business.phone && (
                                     <div className="flex items-start gap-3">
-                                        <Phone className="w-4 h-4 text-[#12b4ff] flex-shrink-0 mt-0.5" />
-                                        <a href={`tel:${business.phone}`} className="text-xs text-foreground hover:text-[#12b4ff] transition-colors block">
+                                        <Phone className="w-4 h-4 text-foreground flex-shrink-0 mt-0.5" />
+                                        <a href={`tel:${business.phone}`} className="text-xs text-foreground hover:text-foreground transition-colors block">
                                             {business.phone}
                                         </a>
                                     </div>
@@ -158,7 +158,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                                 href={socialMedia.instagram} 
                                                 target="_blank" 
                                                 rel="noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center bg-background border border-border hover:border-[#12b4ff] hover:bg-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:text-black transition-all rounded-xl"
+                                                className="w-10 h-10 flex items-center justify-center liquid-control hover:border-foreground transition-all rounded-full"
                                                 title="Instagram"
                                             >
                                                 <Instagram className="w-4 h-4" />
@@ -169,7 +169,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                                 href={socialMedia.facebook} 
                                                 target="_blank" 
                                                 rel="noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center bg-background border border-border hover:border-[#12b4ff] hover:bg-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:text-black transition-all rounded-xl"
+                                                className="w-10 h-10 flex items-center justify-center liquid-control hover:border-foreground transition-all rounded-full"
                                                 title="Facebook"
                                             >
                                                 <Facebook className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                                 href={socialMedia.website} 
                                                 target="_blank" 
                                                 rel="noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center bg-background border border-border hover:border-[#12b4ff] hover:bg-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:text-black transition-all rounded-xl"
+                                                className="w-10 h-10 flex items-center justify-center liquid-control hover:border-foreground transition-all rounded-full"
                                                 title="Sitio Web"
                                             >
                                                 <Globe className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                                 href={socialMedia.tiktok} 
                                                 target="_blank" 
                                                 rel="noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center bg-background border border-border hover:border-[#12b4ff] hover:bg-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:text-black transition-all rounded-xl"
+                                                className="w-10 h-10 flex items-center justify-center liquid-control hover:border-foreground transition-all rounded-full"
                                                 title="TikTok"
                                             >
                                                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -204,7 +204,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                                                 href={socialMedia.twitter} 
                                                 target="_blank" 
                                                 rel="noreferrer"
-                                                className="w-10 h-10 flex items-center justify-center bg-background border border-border hover:border-[#12b4ff] hover:bg-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:text-black transition-all rounded-xl"
+                                                className="w-10 h-10 flex items-center justify-center liquid-control hover:border-foreground transition-all rounded-full"
                                                 title="Twitter / X"
                                             >
                                                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -230,12 +230,12 @@ export default async function PublicBusinessPage({ params }: Props) {
                                 {services.available && (
                                     <Link
                                         href={`/portal/${business.slug}`}
-                                        className="group relative flex flex-col p-6 bg-card ring-1 ring-border hover:ring-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.1)] transition-all overflow-hidden rounded-2xl shadow-sm"
+                                        className="group relative flex flex-col p-6 bg-card ring-1 ring-border hover:ring-foreground hover:shadow-sm transition-all overflow-hidden rounded-2xl shadow-sm"
                                     >
-                                        <div className="w-12 h-12 flex items-center justify-center bg-foreground/5 ring-1 ring-foreground/10 text-[#12b4ff] group-hover:bg-[#12b4ff] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] transition-all rounded-xl mb-4">
+                                        <div className="w-12 h-12 flex items-center justify-center bg-foreground/5 ring-1 ring-foreground/10 text-foreground group-hover:bg-foreground group-hover:text-background group-hover:shadow-sm transition-all rounded-xl mb-4">
                                             <CalendarDays className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-sm font-bold tracking-[0.1em] text-foreground uppercase group-hover:text-[#12b4ff] transition-colors">
+                                        <h3 className="text-sm font-bold tracking-[0.1em] text-foreground uppercase group-hover:text-foreground transition-colors">
                                             Agendar Cita
                                         </h3>
                                         <p className="text-[11px] text-muted-foreground mt-2 line-clamp-2">
@@ -247,12 +247,12 @@ export default async function PublicBusinessPage({ params }: Props) {
                                 {products.available && (
                                     <Link
                                         href={`/negocio/${business.id}/tienda`}
-                                        className="group relative flex flex-col p-6 bg-card ring-1 ring-border hover:ring-[#12b4ff] hover:shadow-[0_0_20px_rgba(18,180,255,0.1)] transition-all overflow-hidden rounded-2xl shadow-sm"
+                                        className="group relative flex flex-col p-6 bg-card ring-1 ring-border hover:ring-foreground hover:shadow-sm transition-all overflow-hidden rounded-2xl shadow-sm"
                                     >
-                                        <div className="w-12 h-12 flex items-center justify-center bg-foreground/5 ring-1 ring-foreground/10 text-[#12b4ff] group-hover:bg-[#12b4ff] group-hover:text-black group-hover:shadow-[0_0_20px_rgba(18,180,255,0.2)] transition-all rounded-xl mb-4">
+                                        <div className="w-12 h-12 flex items-center justify-center bg-foreground/5 ring-1 ring-foreground/10 text-foreground group-hover:bg-foreground group-hover:text-background group-hover:shadow-sm transition-all rounded-xl mb-4">
                                             <ShoppingBag className="w-5 h-5" />
                                         </div>
-                                        <h3 className="text-sm font-bold tracking-[0.1em] text-foreground uppercase group-hover:text-[#12b4ff] transition-colors">
+                                        <h3 className="text-sm font-bold tracking-[0.1em] text-foreground uppercase group-hover:text-foreground transition-colors">
                                             Catálogo / Tienda
                                         </h3>
                                         <p className="text-[11px] text-muted-foreground mt-2 line-clamp-2">
@@ -267,7 +267,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                         {business.description && (
                             <section className="bg-card ring-1 ring-border shadow-sm rounded-2xl p-6 sm:p-8">
                                 <h2 className="text-lg font-bold tracking-[0.05em] uppercase flex items-center gap-3 font-[family-name:var(--font-heading)] border-b border-border pb-4 mb-4">
-                                    <Building2 className="w-5 h-5 text-[#12b4ff]" />
+                                    <Building2 className="w-5 h-5 text-foreground" />
                                     Sobre Nosotros
                                 </h2>
                                 <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
@@ -283,7 +283,7 @@ export default async function PublicBusinessPage({ params }: Props) {
                             return (
                                 <section className="bg-card ring-1 ring-border shadow-sm rounded-2xl p-6 sm:p-8 space-y-4">
                                     <h2 className="text-lg font-bold tracking-[0.05em] uppercase flex items-center gap-3 font-[family-name:var(--font-heading)] border-b border-border pb-4 mb-4">
-                                        <Map className="w-5 h-5 text-[#12b4ff]" />
+                                        <Map className="w-5 h-5 text-foreground" />
                                         Nuestra Ubicación
                                     </h2>
                                     {business.address && (

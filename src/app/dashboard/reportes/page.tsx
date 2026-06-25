@@ -21,7 +21,7 @@ export default async function ReportesPage() {
             <div className="border-b border-border pb-6 flex items-start justify-between">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <BarChart2 className="w-5 h-5 text-[#08b6ff]" />
+                        <BarChart2 className="w-5 h-5 text-foreground" />
                         <h1 className="text-2xl md:text-3xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                             Reportes
                         </h1>

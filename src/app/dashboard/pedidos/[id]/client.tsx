@@ -76,7 +76,7 @@ export function OrderDetailClient({
             <button
                 onClick={handleCancel}
                 disabled={isLoading}
-                className="flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border/30 text-foreground hover:bg-foreground/10 transition-colors disabled:opacity-50"
             >
                 CANCELAR PEDIDO
             </button>

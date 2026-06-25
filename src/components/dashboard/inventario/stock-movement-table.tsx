@@ -49,8 +49,8 @@ export function StockMovementTable({ movements }: StockMovementTableProps) {
                             <td className="px-5 py-3">
                                 <span
                                     className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.2em] uppercase ${m.type === "add"
-                                            ? "text-green-400"
-                                            : "text-red-400"
+                                            ? "text-foreground"
+                                            : "text-foreground"
                                         }`}
                                 >
                                     {m.type === "add" ? (

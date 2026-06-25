@@ -89,8 +89,8 @@ export function NotificationsBell() {
                 <Bell className="h-5 w-5" strokeWidth={1.5} />
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-foreground"></span>
                     </span>
                 )}
             </button>
@@ -104,7 +104,7 @@ export function NotificationsBell() {
                         {unreadCount > 0 && (
                             <button 
                                 onClick={handleMarkAllAsRead}
-                                className="text-[10px] uppercase font-bold tracking-wider text-[#08b6ff] hover:text-[#08b6ff]/80 transition-colors"
+                                className="text-[10px] uppercase font-bold tracking-wider text-foreground hover:text-foreground/80 transition-colors"
                             >
                                 Marcar leídas
                             </button>
@@ -134,7 +134,7 @@ export function NotificationsBell() {
                                                 {notification.title}
                                             </h4>
                                             {!notification.isRead && (
-                                                <span className="h-2 w-2 mt-0.5 rounded-full bg-[#08b6ff] flex-shrink-0" />
+                                                <span className="h-2 w-2 mt-0.5 rounded-full bg-foreground flex-shrink-0" />
                                             )}
                                         </div>
                                         {notification.content && (

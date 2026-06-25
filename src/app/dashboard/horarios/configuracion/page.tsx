@@ -72,7 +72,7 @@ export default async function SchedulesConfigPage({
                     )}
                     <Link
                         href="/dashboard/horarios"
-                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#12b4ff] transition-all"
+                        className="p-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-all"
                     >
                         VOLVER A LA SEMANA
                     </Link>

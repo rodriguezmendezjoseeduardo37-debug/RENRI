@@ -83,8 +83,8 @@ export function BookingConfirmation({
                 }}
                 className="relative"
             >
-                <div className="absolute inset-0 bg-[#08b6ff]/20 blur-xl rounded-full" />
-                <CheckCircle2 className="w-24 h-24 text-[#08b6ff] drop-shadow-[0_0_15px_rgba(190,192,146,0.5)] relative z-10" />
+                <div className="absolute inset-0 bg-foreground/20 blur-xl rounded-full" />
+                <CheckCircle2 className="w-24 h-24 text-foreground drop-shadow-sm relative z-10" />
             </motion.div>
 
             <motion.div
@@ -109,9 +109,9 @@ export function BookingConfirmation({
                 className="w-full max-w-sm mt-8 relative"
             >
                 {/* Subtle border glow */}
-                <div className="absolute -inset-[1px] bg-gradient-to-b from-[#08b6ff]/20 to-transparent rounded-2xl blur-[2px] pointer-events-none" />
+                <div className="absolute -inset-[1px] bg-gradient-to-b from-foreground/20 to-transparent rounded-2xl blur-[2px] pointer-events-none" />
                 
-                <div className="bg-background border border-[#08b6ff]/10 rounded-2xl p-8 relative overflow-hidden group">
+                <div className="bg-background border border-foreground/10 rounded-2xl p-8 relative overflow-hidden group">
                     {/* Background noise/gradient */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl" />
 
@@ -157,7 +157,7 @@ export function BookingConfirmation({
                                 <p className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-1">
                                     TOTAL
                                 </p>
-                                <p className="text-lg font-bold font-mono text-[#08b6ff]">
+                                <p className="text-lg font-bold font-mono text-foreground">
                                     ${amount.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
                                 </p>
                             </div>
@@ -169,7 +169,7 @@ export function BookingConfirmation({
                 <div className="flex justify-center -mt-4 relative z-20">
                     <button
                         onClick={handleCopy}
-                        className="flex items-center gap-2 bg-background border border-[#08b6ff]/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-muted-foreground hover:text-[#08b6ff] hover:border-[#08b6ff]/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
+                        className="flex items-center gap-2 bg-background border border-foreground/20 px-5 py-2.5 rounded-full text-[9px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] bg-clip-padding backdrop-filter backdrop-blur-xl"
                     >
                         <Copy className="w-3.5 h-3.5" />
                         COPIAR DETALLES
@@ -188,7 +188,7 @@ export function BookingConfirmation({
                     <button
                         onClick={handlePayOnline}
                         disabled={isPaying}
-                        className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
+                        className="w-full flex items-center justify-center gap-3 px-8 py-4 liquid-button text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
                     >
                         {isPaying ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -201,7 +201,7 @@ export function BookingConfirmation({
                         PAGO SEGURO CON TARJETA VÍA STRIPE
                     </p>
                     {paymentError && (
-                        <p className="text-center text-[10px] text-red-400">{paymentError}</p>
+                        <p className="text-center text-[10px] text-foreground">{paymentError}</p>
                     )}
                 </motion.div>
             )}
@@ -214,7 +214,7 @@ export function BookingConfirmation({
             >
                 <Link
                     href={`/portal/${tenantSlug}`}
-                    className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-[#08b6ff] hover:border-[#08b6ff] transition-colors uppercase"
+                    className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-foreground hover:border-foreground transition-colors uppercase"
                 >
                     Volver al Inicio
                 </Link>

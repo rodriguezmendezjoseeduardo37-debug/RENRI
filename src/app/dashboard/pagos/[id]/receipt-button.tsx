@@ -7,7 +7,7 @@ export function ReceiptButton() {
         <button
             type="button"
             onClick={() => toast.info("Descarga de recibos disponible próximamente")}
-            className="flex-1 ring-1 ring-border rounded-xl py-4 text-[11px] font-bold tracking-[0.2em] uppercase text-foreground transition-all hover:ring-[#12b4ff] hover:text-[#12b4ff] shadow-sm"
+            className="flex-1 ring-1 ring-border rounded-xl py-4 text-[11px] font-bold tracking-[0.2em] uppercase text-foreground transition-all hover:ring-foreground hover:text-foreground shadow-sm"
         >
             DESCARGAR RECIBO
         </button>

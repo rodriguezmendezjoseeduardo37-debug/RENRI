@@ -21,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/dashboard/inventario/${product.id}`}
-            className="border border-border rounded-2xl shadow-sm bg-card p-5 flex flex-col justify-between group hover:border-[#08b6ff] hover:shadow-md transition-all min-h-[220px]"
+            className="border border-border rounded-2xl shadow-sm bg-card p-5 flex flex-col justify-between group hover:border-foreground hover:shadow-md transition-all min-h-[220px]"
         >
             {/* Image or placeholder */}
             <div className="flex items-center justify-between mb-4">
@@ -41,7 +41,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     </div>
                 )}
                 {isLowStock && (
-                    <AlertTriangle className="w-4 h-4 text-red-500" />
+                    <AlertTriangle className="w-4 h-4 text-foreground" />
                 )}
             </div>
 
@@ -70,7 +70,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     )}
                 </div>
                 <span
-                    className={`text-sm font-bold font-mono ${isLowStock ? "text-red-500" : "text-muted-foreground"
+                    className={`text-sm font-bold font-mono ${isLowStock ? "text-foreground" : "text-muted-foreground"
                         }`}
                 >
                     {product.stock}

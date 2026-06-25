@@ -10,11 +10,11 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="relative min-h-[100svh] bg-[#0a0a0a] flex flex-col font-sans selection:bg-[#12b4ff]/30 selection:text-white">
+    <div className="relative min-h-[100svh] bg-[#0a0a0a] flex flex-col font-sans selection:bg-foreground/30 selection:text-white">
       {/* SaaS Background (Grid + Gradients) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#12b4ff]/10 blur-[120px]"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-foreground/10 blur-[120px]"></div>
         <div className="absolute top-[20%] right-[-5%] w-[30%] h-[50%] rounded-full bg-white/5 blur-[120px]"></div>
       </div>
 
@@ -32,7 +32,7 @@ export default function Home() {
               <div className="block">Tu negocio.</div>
             </StaggerItem>
             <StaggerItem>
-              <div className="block font-semibold bg-gradient-to-r from-[#12b4ff] to-white bg-clip-text text-transparent">Sin límites.</div>
+              <div className="block font-semibold bg-gradient-to-r from-foreground to-white bg-clip-text text-transparent">Sin límites.</div>
             </StaggerItem>
           </h1>
 
@@ -41,16 +41,16 @@ export default function Home() {
             <p>
               Citas, pagos e inventario en un solo lugar
               <br />
-              — impulsando <Sparkles className="inline w-4 h-4 -mt-1 text-[#12b4ff]" /> miles de negocios y empresas.
+              — impulsando <Sparkles className="inline w-4 h-4 -mt-1 text-foreground" /> miles de negocios y empresas.
             </p>
           </StaggerItem>
 
           {/* CTA Buttons */}
           <StaggerItem className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-sm sm:max-w-none px-4 sm:px-0">
-            <Link href="/register" className="w-full sm:w-auto bg-[#12b4ff] text-black text-sm font-bold px-6 py-3 rounded-full hover:bg-[#00a0e6] hover:shadow-[0_0_20px_rgba(18,180,255,0.3)] transition-all uppercase tracking-wide text-center">
+            <Link href="/register" className="w-full sm:w-auto liquid-button text-sm font-bold px-6 py-3 rounded-full hover:shadow-md transition-all uppercase tracking-wide text-center">
               Comenzar gratis
             </Link>
-            <Link href="/pricing" className="w-full sm:w-auto text-white text-sm font-medium px-6 py-3 rounded-full ring-1 ring-white/20 hover:bg-white/10 transition-all bg-white/5 backdrop-blur-sm text-center">
+            <Link href="/pricing" className="w-full sm:w-auto liquid-control text-white text-sm font-medium px-6 py-3 rounded-full transition-all text-center">
               Ver planes
             </Link>
           </StaggerItem>

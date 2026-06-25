@@ -14,7 +14,7 @@ import { getFullAnalytics, exportPaymentsCSV, exportAppointmentsCSV, exportClien
 import { toast } from "sonner";
 
 // ─── Color Palette ────────────────────────────────────────
-const GOLD = "#08b6ff";
+const GOLD = "#0a0a0a";
 const COLORS = [GOLD, "#8B8D6A", "#6E7055", "#4A4B3A", "#D4D6A6", "#E8EAC0"];
 
 // ─── Helpers ──────────────────────────────────────────────
@@ -43,13 +43,13 @@ function StatCard({ label, value, sub, icon: Icon, accent = false }: {
 }) {
     return (
         <div className={`rounded-2xl border p-6 flex flex-col gap-3 ${accent
-            ? "border-[#08b6ff]/40 bg-[#08b6ff]/5"
+            ? "border-foreground/40 bg-foreground/5"
             : "border-border bg-card"}`}>
             <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">{label}</span>
-                <Icon className={`w-4 h-4 ${accent ? "text-[#08b6ff]" : "text-muted-foreground"}`} />
+                <Icon className={`w-4 h-4 ${accent ? "text-foreground" : "text-muted-foreground"}`} />
             </div>
-            <span className={`text-2xl font-bold font-mono ${accent ? "text-[#08b6ff]" : "text-foreground"}`}>
+            <span className={`text-2xl font-bold font-mono ${accent ? "text-foreground" : "text-foreground"}`}>
                 {value}
             </span>
             {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
@@ -133,14 +133,14 @@ export function AnalyticsDashboard({ initialData, tenantId }: Props) {
                             disabled={isPending}
                             className={`px-4 py-2 rounded-xl text-[11px] font-bold tracking-[0.1em] transition-all ${
                                 period === p.value
-                                    ? "bg-[#08b6ff] text-black"
-                                    : "border border-border text-muted-foreground hover:border-[#08b6ff]/40 hover:text-foreground"
+                                    ? "liquid-button"
+                                    : "border border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground"
                             }`}
                         >
                             {p.label}
                         </button>
                     ))}
-                    {isPending && <Loader2 className="w-4 h-4 animate-spin text-[#08b6ff]" />}
+                    {isPending && <Loader2 className="w-4 h-4 animate-spin text-foreground" />}
                 </div>
 
                 {/* Export buttons */}
@@ -150,7 +150,7 @@ export function AnalyticsDashboard({ initialData, tenantId }: Props) {
                             key={type}
                             onClick={() => handleExport(type)}
                             disabled={exportPending !== null}
-                            className="px-3 py-2 border border-border text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground hover:border-[#08b6ff]/40 hover:text-foreground transition-all rounded-xl flex items-center gap-1.5 disabled:opacity-50"
+                            className="px-3 py-2 border border-border text-[10px] font-bold tracking-[0.15em] uppercase text-muted-foreground hover:border-foreground/40 hover:text-foreground transition-all rounded-xl flex items-center gap-1.5 disabled:opacity-50"
                         >
                             {exportPending === type
                                 ? <Loader2 className="w-3 h-3 animate-spin" />
@@ -291,9 +291,9 @@ export function AnalyticsDashboard({ initialData, tenantId }: Props) {
                     </h3>
                     <div className="space-y-3">
                         {[
-                            { label: "Confirmadas", value: apts.confirmed, color: "text-emerald-400", icon: CheckCircle2 },
-                            { label: "Pendientes", value: apts.pending, color: "text-amber-400", icon: Clock },
-                            { label: "Canceladas", value: apts.cancelled, color: "text-red-400", icon: XCircle },
+                            { label: "Confirmadas", value: apts.confirmed, color: "text-foreground", icon: CheckCircle2 },
+                            { label: "Pendientes", value: apts.pending, color: "text-foreground", icon: Clock },
+                            { label: "Canceladas", value: apts.cancelled, color: "text-foreground", icon: XCircle },
                         ].map(item => (
                             <div key={item.label} className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -303,7 +303,7 @@ export function AnalyticsDashboard({ initialData, tenantId }: Props) {
                                 <div className="flex items-center gap-3">
                                     <div className="w-24 h-1.5 bg-border rounded-full overflow-hidden">
                                         <div
-                                            className="h-full rounded-full bg-[#08b6ff]"
+                                            className="h-full rounded-full bg-foreground"
                                             style={{ width: `${apts.total > 0 ? (item.value / apts.total) * 100 : 0}%` }}
                                         />
                                     </div>
@@ -332,7 +332,7 @@ export function AnalyticsDashboard({ initialData, tenantId }: Props) {
                                     <div className="flex items-center gap-3">
                                         <div className="w-24 h-1.5 bg-border rounded-full overflow-hidden">
                                             <div
-                                                className="h-full rounded-full bg-[#08b6ff]"
+                                                className="h-full rounded-full bg-foreground"
                                                 style={{ width: `${apts.topStaff[0]?.count > 0 ? (s.count / apts.topStaff[0].count) * 100 : 0}%` }}
                                             />
                                         </div>

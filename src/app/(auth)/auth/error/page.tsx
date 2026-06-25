@@ -42,8 +42,8 @@ function ErrorContent() {
     return (
         <Card className="w-full max-w-md bg-[hsl(0,0%,7%)] border-[hsl(0,0%,14.9%)]">
             <CardHeader className="text-center space-y-4">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-500/10">
-                    <AlertTriangle className="h-7 w-7 text-red-400" />
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-foreground/10">
+                    <AlertTriangle className="h-7 w-7 text-foreground" />
                 </div>
                 <CardTitle className="text-xl text-foreground">{title}</CardTitle>
                 <CardDescription className="text-[hsl(0,0%,63.9%)]">

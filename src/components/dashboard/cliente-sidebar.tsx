@@ -14,13 +14,13 @@ import {
 import { RenriMark } from "@/components/renri-mark";
 
 export const NAV_USUARIO = [
-    { href: "/cliente", icon: Home, label: "INICIO", iconColor: "text-[#12b4ff]" },
-    { href: "/cliente/explorar", icon: MapPin, label: "EXPLORAR", iconColor: "text-amber-500" },
-    { href: "/cliente/disponibilidad", icon: Clock, label: "DISPONIBILIDAD", iconColor: "text-rose-500" },
-    { href: "/cliente/mis-citas", icon: Calendar, label: "MIS CITAS", iconColor: "text-[#12b4ff]" },
-    { href: "/cliente/mis-compras", icon: ShoppingBag, label: "MIS COMPRAS", iconColor: "text-amber-500" },
-    { href: "/cliente/mis-pagos", icon: CreditCard, label: "MIS PAGOS", iconColor: "text-[#10b981]" },
-    { href: "/cliente/enlazar-negocio", icon: Link2, label: "MIS NEGOCIOS", iconColor: "text-indigo-500" },
+    { href: "/cliente", icon: Home, label: "INICIO", iconColor: "text-foreground" },
+    { href: "/cliente/explorar", icon: MapPin, label: "EXPLORAR", iconColor: "text-foreground" },
+    { href: "/cliente/disponibilidad", icon: Clock, label: "DISPONIBILIDAD", iconColor: "text-muted-foreground" },
+    { href: "/cliente/mis-citas", icon: Calendar, label: "MIS CITAS", iconColor: "text-foreground" },
+    { href: "/cliente/mis-compras", icon: ShoppingBag, label: "MIS COMPRAS", iconColor: "text-foreground" },
+    { href: "/cliente/mis-pagos", icon: CreditCard, label: "MIS PAGOS", iconColor: "text-foreground" },
+    { href: "/cliente/enlazar-negocio", icon: Link2, label: "MIS NEGOCIOS", iconColor: "text-muted-foreground" },
 ];
 
 export function ClienteSidebar() {
@@ -54,11 +54,11 @@ export function ClienteSidebar() {
                             href={item.href}
                             className={`flex items-center h-11 px-4 gap-3 rounded-xl transition-all duration-200 group ${
                                 isActive
-                                    ? "text-black bg-[#12b4ff] shadow-[0_0_20px_rgba(18,180,255,0.2)] font-bold"
+                                    ? "text-background bg-foreground shadow-sm font-bold"
                                     : "text-muted-foreground hover:text-foreground hover:bg-card"
                             }`}
                         >
-                            <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-black" : item.iconColor}`} strokeWidth={1.5} />
+                            <item.icon className={`h-4 w-4 flex-shrink-0 ${isActive ? "text-background" : item.iconColor}`} strokeWidth={1.5} />
                             <span className="text-[11px] font-medium tracking-[0.15em] whitespace-nowrap">
                                 {item.label}
                             </span>

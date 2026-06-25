@@ -134,7 +134,7 @@ export function StockAdjustModal({
                             STOCK RESULTANTE
                         </span>
                         <span
-                            className={`text-2xl font-bold font-mono ${previewStock < 0 ? "text-red-500" : "text-foreground"
+                            className={`text-2xl font-bold font-mono ${previewStock < 0 ? "text-foreground" : "text-foreground"
                                 }`}
                         >
                             {previewStock}

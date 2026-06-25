@@ -42,7 +42,7 @@ export default async function MisComprasPage() {
                     {orders.map((order) => (
                         <div
                             key={order.id}
-                            className="border border-border bg-card p-6 flex flex-col gap-5 rounded-2xl hover:border-[#08b6ff]/30 transition-colors"
+                            className="border border-border bg-card p-6 flex flex-col gap-5 rounded-2xl hover:border-foreground/30 transition-colors"
                         >
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-2">
@@ -51,8 +51,8 @@ export default async function MisComprasPage() {
                                             PEDIDO
                                         </p>
                                         <span className={`px-2.5 py-1 text-[10px] font-bold tracking-widest uppercase rounded-md border ${
-                                            order.status === 'completed' ? 'border-[#10b981]/30 bg-[#10b981]/10 text-[#10b981]' :
-                                            order.status === 'pending' ? 'border-amber-500/30 bg-amber-500/10 text-amber-500' :
+                                            order.status === 'completed' ? 'border-foreground/30 bg-foreground/10 text-foreground' :
+                                            order.status === 'pending' ? 'border-border/30 bg-foreground/10 text-foreground' :
                                             'border-border bg-muted text-muted-foreground'
                                         }`}>
                                             {order.status}

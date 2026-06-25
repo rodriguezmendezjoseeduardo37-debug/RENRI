@@ -33,7 +33,7 @@ export default async function CheckoutPage({ params }: Props) {
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
                     <Link
                         href={`/negocio/${businessId}/tienda`}
-                        className="w-10 h-10 border border-border flex items-center justify-center hover:bg-[#08b6ff] hover:text-black hover:border-[#08b6ff] transition-colors rounded-xl"
+                        className="w-10 h-10 liquid-control flex items-center justify-center rounded-full hover:bg-foreground/5 transition-all"
                     >
                         <ArrowLeft className="w-4 h-4" />
                     </Link>
@@ -50,10 +50,10 @@ export default async function CheckoutPage({ params }: Props) {
 
             <main className="max-w-3xl mx-auto px-4 py-10">
                 {isCompleted ? (
-                    <div className="border border-[#08b6ff]/20 bg-background p-10 text-center space-y-4 rounded-2xl">
+                    <div className="border border-foreground/20 bg-background p-10 text-center space-y-4 rounded-2xl">
                         <div className="relative inline-block">
-                            <div className="absolute inset-0 bg-[#08b6ff]/20 blur-xl rounded-full" />
-                            <CheckCircle2 className="w-14 h-14 text-[#08b6ff] relative z-10 mx-auto" />
+                            <div className="absolute inset-0 bg-foreground/20 blur-xl rounded-full" />
+                            <CheckCircle2 className="w-14 h-14 text-foreground relative z-10 mx-auto" />
                         </div>
                         <h2 className="text-2xl font-bold tracking-[0.1em] text-foreground uppercase font-[family-name:var(--font-heading)]">
                             ¡PAGO VALIDADO!
@@ -63,7 +63,7 @@ export default async function CheckoutPage({ params }: Props) {
                         </p>
                         <Link
                             href={`/negocio/${businessId}/tienda`}
-                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#08b6ff]/30 text-[#08b6ff] hover:bg-[#08b6ff] hover:text-black transition-colors rounded-xl"
+                            className="inline-flex items-center gap-2 px-6 py-3 mt-4 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control text-foreground hover:bg-foreground/5 transition-all rounded-full"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" />
                             VOLVER A LA TIENDA
@@ -120,7 +120,7 @@ export default async function CheckoutPage({ params }: Props) {
                                 </div>
                                 <div className="flex justify-between text-sm font-bold text-foreground pt-2 border-t border-border">
                                     <span className="tracking-[0.15em] uppercase">Total</span>
-                                    <span className="font-mono text-lg text-[#08b6ff]">${order.total} MXN</span>
+                                    <span className="font-mono text-lg text-foreground">${order.total} MXN</span>
                                 </div>
                             </div>
 

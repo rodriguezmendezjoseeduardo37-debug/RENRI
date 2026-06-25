@@ -38,7 +38,7 @@ export default async function ClientesPage() {
                 </div>
                 <div>
                     <div className="px-4 py-3 bg-card border border-border text-[10px] font-mono tracking-[0.2em] text-muted-foreground uppercase rounded-xl">
-                        TOTAL: <span className="text-[#08b6ff] font-bold ml-2">{clientes.length}</span>
+                        TOTAL: <span className="text-foreground font-bold ml-2">{clientes.length}</span>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@ export default async function ClientesPage() {
                                             {format(cliente.createdAt, "dd MMM yyyy", { locale: es }).toUpperCase()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`px-2 py-1 text-[9px] tracking-[0.2em] uppercase font-bold border ${cliente.isVerified ? "border-border text-muted-foreground rounded-lg" : "border-transparent bg-[#08b6ff] text-black rounded-lg shadow-sm"}`}>
+                                            <span className={`px-2 py-1 text-[9px] tracking-[0.2em] uppercase font-bold border ${cliente.isVerified ? "border-border text-muted-foreground rounded-lg" : "border-transparent liquid-button rounded-lg shadow-sm"}`}>
                                                 {cliente.isVerified ? "VERIFICADO" : "PENDIENTE"}
                                             </span>
                                         </td>
@@ -92,7 +92,7 @@ export default async function ClientesPage() {
                                                         <form action={verifyClient.bind(null, cliente.id)}>
                                                             <button
                                                                 type="submit"
-                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-lg shadow-sm hover:opacity-90 hover:shadow transition-all"
+                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase liquid-button rounded-lg shadow-sm hover:opacity-90 hover:shadow transition-all"
                                                             >
                                                                 ACEPTAR
                                                             </button>
@@ -100,7 +100,7 @@ export default async function ClientesPage() {
                                                         <form action={rejectClient.bind(null, cliente.id)}>
                                                             <button
                                                                 type="submit"
-                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground hover:border-red-500 hover:text-red-500 transition-colors"
+                                                                className="px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground hover:border-border hover:text-foreground transition-colors"
                                                             >
                                                                 RECHAZAR
                                                             </button>
@@ -110,7 +110,7 @@ export default async function ClientesPage() {
                                                     <form action={rejectClient.bind(null, cliente.id)}>
                                                         <button
                                                             type="submit"
-                                                            className="px-3 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground hover:text-red-500 transition-colors"
+                                                            className="px-3 py-1.5 text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground hover:text-foreground transition-colors"
                                                             title="Eliminar paciente del sistema"
                                                         >
                                                             ELIMINAR

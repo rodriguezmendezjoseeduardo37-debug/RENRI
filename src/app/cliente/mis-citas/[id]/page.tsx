@@ -118,7 +118,7 @@ export default async function MiCitaDetallePage({
                                 <p className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
                                     MÉTODO: {payment?.paymentMethod === "cash" ? "EFECTIVO" : "TARJETA"}
                                 </p>
-                                <p className={`text-sm font-bold ${payment?.status === "completed" ? "text-green-500" : "text-muted-foreground"}`}>
+                                <p className={`text-sm font-bold ${payment?.status === "completed" ? "text-foreground" : "text-muted-foreground"}`}>
                                     {payment
                                         ? payment.status === "completed"
                                             ? "✓ PAGO VALIDADO"

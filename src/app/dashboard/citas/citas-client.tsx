@@ -175,7 +175,7 @@ export function CitasClient({
                 </div>
                 <button
                     onClick={() => setFormOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all"
+                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:bg-foreground/90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVA CITA
@@ -217,7 +217,7 @@ export function CitasClient({
                         <List className="h-3.5 w-3.5" />
                         LISTA
                         {viewMode === "list" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#12b4ff] rounded-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground rounded-full" />
                         )}
                     </button>
                     <button
@@ -228,7 +228,7 @@ export function CitasClient({
                         <CalendarIcon className="h-3.5 w-3.5" />
                         CALENDARIO
                         {viewMode === "calendar" && (
-                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#12b4ff] rounded-full" />
+                            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground rounded-full" />
                         )}
                     </button>
                 </div>

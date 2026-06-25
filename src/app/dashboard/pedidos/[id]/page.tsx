@@ -50,7 +50,7 @@ export default async function OrderDetailPage({
                 </div>
                 <span
                     className={`px-4 py-2 text-[11px] font-bold tracking-[0.2em] uppercase ${isCancelled
-                            ? "bg-red-500/10 text-red-500 border border-red-500/30"
+                            ? "bg-foreground/10 text-foreground border border-border/30"
                             : order.status === "completed"
                                 ? "bg-white/10 text-foreground border border-white/30"
                                 : "bg-popover text-muted-foreground border border-border"

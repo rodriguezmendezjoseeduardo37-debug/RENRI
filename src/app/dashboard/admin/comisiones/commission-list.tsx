@@ -80,7 +80,7 @@ export function CommissionList({ tenants }: { tenants: any[] }) {
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-2">
                                         {tenant.stripeConnectEnabled ? (
-                                            <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 border border-green-500/20 text-green-500 rounded-sm">
+                                            <div className="flex items-center gap-1.5 px-2 py-1 bg-foreground/10 border border-border/20 text-foreground rounded-sm">
                                                 <CheckCircle2 className="w-3 h-3" />
                                                 <span className="text-[9px] font-bold uppercase tracking-wider">Activo</span>
                                             </div>
@@ -122,7 +122,7 @@ export function CommissionList({ tenants }: { tenants: any[] }) {
                                     <button
                                         onClick={() => handleUpdate(tenant.id)}
                                         disabled={updatingId === tenant.id || rates[tenant.id] === tenant.commissionRate}
-                                        className="inline-flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-border hover:bg-foreground hover:text-background transition-all disabled:opacity-30"
+                                        className="inline-flex items-center gap-2 px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control hover:bg-foreground/5 transition-all disabled:opacity-30"
                                     >
                                         {updatingId === tenant.id ? (
                                             <Loader2 className="w-3.5 h-3.5 animate-spin" />

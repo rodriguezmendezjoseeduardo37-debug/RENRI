@@ -27,8 +27,8 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                     DISPONIBILIDAD: {staffName}
                 </h3>
                 <div className="flex gap-4 text-[10px] font-medium tracking-[0.2em] uppercase">
-                    <span className="text-foreground bg-[#12b4ff]/10 text-[#12b4ff] px-2 py-1 rounded-lg">{availableDays.length} días Disp</span>
-                    <span className="text-red-500 bg-red-500/10 px-2 py-1 rounded-lg">{blockedDays.length} Bloqueados</span>
+                    <span className="text-foreground bg-foreground/10 text-foreground px-2 py-1 rounded-lg">{availableDays.length} días Disp</span>
+                    <span className="text-foreground bg-foreground/10 px-2 py-1 rounded-lg">{blockedDays.length} Bloqueados</span>
                     <span className="text-muted-foreground bg-foreground/5 px-2 py-1 rounded-lg">{noScheduleDays.length} Sin Asignar</span>
                 </div>
             </div>
@@ -45,20 +45,20 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                         let statusText = "SIN HORARIO";
 
                         if (day.isBlocked) {
-                            styleClass = "border-red-900/50 bg-red-950/10 text-red-500 opacity-60";
+                            styleClass = "border-border bg-foreground/5 text-foreground opacity-60";
                             statusText = "BLOQUEADO";
                         } else if (hasSlots) {
                             if (availableSlots === 0) {
                                 styleClass = "ring-1 ring-border text-foreground bg-card";
                                 statusText = "LLENO";
                             } else {
-                                styleClass = "ring-1 ring-[#12b4ff]/30 bg-card text-foreground";
+                                styleClass = "ring-1 ring-foreground/30 bg-card text-foreground";
                                 statusText = `${availableSlots} LIBRES`;
                             }
                         }
 
                         if (isSel) {
-                            styleClass += " ring-2 ring-[#12b4ff] ml-2";
+                            styleClass += " ring-2 ring-foreground ml-2";
                         }
 
                         return (
@@ -81,7 +81,7 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                             <h4 className="text-[12px] font-bold tracking-[0.3em] text-muted-foreground uppercase mb-6 flex items-center justify-between">
                                 TURNOS DEL {activeDay.date}
                                 {activeDay.isBlocked && (
-                                    <span className="px-2 py-1 bg-red-500 text-white rounded-lg">FECHA BLOQUEADA</span>
+                                    <span className="px-2 py-1 bg-foreground text-white rounded-lg">FECHA BLOQUEADA</span>
                                 )}
                             </h4>
 
@@ -93,7 +93,7 @@ export function StaffAvailability({ availabilityResult, staffName }: StaffAvaila
                                 <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
                                     {activeDay.slots.map((slot, i) => {
                                         const bgClass = slot.isAvailable
-                                            ? "bg-[#12b4ff]/10 text-[#12b4ff] ring-1 ring-[#12b4ff]/20 rounded-xl hover:bg-[#12b4ff]/20"
+                                            ? "bg-foreground/10 text-foreground ring-1 ring-foreground/20 rounded-xl hover:bg-foreground/20"
                                             : "bg-foreground/5 text-muted-foreground line-through cursor-not-allowed rounded-xl";
 
                                         return (

@@ -56,16 +56,16 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
         }
     };
 
-    const inputClass = "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50";
+    const inputClass = "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-all focus:ring-1 focus:ring-foreground/50";
     const labelClass = "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="flex items-center gap-6 pb-8 border-b border-border relative">
-                <div className="absolute top-0 left-0 w-[100px] h-[100px] bg-[#08b6ff]/5 blur-[30px] rounded-full -z-10" />
+                <div className="absolute top-0 left-0 w-[100px] h-[100px] bg-foreground/5 blur-[30px] rounded-full -z-10" />
                 <div className="relative group cursor-pointer">
-                    <div className="w-20 h-20 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden hover:border-[#08b6ff] transition-colors relative z-10">
-                        <Camera className="w-6 h-6 text-muted-foreground group-hover:text-[#08b6ff] transition-colors" />
+                    <div className="w-20 h-20 rounded-full border border-border bg-card flex items-center justify-center overflow-hidden hover:border-foreground transition-colors relative z-10">
+                        <Camera className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </div>
                 </div>
                 <div>
@@ -78,7 +78,7 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
                 <div className="space-y-2">
                     <label className={labelClass}>Nombre Completo</label>
                     <input {...form.register("name")} className={inputClass} />
-                    {form.formState.errors.name && <p className="text-red-500 text-[10px] uppercase font-bold tracking-widest">{form.formState.errors.name.message}</p>}
+                    {form.formState.errors.name && <p className="text-foreground text-[10px] uppercase font-bold tracking-widest">{form.formState.errors.name.message}</p>}
                 </div>
                 <div className="space-y-2">
                     <label className={labelClass}>Teléfono de Contacto</label>
@@ -105,7 +105,7 @@ export function PerfilForm({ user, profile }: PerfilFormProps) {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR PERFIL"}

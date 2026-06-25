@@ -71,7 +71,7 @@ export function RefundButton({
         <>
             <button
                 onClick={() => setOpen(true)}
-                className="px-6 py-3 border border-red-900/50 hover:bg-red-950/20 text-red-500 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2 rounded-xl"
+                className="px-6 py-3 border border-border hover:bg-foreground/5 text-foreground text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center gap-2 rounded-xl"
             >
                 <RotateCcw className="w-3 h-3" />
                 REEMBOLSO
@@ -92,7 +92,7 @@ export function RefundButton({
                             <div className="text-center space-y-4 py-4">
                                 <div className="flex items-center justify-center">
                                     <div className="w-14 h-14 rounded-full bg-emerald-950/50 border border-emerald-700/40 flex items-center justify-center">
-                                        <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+                                        <CheckCircle2 className="w-7 h-7 text-foreground" />
                                     </div>
                                 </div>
                                 <h3 className="text-lg font-bold tracking-[0.1em] text-foreground uppercase">
@@ -108,7 +108,7 @@ export function RefundButton({
                                 </p>
                                 <button
                                     onClick={() => { setOpen(false); setSuccess(null); }}
-                                    className="w-full py-3 bg-card ring-1 ring-border text-[11px] font-bold tracking-[0.2em] uppercase hover:ring-[#12b4ff] transition-all rounded-xl"
+                                    className="w-full py-3 bg-card ring-1 ring-border text-[11px] font-bold tracking-[0.2em] uppercase hover:ring-foreground transition-all rounded-xl"
                                 >
                                     CERRAR
                                 </button>
@@ -136,8 +136,8 @@ export function RefundButton({
                                             onClick={() => setMode(m)}
                                             className={`p-3 rounded-xl border text-[11px] font-bold tracking-[0.15em] uppercase transition-all ${
                                                 mode === m
-                                                    ? "ring-1 ring-[#12b4ff] bg-[#12b4ff]/10 text-[#12b4ff]"
-                                                    : "ring-1 ring-border text-muted-foreground hover:ring-[#12b4ff]/30"
+                                                    ? "ring-1 ring-foreground bg-foreground/10 text-foreground"
+                                                    : "ring-1 ring-border text-muted-foreground hover:ring-foreground/30"
                                             }`}
                                         >
                                             {m === "full" ? "Total" : "Parcial"}
@@ -162,16 +162,16 @@ export function RefundButton({
                                                 value={partialAmount}
                                                 onChange={(e) => setPartialAmount(e.target.value)}
                                                 placeholder={`0.00 — máx $${totalAmount.toFixed(2)}`}
-                                                className="w-full pl-8 pr-4 py-3 bg-background ring-1 ring-border rounded-xl text-foreground font-mono text-sm focus:ring-[#12b4ff] focus:outline-none transition-all"
+                                                className="w-full pl-8 pr-4 py-3 bg-background liquid-control rounded-full text-foreground font-mono text-sm focus:ring-foreground focus:outline-none transition-all"
                                             />
                                         </div>
                                     </div>
                                 )}
 
                                 {/* Warning */}
-                                <div className="flex items-start gap-3 p-3 rounded-xl bg-amber-950/20 border border-amber-700/30">
-                                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                                    <p className="text-xs text-amber-400 leading-relaxed">
+                                <div className="flex items-start gap-3 p-3 rounded-xl bg-foreground/5 border border-border">
+                                    <AlertTriangle className="w-4 h-4 text-foreground shrink-0 mt-0.5" />
+                                    <p className="text-xs text-foreground leading-relaxed">
                                         {mode === "full"
                                             ? "Se reembolsará el total del cargo en Stripe. Esta acción no puede deshacerse."
                                             : "Se realizará un reembolso parcial. El saldo restante permanece activo en el cargo original."}
@@ -189,7 +189,7 @@ export function RefundButton({
                                     <button
                                         onClick={handleRefund}
                                         disabled={isLoading || (mode === "partial" && !partialAmount)}
-                                        className="flex-1 py-3 bg-red-950/40 border border-red-900/60 hover:bg-red-950/60 text-red-400 text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2 rounded-xl disabled:opacity-50"
+                                        className="flex-1 py-3 bg-foreground/10 border border-border hover:bg-foreground/15 text-foreground text-[11px] font-bold tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2 rounded-xl disabled:opacity-50"
                                     >
                                         {isLoading ? (
                                             <Loader2 className="w-3.5 h-3.5 animate-spin" />

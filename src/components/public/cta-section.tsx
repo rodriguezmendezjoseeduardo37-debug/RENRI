@@ -10,7 +10,7 @@ export function CtaSection() {
       <SlideUp onScroll>
         <div className="bg-[#111] rounded-[2.5rem] p-8 sm:p-16 shadow-2xl relative overflow-hidden ring-1 ring-white/10">
           {/* Background glow in CTA */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-2xl bg-[#12b4ff]/20 blur-[100px] pointer-events-none rounded-full" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-2xl bg-foreground/20 blur-[100px] pointer-events-none rounded-full" />
           <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/5 blur-[80px] pointer-events-none rounded-full" />
           
           <div className="relative z-10">
@@ -23,7 +23,7 @@ export function CtaSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link 
                 href="/register" 
-                className="w-full sm:w-auto bg-[#12b4ff] text-black font-bold tracking-wide px-8 py-3.5 rounded-full hover:bg-[#00a0e6] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase"
+                className="w-full sm:w-auto liquid-button font-bold tracking-wide px-8 py-3.5 rounded-full hover:bg-foreground/90 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase"
               >
                 Crear cuenta gratis <ArrowRight className="w-4 h-4" />
               </Link>

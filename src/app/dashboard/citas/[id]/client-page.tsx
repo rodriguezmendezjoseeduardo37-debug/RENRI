@@ -81,7 +81,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                     <button
                         onClick={() => setEditOpen(true)}
                         disabled={isLoading}
-                        className="flex items-center gap-2 px-4 py-2 text-[10px] font-medium tracking-[0.15em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 text-[10px] font-medium tracking-[0.15em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-foreground transition-all disabled:opacity-50"
                     >
                         <Edit className="h-3 w-3" />
                         EDITAR
@@ -134,8 +134,8 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <div className={`w-2 h-2 ${payment.status === "completed" ? "bg-green-500" : "bg-orange-500"}`} />
-                                        <span className={`text-[11px] font-bold uppercase tracking-wider ${payment.status === "completed" ? "text-green-500" : "text-orange-500"}`}>
+                                        <div className={`w-2 h-2 ${payment.status === "completed" ? "bg-foreground" : "bg-orange-500"}`} />
+                                        <span className={`text-[11px] font-bold uppercase tracking-wider ${payment.status === "completed" ? "text-foreground" : "text-orange-500"}`}>
                                             {payment.status === "completed" ? "COBRADO / VALIDADO" : "PENDIENTE"}
                                         </span>
                                     </div>
@@ -148,7 +148,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                                 return updated;
                                             }, "Pago en efectivo validado")}
                                             disabled={isLoading}
-                                            className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-green-600 text-white hover:bg-green-500 transition-colors disabled:opacity-50 rounded-xl"
+                                            className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground text-white hover:bg-foreground transition-colors disabled:opacity-50 rounded-xl"
                                         >
                                             {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <DollarSign className="h-3.5 w-3.5" />}
                                             CONFIRMAR RECEPCIÓN
@@ -170,7 +170,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                             value={cobroAmount}
                                             onChange={(e) => setCobroAmount(e.target.value)}
                                             placeholder="0.00"
-                                            className="w-full bg-background ring-1 ring-border rounded-xl px-3 py-3 pl-7 text-xl font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-[#12b4ff] transition-all font-mono"
+                                            className="w-full bg-background ring-1 ring-border rounded-xl px-3 py-3 pl-7 text-xl font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:ring-foreground transition-all font-mono"
                                             autoFocus
                                         />
                                     </div>
@@ -184,7 +184,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                             onClick={() => setCobroMethod("cash")}
                                             className={`flex flex-col items-center gap-1.5 p-3 border rounded-xl transition-all ${
                                                 cobroMethod === "cash"
-                                                    ? "border-[#12b4ff] bg-[#12b4ff]/5 text-foreground"
+                                                    ? "border-foreground bg-foreground/5 text-foreground"
                                                     : "border-border text-muted-foreground hover:border-foreground/30"
                                             }`}
                                         >
@@ -196,7 +196,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                             onClick={() => setCobroMethod("card")}
                                             className={`flex flex-col items-center gap-1.5 p-3 border rounded-xl transition-all ${
                                                 cobroMethod === "card"
-                                                    ? "border-[#12b4ff] bg-[#12b4ff]/5 text-foreground"
+                                                    ? "border-foreground bg-foreground/5 text-foreground"
                                                     : "border-border text-muted-foreground hover:border-foreground/30"
                                             }`}
                                         >
@@ -238,7 +238,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                         }
                                     }}
                                     disabled={isLoading || !cobroAmount || parseFloat(String(cobroAmount)) <= 0}
-                                    className="w-full py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-green-600 text-white hover:bg-green-500 transition-colors disabled:opacity-50 rounded-xl flex items-center justify-center gap-2"
+                                    className="w-full py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground text-white hover:bg-foreground transition-colors disabled:opacity-50 rounded-xl flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <DollarSign className="h-3.5 w-3.5" />}
                                     {cobroMethod === "cash" ? "CONFIRMAR COBRO" : "GENERAR ENLACE"}
@@ -258,7 +258,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                 </p>
                                 <button
                                     onClick={() => setCobroOpen(true)}
-                                    className="w-full py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-green-600 text-white hover:bg-green-500 transition-colors rounded-xl flex items-center justify-center gap-2"
+                                    className="w-full py-3 text-[10px] font-bold tracking-[0.2em] uppercase bg-foreground text-white hover:bg-foreground transition-colors rounded-xl flex items-center justify-center gap-2"
                                 >
                                     <DollarSign className="h-3.5 w-3.5" />
                                     REGISTRAR COBRO PRESENCIAL
@@ -276,7 +276,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                 <button
                                     onClick={() => handleAction(() => confirmAppointment(appointment.id, tenantId), "Cita confirmada")}
                                     disabled={isLoading}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:bg-foreground/90 transition-all disabled:opacity-50"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
                                     CONFIRMAR CITA
@@ -286,7 +286,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                 <button
                                     onClick={() => handleAction(() => completeAppointment(appointment.id, tenantId), "Cita completada")}
                                     disabled={isLoading}
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
+                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-foreground transition-all disabled:opacity-50"
                                 >
                                     {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
                                     COMPLETAR
@@ -297,7 +297,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                     <button 
                                         onClick={() => setEditOpen(true)}
                                         disabled={isLoading}
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-[#12b4ff] transition-all disabled:opacity-50"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-card ring-1 ring-border text-foreground rounded-xl hover:ring-foreground transition-all disabled:opacity-50"
                                     >
                                         <Clock className="h-3.5 w-3.5" />
                                         REAGENDAR
@@ -305,7 +305,7 @@ export function AppointmentDetailClient({ initialAppointment, initialPayment, te
                                     <button
                                         onClick={() => handleAction(() => cancelAppointment(appointment.id, tenantId), "Cita cancelada")}
                                         disabled={isLoading}
-                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-red-900/50 text-red-500 rounded-xl hover:bg-red-950/30 hover:text-red-400 transition-all disabled:opacity-50"
+                                        className="w-full flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-foreground rounded-xl hover:bg-foreground/10 hover:text-foreground transition-all disabled:opacity-50"
                                     >
                                         {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
                                         CANCELAR

@@ -54,7 +54,7 @@ export default async function SchedulesPage({
                         BUSINESS ID {businessId.slice(0, 8).toUpperCase()} · {staffName}
                     </p>
                     <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-card ring-1 ring-border rounded-full shadow-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#12b4ff] animate-pulse" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-foreground animate-pulse" />
                         <span className="text-[9px] font-bold tracking-[0.2em] text-foreground uppercase">Horario Semanal Recurrente Automático</span>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ export default async function SchedulesPage({
 
                     <Link
                         href="/dashboard/horarios/configuracion"
-                        className="flex items-center justify-center px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] transition-all"
+                        className="flex items-center justify-center px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:bg-foreground/90 transition-all"
                     >
                         CONFIGURAR
                     </Link>

@@ -17,8 +17,8 @@ export function EmptyState({
     className = "",
 }: EmptyStateProps) {
     return (
-        <div className={`flex flex-col items-center justify-center p-12 text-center border border-dashed border-border rounded-2xl bg-card/50 ${className}`}>
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-accent text-muted-foreground mb-6">
+        <div className={`premium-card flex flex-col items-center justify-center p-12 text-center border-dashed ${className}`}>
+            <div className="liquid-control flex items-center justify-center w-16 h-16 rounded-full text-foreground mb-6">
                 <Icon strokeWidth={1.5} className="w-8 h-8" />
             </div>
             <h3 className="text-[13px] font-bold tracking-[0.1em] text-foreground uppercase mb-2">

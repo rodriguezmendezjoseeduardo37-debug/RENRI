@@ -74,7 +74,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
     };
 
     const inputClass =
-        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-all focus:ring-1 focus:ring-[#08b6ff]/50";
+        "w-full bg-background border border-border text-foreground text-sm px-4 py-3 rounded-xl placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-all focus:ring-1 focus:ring-foreground/50";
     const labelClass =
         "text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase block mb-2";
 
@@ -99,7 +99,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
             {/* Public Slug */}
             <div>
                 <label className={labelClass}>ENLACE DEL PORTAL PÚBLICO (SLUG)</label>
-                <div className="flex bg-card border border-border rounded-xl overflow-hidden focus-within:border-[#08b6ff] transition-colors">
+                <div className="flex bg-card border border-border rounded-xl overflow-hidden focus-within:border-foreground transition-colors">
                     <span className="text-muted-foreground text-sm px-4 py-3 border-r border-border bg-card font-mono select-none">
                         {hostUrl.replace(/^https?:\/\//, "")}/portal/
                     </span>
@@ -197,7 +197,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
 
             {/* Customization & Appearance */}
             <div className="border-t border-border pt-6 space-y-6">
-                <h3 className="text-sm font-bold tracking-[0.2em] text-[#08b6ff] uppercase">
+                <h3 className="text-sm font-bold tracking-[0.2em] text-foreground uppercase">
                     PERSONALIZACIÓN VISUAL DEL PORTAL
                 </h3>
 
@@ -388,7 +388,7 @@ export function OrganizacionForm({ tenant, hostUrl }: OrganizacionFormProps) {
                 <button
                     type="submit"
                     disabled={isLoading || !name.trim() || !slug.trim()}
-                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="flex items-center gap-2 px-8 py-3.5 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isLoading ? "GUARDANDO..." : "GUARDAR CAMBIOS"}

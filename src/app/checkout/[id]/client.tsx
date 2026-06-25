@@ -107,10 +107,10 @@ function CheckoutForm({ paymentId, checkoutToken }: CheckoutFormProps) {
 
     if (paymentSuccess) {
         return (
-            <div className="border border-[#08b6ff]/20 bg-background p-4 sm:p-6 md:p-8 space-y-4 rounded-2xl text-center">
+            <div className="border border-foreground/20 bg-background p-4 sm:p-6 md:p-8 space-y-4 rounded-2xl text-center">
                 <div className="relative inline-block">
-                    <div className="absolute inset-0 bg-[#08b6ff]/20 blur-xl rounded-full" />
-                    <CheckCircle2 className="w-12 h-12 text-[#08b6ff] relative z-10 mx-auto" />
+                    <div className="absolute inset-0 bg-foreground/20 blur-xl rounded-full" />
+                    <CheckCircle2 className="w-12 h-12 text-foreground relative z-10 mx-auto" />
                 </div>
                 <h3 className="text-lg font-bold tracking-[0.1em] text-foreground uppercase">
                     ¡PAGO COMPLETADO!
@@ -120,7 +120,7 @@ function CheckoutForm({ paymentId, checkoutToken }: CheckoutFormProps) {
                 </p>
                 <button
                     onClick={() => window.location.reload()}
-                    className="px-6 py-3 text-[10px] font-bold tracking-[0.2em] uppercase border border-[#08b6ff]/30 text-[#08b6ff] hover:bg-[#08b6ff] hover:text-black transition-colors rounded-xl"
+                    className="px-6 py-3 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control text-foreground hover:bg-foreground/5 transition-all rounded-full"
                 >
                     VER ESTADO DEL PEDIDO
                 </button>
@@ -147,7 +147,7 @@ function CheckoutForm({ paymentId, checkoutToken }: CheckoutFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="border border-[#08b6ff]/20 bg-background p-4 sm:p-6 md:p-8 space-y-6 rounded-2xl">
+        <form onSubmit={handleSubmit} className="border border-foreground/20 bg-background p-4 sm:p-6 md:p-8 space-y-6 rounded-2xl">
             <h3 className="text-[14px] font-bold tracking-[0.2em] text-foreground uppercase border-b border-border pb-4 mb-6">
                 PAGAR CON TARJETA
             </h3>
@@ -163,7 +163,7 @@ function CheckoutForm({ paymentId, checkoutToken }: CheckoutFormProps) {
                     onChange={(e) => setCardholderName(e.target.value)}
                     required
                     placeholder="Como aparece en la tarjeta"
-                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-[#08b6ff] focus:outline-none transition-colors rounded-xl"
+                    className="w-full px-4 py-3 bg-background border border-border text-foreground text-sm placeholder:text-foreground focus:border-foreground focus:outline-none transition-colors rounded-xl"
                 />
             </div>
 
@@ -191,14 +191,14 @@ function CheckoutForm({ paymentId, checkoutToken }: CheckoutFormProps) {
             <button
                 type="submit"
                 disabled={isLoading || !stripe || !elements || !elementReady}
-                className="w-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl bg-[#08b6ff] text-black hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase rounded-xl liquid-button hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
                 {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                 {isLoading ? "PROCESANDO..." : "PAGAR AHORA"}
             </button>
 
             <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground tracking-[0.1em]">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#08b6ff]" />
+                <ShieldCheck className="w-3.5 h-3.5 text-foreground" />
                 PAGO SEGURO PROCESADO POR STRIPE
             </div>
         </form>
@@ -250,7 +250,7 @@ export function CheckoutClient({ paymentId, businessId, checkoutToken }: Checkou
             fontFamily: "monospace",
             colorBackground: isDark ? "#0A0A0A" : "#FFFFFF",
             colorText: isDark ? "#ffffff" : "#0A0A0A",
-            colorPrimary: "#08b6ff",
+            colorPrimary: "#0a0a0a",
             colorDanger: "#DC2626",
             borderRadius: "12px",
         },
@@ -258,7 +258,7 @@ export function CheckoutClient({ paymentId, businessId, checkoutToken }: Checkou
 
     if (!clientSecret || !connectedStripe) {
         return (
-            <div className="border border-[#08b6ff]/20 bg-background p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center space-y-6 rounded-2xl">
+            <div className="border border-foreground/20 bg-background p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center space-y-6 rounded-2xl">
                 <div className="text-center space-y-2">
                     <h3 className="text-sm font-bold tracking-[0.2em] text-foreground uppercase">
                         PAGO EN LÍNEA
@@ -271,7 +271,7 @@ export function CheckoutClient({ paymentId, businessId, checkoutToken }: Checkou
                 <button
                     onClick={initializePayment}
                     disabled={isInitializing}
-                    className="px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
+                    className="px-8 py-4 liquid-button rounded-full text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-all disabled:opacity-50 flex items-center gap-2"
                 >
                     {isInitializing && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isInitializing ? "CONECTANDO STRIPE..." : "PROCEDER AL PAGO"}
@@ -279,7 +279,7 @@ export function CheckoutClient({ paymentId, businessId, checkoutToken }: Checkou
 
                 <Link
                     href={`/negocio/${businessId}/tienda`}
-                    className="inline-flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.15em] hover:text-[#08b6ff] transition-colors uppercase"
+                    className="inline-flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.15em] hover:text-foreground transition-colors uppercase"
                 >
                     <ArrowLeft className="w-3 h-3" />
                     VOLVER A LA TIENDA

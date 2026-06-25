@@ -13,11 +13,11 @@ const TYPE_CONFIG: Record<
     SearchResultItem["type"],
     { icon: React.ElementType; color: string; label: string }
 > = {
-    cliente: { icon: Users, color: "text-blue-400", label: "Cliente" },
+    cliente: { icon: Users, color: "text-foreground", label: "Cliente" },
     producto: { icon: Package, color: "text-emerald-400", label: "Producto" },
-    pedido: { icon: ShoppingCart, color: "text-amber-400", label: "Pedido" },
+    pedido: { icon: ShoppingCart, color: "text-foreground", label: "Pedido" },
     cita: { icon: Calendar, color: "text-violet-400", label: "Cita" },
-    pago: { icon: ShoppingCart, color: "text-rose-400", label: "Pago" },
+    pago: { icon: ShoppingCart, color: "text-muted-foreground", label: "Pago" },
 };
 
 export function SearchBar({ accountType = "servicios" }: SearchBarProps) {

@@ -20,8 +20,8 @@ export default function ErrorPage({
     return (
         <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
             <div className="max-w-md w-full glass-panel p-8 rounded-2xl flex flex-col items-center text-center space-y-6">
-                <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-2">
-                    <AlertTriangle className="w-8 h-8 text-red-500" />
+                <div className="w-16 h-16 rounded-full bg-foreground/10 border border-border/20 flex items-center justify-center mb-2">
+                    <AlertTriangle className="w-8 h-8 text-foreground" />
                 </div>
                 
                 <div className="space-y-2">
@@ -42,7 +42,7 @@ export default function ErrorPage({
                 <div className="flex flex-col sm:flex-row w-full gap-3 pt-2">
                     <button
                         onClick={reset}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#08b6ff] hover:opacity-90 text-black text-[11px] font-bold tracking-[0.2em] rounded-xl transition-all uppercase"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 liquid-button hover:opacity-90 text-[11px] font-bold tracking-[0.2em] rounded-xl transition-all uppercase"
                     >
                         <RotateCcw className="w-4 h-4" />
                         Reintentar

@@ -69,7 +69,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 value={value}
                 disabled={disabled}
                 onChange={(e) => onChange(e.target.value)}
-                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-[#12b4ff] transition-all outline-none disabled:opacity-30"
+                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-foreground transition-all outline-none disabled:opacity-30"
             />
         </div>
     );
@@ -91,7 +91,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 value={value}
                 disabled={disabled}
                 onChange={(e) => onChange(Number(e.target.value))}
-                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-[#12b4ff] transition-all outline-none disabled:opacity-30"
+                className="bg-background ring-1 ring-border text-foreground p-2 text-xs rounded-xl focus:ring-foreground transition-all outline-none disabled:opacity-30"
             >
                 <option value={15}>15 min</option>
                 <option value={20}>20 min</option>
@@ -107,7 +107,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
     return (
         <div className="ring-1 ring-border bg-card rounded-2xl shadow-sm overflow-hidden">
             <div className="p-4 border-b border-border bg-white/5 flex items-center gap-3">
-                <div className="p-2 bg-foreground/5 ring-1 ring-foreground/10 text-[#12b4ff] rounded-xl">
+                <div className="p-2 bg-foreground/5 ring-1 ring-foreground/10 text-foreground rounded-xl">
                     <CalendarDays className="w-4 h-4" />
                 </div>
                 <div>
@@ -125,12 +125,12 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 <div className={`space-y-6 transition-opacity ${!weekdays.isOpen ? "opacity-50" : ""}`}>
                     <div className="flex items-center justify-between pb-2 border-b border-white/5">
                         <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                            <span className="w-2 h-2 rounded-full bg-foreground shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                             <h4 className="text-[10px] font-bold tracking-[0.2em] text-foreground uppercase">Lunes a Viernes</h4>
                         </div>
                         <button 
                             onClick={() => setWeekdays({...weekdays, isOpen: !weekdays.isOpen})}
-                        className={`p-1.5 border rounded-lg transition-colors ${weekdays.isOpen ? "border-[#12b4ff] text-[#12b4ff]" : "border-border text-muted-foreground"}`}
+                        className={`p-1.5 border rounded-lg transition-colors ${weekdays.isOpen ? "border-foreground text-foreground" : "border-border text-muted-foreground"}`}
                         >
                             <Power className="w-3.5 h-3.5" />
                         </button>
@@ -148,12 +148,12 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 <div className={`space-y-6 transition-opacity ${!weekend.isOpen ? "opacity-50" : ""}`}>
                     <div className="flex items-center justify-between pb-2 border-b border-white/5">
                         <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]" />
+                            <span className="w-2 h-2 rounded-full bg-foreground shadow-sm" />
                             <h4 className="text-[10px] font-bold tracking-[0.2em] text-foreground uppercase">Sábado y Domingo</h4>
                         </div>
                         <button 
                             onClick={() => setWeekend({...weekend, isOpen: !weekend.isOpen})}
-                        className={`p-1.5 border rounded-lg transition-colors ${weekend.isOpen ? "border-purple-500 text-purple-500" : "border-border text-muted-foreground"}`}
+                        className={`p-1.5 border rounded-lg transition-colors ${weekend.isOpen ? "border-border text-muted-foreground" : "border-border text-muted-foreground"}`}
                         >
                             <Power className="w-3.5 h-3.5" />
                         </button>
@@ -178,7 +178,7 @@ export function BulkScheduleEditor({ tenantId, staffId }: BulkScheduleEditorProp
                 <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-3 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase disabled:opacity-50 transition-all min-w-[240px]"
+                    className="flex items-center justify-center gap-3 liquid-button rounded-full shadow-sm hover:bg-foreground/90 px-10 py-4 text-[11px] font-bold tracking-[0.2em] uppercase disabled:opacity-50 transition-all min-w-[240px]"
                 >
                     {isSubmitting ? (
                         <Loader2 className="w-4 h-4 animate-spin" />

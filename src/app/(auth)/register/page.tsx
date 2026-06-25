@@ -93,10 +93,10 @@ export default function RegisterPage() {
     if (successMsg) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[hsl(0,0%,3.9%)] relative px-4 overflow-hidden">
-                <div className="absolute top-1/4 -left-32 w-96 h-96 bg-[#08b6ff]/10 rounded-full blur-[128px] pointer-events-none"></div>
-                <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-[#08b6ff]/5 rounded-full blur-[128px] pointer-events-none"></div>
+                <div className="absolute top-1/4 -left-32 w-96 h-96 bg-foreground/10 rounded-full blur-[128px] pointer-events-none"></div>
+                <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-foreground/5 rounded-full blur-[128px] pointer-events-none"></div>
                 <Card className="w-full max-w-md bg-[hsl(0,0%,7%)]/80 backdrop-blur-xl border-[hsl(0,0%,14.9%)] shadow-2xl relative overflow-hidden text-center">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#08b6ff] to-transparent opacity-50"></div>
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-foreground to-transparent opacity-50"></div>
                     <CardHeader className="space-y-4 pt-8">
                         <div className="mx-auto flex flex-col items-center gap-3">
                             <RenriMark size={48} theme="dark" />
@@ -107,7 +107,7 @@ export default function RegisterPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-4">
-                        <Button asChild className="w-full h-11 bg-[#08b6ff] text-[#0a0a0a] rounded-xl font-bold hover:opacity-90 transition-opacity">
+                        <Button asChild className="w-full h-11 liquid-button rounded-full font-bold hover:opacity-90 transition-opacity">
                             <Link href="/login">
                                 Ir al Inicio de Sesión
                             </Link>
@@ -172,7 +172,7 @@ export default function RegisterPage() {
                 >
                     {/* Reduced warning boxes size for minimalist approach */}
                     {isClientRegistration && (
-                        <div className="rounded-xl border border-[#08b6ff]/20 bg-[#08b6ff]/5 p-3 text-[13px] text-foreground/80 leading-relaxed text-center">
+                        <div className="rounded-xl border border-foreground/20 bg-foreground/5 p-3 text-[13px] text-foreground/80 leading-relaxed text-center">
                             Si ya reservaste con este correo, tu cuenta se activará y verás tus citas en el dashboard.
                         </div>
                     )}
@@ -216,7 +216,7 @@ export default function RegisterPage() {
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         {error && (
-                            <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+                            <div className="rounded-md bg-foreground/10 border border-border/20 p-3 text-sm text-foreground">
                                 {error}
                             </div>
                         )}
@@ -233,7 +233,7 @@ export default function RegisterPage() {
                                             setValue("accountType", type.value);
                                         }}
                                         className={`rounded-xl border p-3 text-left transition-all duration-300 ${selectedType === type.value
-                                            ? "border-[#08b6ff] bg-[#08b6ff]/10 text-foreground"
+                                            ? "border-foreground bg-foreground/10 text-foreground"
                                             : "border-border bg-card text-muted-foreground hover:border-foreground/20 hover:text-foreground"
                                             }`}
                                     >
@@ -253,11 +253,11 @@ export default function RegisterPage() {
                             <Input
                                 id="name"
                                 placeholder="Juan Pérez"
-                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                                 {...register("name", { required: true })}
                             />
                             {errors.name && (
-                                <p className="text-xs text-red-400">{errors.name.message}</p>
+                                <p className="text-xs text-foreground">{errors.name.message}</p>
                             )}
                         </div>
 
@@ -269,11 +269,11 @@ export default function RegisterPage() {
                                 id="email"
                                 type="email"
                                 placeholder="tu@email.com"
-                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                                 {...register("email", { required: true })}
                             />
                             {errors.email && (
-                                <p className="text-xs text-red-400">{errors.email.message}</p>
+                                <p className="text-xs text-foreground">{errors.email.message}</p>
                             )}
                         </div>
 
@@ -285,11 +285,11 @@ export default function RegisterPage() {
                                 id="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                                 {...register("password", { required: true })}
                             />
                             {errors.password && (
-                                <p className="text-xs text-red-400">
+                                <p className="text-xs text-foreground">
                                     {errors.password.message}
                                 </p>
                             )}
@@ -303,11 +303,11 @@ export default function RegisterPage() {
                                 id="confirmPassword"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                                className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                                 {...register("confirmPassword", { required: true })}
                             />
                             {errors.confirmPassword && (
-                                <p className="text-xs text-red-400">
+                                <p className="text-xs text-foreground">
                                     {errors.confirmPassword.message}
                                 </p>
                             )}
@@ -315,7 +315,7 @@ export default function RegisterPage() {
 
                         <Button
                             type="submit"
-                            className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
+                            className="w-full h-12 liquid-button hover:bg-foreground/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
@@ -329,7 +329,7 @@ export default function RegisterPage() {
                         ¿Ya tienes cuenta?{" "}
                         <Link
                             href="/login"
-                            className="text-foreground font-medium hover:text-[#08b6ff] transition-colors"
+                            className="text-foreground font-medium hover:text-foreground transition-colors"
                         >
                             Inicia Sesión
                         </Link>

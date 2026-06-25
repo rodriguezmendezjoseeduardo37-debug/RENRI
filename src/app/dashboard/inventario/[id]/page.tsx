@@ -148,7 +148,7 @@ export default async function ProductDetailPage({
                                 STOCK ACTUAL
                             </span>
                             <span
-                                className={`text-5xl font-bold font-mono ${isLowStock ? "text-red-500" : "text-foreground"
+                                className={`text-5xl font-bold font-mono ${isLowStock ? "text-foreground" : "text-foreground"
                                     }`}
                             >
                                 {product.stock}
@@ -156,7 +156,7 @@ export default async function ProductDetailPage({
                         </div>
 
                         {isLowStock && (
-                            <div className="flex items-center gap-2 justify-center text-red-500">
+                            <div className="flex items-center gap-2 justify-center text-foreground">
                                 <AlertTriangle className="w-4 h-4" />
                                 <span className="text-[10px] font-bold tracking-[0.2em] uppercase">
                                     STOCK BAJO

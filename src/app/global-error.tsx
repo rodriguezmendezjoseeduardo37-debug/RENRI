@@ -27,8 +27,8 @@ export default function GlobalError({
         <html lang="es" className={`${spaceGrotesk.variable} ${inter.variable} dark`}>
             <body className="font-[family-name:var(--font-body)] bg-[hsl(240,10%,4%)] text-white min-h-screen flex flex-col items-center justify-center p-4">
                 <div className="max-w-md w-full bg-[hsl(240,10%,6%)] border border-white/10 p-8 rounded-2xl flex flex-col items-center text-center space-y-6 shadow-2xl">
-                    <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-2">
-                        <AlertTriangle className="w-8 h-8 text-red-500" />
+                    <div className="w-16 h-16 rounded-full bg-foreground/10 border border-border/20 flex items-center justify-center mb-2">
+                        <AlertTriangle className="w-8 h-8 text-foreground" />
                     </div>
                     
                     <div className="space-y-2">
@@ -48,7 +48,7 @@ export default function GlobalError({
 
                     <button
                         onClick={() => reset()}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-[#08b6ff] hover:opacity-90 text-black text-[11px] font-bold tracking-[0.2em] rounded-xl transition-all uppercase mt-2"
+                        className="w-full flex items-center justify-center gap-2 py-3 liquid-button hover:opacity-90 text-[11px] font-bold tracking-[0.2em] rounded-xl transition-all uppercase mt-2"
                     >
                         <RotateCcw className="w-4 h-4" />
                         Reiniciar Sistema

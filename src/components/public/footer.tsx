@@ -19,26 +19,26 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-white mb-4">Producto</h4>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link href="/pricing" className="hover:text-[#12b4ff] transition-colors">Precios</Link></li>
-              <li><Link href="#" className="hover:text-[#12b4ff] transition-colors">Funcionalidades</Link></li>
-              <li><Link href="#" className="hover:text-[#12b4ff] transition-colors">Integraciones</Link></li>
+              <li><Link href="/pricing" className="hover:text-foreground transition-colors">Precios</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">Funcionalidades</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">Integraciones</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold text-white mb-4">Empresa</h4>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link href="#" className="hover:text-[#12b4ff] transition-colors">Sobre nosotros</Link></li>
-              <li><Link href="#" className="hover:text-[#12b4ff] transition-colors">Contacto</Link></li>
-              <li><Link href="#" className="hover:text-[#12b4ff] transition-colors">Blog</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">Sobre nosotros</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">Contacto</Link></li>
+              <li><Link href="#" className="hover:text-foreground transition-colors">Blog</Link></li>
             </ul>
           </div>
           
           <div>
             <h4 className="font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link href="/terminos" className="hover:text-[#12b4ff] transition-colors">Términos de servicio</Link></li>
-              <li><Link href="/privacidad" className="hover:text-[#12b4ff] transition-colors">Aviso de privacidad</Link></li>
+              <li><Link href="/terminos" className="hover:text-foreground transition-colors">Términos de servicio</Link></li>
+              <li><Link href="/privacidad" className="hover:text-foreground transition-colors">Aviso de privacidad</Link></li>
             </ul>
           </div>
         </div>

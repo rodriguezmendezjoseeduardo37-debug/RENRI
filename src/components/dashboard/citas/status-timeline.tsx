@@ -24,7 +24,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
 
             {isCancelled ? (
                 <div className="flex items-center gap-3 p-4 bg-card ring-1 ring-border rounded-xl">
-                    <div className="w-3 h-3 bg-red-500 rounded-full" />
+                    <div className="w-3 h-3 bg-foreground rounded-full" />
                     <span className="text-sm text-muted-foreground uppercase tracking-[0.1em]">
                         {currentStatus === "cancelled" ? "CANCELADA" : "NO SHOW"}
                     </span>
@@ -40,7 +40,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Step indicator */}
                                 <div className="flex flex-col items-center gap-2 flex-1">
                                     <div
-                                        className={`w-4 h-4 rounded-full flex items-center justify-center ${isDone ? "bg-[#12b4ff] shadow-[0_0_10px_rgba(18,180,255,0.3)]" : "border border-border"
+                                        className={`w-4 h-4 rounded-full flex items-center justify-center ${isDone ? "bg-foreground shadow-[0_0_10px_rgba(18,180,255,0.3)]" : "border border-border"
                                             }`}
                                     >
                                         {isDone && (
@@ -58,7 +58,7 @@ export function StatusTimeline({ currentStatus }: StatusTimelineProps) {
                                 {/* Connector line */}
                                 {i < STEPS.length - 1 && (
                                     <div
-                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-[#12b4ff]" : "bg-border"
+                                        className={`flex-1 h-[1px] -mt-5 ${currentIndex > i ? "bg-foreground" : "bg-border"
                                             }`}
                                     />
                                 )}

@@ -112,14 +112,14 @@ export function ScheduleFormModal({
                                 <select
                                     {...form.register("dayOfWeek", { valueAsNumber: true })}
                                     disabled={!!initialData}
-                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all disabled:opacity-50"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-foreground transition-all disabled:opacity-50"
                                 >
                                     {DAYS.map((day, i) => (
                                         <option key={i} value={i}>{day.toUpperCase()}</option>
                                     ))}
                                 </select>
                                 {form.formState.errors.dayOfWeek && (
-                                    <p className="text-[11px] text-red-500">{form.formState.errors.dayOfWeek.message}</p>
+                                    <p className="text-[11px] text-foreground">{form.formState.errors.dayOfWeek.message}</p>
                                 )}
                             </div>
                         )}
@@ -134,10 +134,10 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("startTime")}
-                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-[#12b4ff] transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-foreground transition-all"
                                 />
                                 {form.formState.errors.startTime && (
-                                    <p className="text-[11px] text-red-500">{form.formState.errors.startTime.message}</p>
+                                    <p className="text-[11px] text-foreground">{form.formState.errors.startTime.message}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
@@ -148,10 +148,10 @@ export function ScheduleFormModal({
                                     type="time"
                                     step="1800"
                                     {...form.register("endTime")}
-                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-[#12b4ff] transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground font-mono focus:outline-none focus:ring-foreground transition-all"
                                 />
                                 {form.formState.errors.endTime && (
-                                    <p className="text-[11px] text-red-500">{form.formState.errors.endTime.message}</p>
+                                    <p className="text-[11px] text-foreground">{form.formState.errors.endTime.message}</p>
                                 )}
                             </div>
                         </div>
@@ -164,7 +164,7 @@ export function ScheduleFormModal({
                                 </label>
                                 <select
                                     {...form.register("slotDurationMinutes", { valueAsNumber: true })}
-                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-[#12b4ff] transition-all"
+                                    className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:outline-none focus:ring-foreground transition-all"
                                 >
                                     <option value={15}>15 min</option>
                                     <option value={20}>20 min</option>
@@ -192,7 +192,7 @@ export function ScheduleFormModal({
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="flex-1 px-4 py-3 bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#00a0e6] text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
+                            className="flex-1 px-4 py-3 liquid-button rounded-full shadow-sm hover:bg-foreground/90 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
                         >
                             {isLoading ? "GUARDANDO..." : "GUARDAR"}
                         </button>
@@ -202,7 +202,7 @@ export function ScheduleFormModal({
                                 type="button"
                                 onClick={handleDelete}
                                 disabled={isDeleting}
-                                className="px-4 py-3 border border-red-900/50 text-red-500 hover:bg-red-950/30 hover:text-red-400 rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase transition-all"
+                                className="px-4 py-3 border border-border text-foreground hover:bg-foreground/10 hover:text-foreground rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase transition-all"
                             >
                                 {isDeleting ? "..." : "ELIMINAR"}
                             </button>

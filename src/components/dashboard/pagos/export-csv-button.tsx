@@ -53,7 +53,7 @@ export function ExportCsvButton({ data, filename = "pagos_export.csv" }: ExportC
     return (
         <button 
             onClick={handleExport}
-            className="flex items-center gap-2 ring-1 ring-border rounded-xl px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:ring-[#12b4ff] hover:text-foreground transition-all uppercase shadow-sm"
+            className="flex items-center gap-2 liquid-control rounded-full px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground hover:text-foreground transition-all uppercase shadow-sm"
         >
             <Download className="w-3.5 h-3.5" />
             EXPORTAR CSV

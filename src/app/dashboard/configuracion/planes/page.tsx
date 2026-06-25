@@ -74,7 +74,7 @@ export default async function PlanesPage({
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-foreground transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -92,7 +92,7 @@ export default async function PlanesPage({
             )}
 
             {isActivationPending && (
-                <div className="bg-[#08b6ff]/10 border border-[#08b6ff]/30 text-[#08b6ff] px-4 py-3 rounded-lg flex items-center gap-3">
+                <div className="bg-foreground/10 border border-foreground/30 text-foreground px-4 py-3 rounded-lg flex items-center gap-3">
                     <div>
                         <p className="text-sm font-bold tracking-wide">PAGO RECIBIDO</p>
                         <p className="text-xs opacity-80 mt-0.5">Estamos confirmando la suscripcion con Stripe. Actualiza esta pagina en unos segundos si el plan aun no aparece activo.</p>
@@ -101,7 +101,7 @@ export default async function PlanesPage({
             )}
 
             {isCanceled && (
-                <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg flex items-center gap-3">
+                <div className="bg-foreground/10 border border-border/30 text-foreground px-4 py-3 rounded-lg flex items-center gap-3">
                     <div>
                         <p className="text-sm font-bold tracking-wide">PAGO CANCELADO</p>
                         <p className="text-xs opacity-80 mt-0.5">El proceso de pago fue interrumpido. No se te ha cobrado nada.</p>
@@ -116,7 +116,7 @@ export default async function PlanesPage({
                     return (
                         <div
                             key={plan.name}
-                            className={`border ${isCurrentPlan ? "border-[#08b6ff]" : plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative transition-colors rounded-2xl`}
+                            className={`border ${isCurrentPlan ? "border-foreground" : plan.recommended ? "border-white" : "border-border"} bg-card p-10 flex flex-col relative transition-colors rounded-2xl`}
                         >
                             {plan.recommended && !isCurrentPlan && (
                                 <div className="absolute top-0 right-0 bg-secondary text-secondary-foreground rounded-xl shadow-sm hover:bg-secondary/80 text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
@@ -124,7 +124,7 @@ export default async function PlanesPage({
                                 </div>
                             )}
                             {isCurrentPlan && (
-                                <div className="absolute top-0 right-0 bg-[#08b6ff] text-black rounded-xl shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
+                                <div className="absolute top-0 right-0 liquid-button rounded-full shadow-sm text-[9px] font-bold tracking-[0.2em] uppercase px-3 py-1 -mt-3 mr-6">
                                     PLAN ACTUAL
                                 </div>
                             )}
@@ -144,7 +144,7 @@ export default async function PlanesPage({
                             <ul className="space-y-4 mb-12 flex-grow">
                                 {plan.features.map((feature) => (
                                     <li key={feature} className="flex items-start gap-3">
-                                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isCurrentPlan ? "text-[#08b6ff]" : "text-foreground"}`} />
+                                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isCurrentPlan ? "text-foreground" : "text-foreground"}`} />
                                         <span className="text-xs text-muted-foreground leading-relaxed uppercase tracking-wide">{feature}</span>
                                     </li>
                                 ))}

@@ -8,22 +8,22 @@ export function FeaturesGrid() {
     {
       title: "Citas Inteligentes",
       description: "Sincronización automática de tu agenda sin riesgo a empalmes.",
-      icon: <Calendar className="w-5 h-5 text-[#12b4ff]" />,
+      icon: <Calendar className="w-5 h-5 text-foreground" />,
     },
     {
       title: "Pagos sin Fricción",
       description: "Acepta pagos con tarjeta fácilmente, integrados con Stripe.",
-      icon: <CreditCard className="w-5 h-5 text-[#12b4ff]" />,
+      icon: <CreditCard className="w-5 h-5 text-foreground" />,
     },
     {
       title: "Inventario al Instante",
       description: "Control de stock en tiempo real y alertas de reabastecimiento.",
-      icon: <Package className="w-5 h-5 text-[#12b4ff]" />,
+      icon: <Package className="w-5 h-5 text-foreground" />,
     },
     {
       title: "Gestión de Clientes",
       description: "Historial clínico, de servicios prestados y preferencias guardadas.",
-      icon: <Users className="w-5 h-5 text-[#12b4ff]" />,
+      icon: <Users className="w-5 h-5 text-foreground" />,
     }
   ];
 
@@ -43,7 +43,7 @@ export function FeaturesGrid() {
       <StaggerGroup className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feat, i) => (
           <StaggerItem key={i}>
-            <div className="bg-[#111]/80 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/10 shadow-sm hover:shadow-lg transition-all h-full flex flex-col hover:ring-[#12b4ff]/50">
+            <div className="bg-[#111]/80 backdrop-blur-md rounded-2xl p-6 ring-1 ring-white/10 shadow-sm hover:shadow-lg transition-all h-full flex flex-col hover:ring-foreground/50">
               <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ring-1 ring-white/10 mb-4">
                 {feat.icon}
               </div>

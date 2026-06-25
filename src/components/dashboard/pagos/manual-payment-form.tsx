@@ -45,7 +45,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                     <select
                         value={method}
                         onChange={(e) => setMethod(e.target.value)}
-                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-[#12b4ff] focus:outline-none transition-all"
+                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-foreground focus:outline-none transition-all"
                     >
                         <option value="EFECTIVO">EFECTIVO</option>
                         <option value="TRANSFERENCIA">TRANSFERENCIA BANCARIA</option>
@@ -63,7 +63,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
                         value={reference}
                         onChange={(e) => setReference(e.target.value)}
                         placeholder="Folio, Autorización..."
-                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-[#12b4ff] focus:outline-none transition-all font-mono"
+                        className="w-full bg-background ring-1 ring-border rounded-xl p-3 text-sm text-foreground focus:ring-foreground focus:outline-none transition-all font-mono"
                     />
                 </div>
             </div>
@@ -71,7 +71,7 @@ export function ManualPaymentForm({ paymentId, onSuccess }: ManualPaymentFormPro
             <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#12b4ff] text-black rounded-xl shadow-[0_0_20px_rgba(18,180,255,0.2)] hover:bg-[#12b4ff]/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
+                className="w-full liquid-button rounded-full shadow-sm hover:bg-foreground/90 py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all disabled:opacity-50"
             >
                 {isLoading ? "REGISTRANDO..." : "CONFIRMAR PAGO RECIBIDO"}
             </button>

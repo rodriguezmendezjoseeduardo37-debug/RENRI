@@ -79,21 +79,21 @@ export default async function PortalPage({
                 <div className="mt-20 pb-10 flex items-center justify-center gap-6 text-[9px] tracking-[0.3em] text-muted-foreground uppercase w-full flex-wrap">
                     <Link
                         href="/cliente"
-                        className="hover:text-[#08b6ff] transition-colors"
+                        className="hover:text-foreground transition-colors"
                     >
                         INICIO
                     </Link>
                     <span className="text-foreground hidden sm:inline">|</span>
                     <Link
                         href={`/negocio/${tenant.id}`}
-                        className="hover:text-[#08b6ff] transition-colors"
+                        className="hover:text-foreground transition-colors"
                     >
                         PÁGINA PRINCIPAL
                     </Link>
                     <span className="text-foreground hidden sm:inline">|</span>
                     <Link
                         href={`/portal/${tenantSlug}/historial`}
-                        className="hover:text-[#08b6ff] transition-colors"
+                        className="hover:text-foreground transition-colors"
                     >
                         HISTORIAL
                     </Link>

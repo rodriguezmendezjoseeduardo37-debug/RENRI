@@ -29,7 +29,7 @@ export function ProductRow({ product }: ProductRowProps) {
                 ${Number(product.price).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
             </td>
             <td className="px-6 py-4">
-                <span className={`text-sm font-bold font-mono flex items-center gap-2 ${isLowStock ? "text-red-500" : "text-muted-foreground"}`}>
+                <span className={`text-sm font-bold font-mono flex items-center gap-2 ${isLowStock ? "text-foreground" : "text-muted-foreground"}`}>
                     {product.stock}
                     {isLowStock && <AlertTriangle className="w-3 h-3" />}
                 </span>

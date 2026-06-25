@@ -101,14 +101,14 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
     // ═════════════════════════════════════════════════════
     if (status.state === "active") {
         return (
-            <div className="border border-[#08b6ff]/30 bg-card rounded-2xl p-8 space-y-6">
+            <div className="border border-foreground/30 bg-card rounded-2xl p-8 space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-[#08b6ff]/10 border border-[#08b6ff]/20 flex items-center justify-center">
-                        <CheckCircle2 className="w-6 h-6 text-[#08b6ff]" />
+                    <div className="w-12 h-12 rounded-2xl bg-foreground/10 border border-foreground/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-6 h-6 text-foreground" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold tracking-[0.15em] text-[#08b6ff] uppercase">
+                        <p className="text-sm font-bold tracking-[0.15em] text-foreground uppercase">
                             COBROS ACTIVOS
                         </p>
                         <p className="text-[10px] text-muted-foreground tracking-[0.1em]">
@@ -137,7 +137,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     <button
                         onClick={handleDisconnect}
                         disabled={isDisconnecting}
-                        className="flex items-center gap-2 px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-red-500 hover:bg-red-500/5 rounded-xl transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-5 py-3 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-foreground hover:bg-foreground/5 rounded-xl transition-colors disabled:opacity-50"
                     >
                         {isDisconnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Unlink className="w-3.5 h-3.5" />}
                         {isDisconnecting ? "DESCONECTANDO..." : "DESCONECTAR"}
@@ -152,13 +152,13 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
     // ═════════════════════════════════════════════════════
     if (status.state === "pending_verification") {
         return (
-            <div className="border border-amber-500/20 bg-card rounded-2xl p-8 space-y-6">
+            <div className="border border-border/20 bg-card rounded-2xl p-8 space-y-6">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                        <RefreshCw className="w-6 h-6 text-amber-400 animate-spin" style={{ animationDuration: "3s" }} />
+                    <div className="w-12 h-12 rounded-2xl bg-foreground/10 border border-border/20 flex items-center justify-center">
+                        <RefreshCw className="w-6 h-6 text-foreground animate-spin" style={{ animationDuration: "3s" }} />
                     </div>
                     <div>
-                        <p className="text-sm font-bold tracking-[0.15em] text-amber-400 uppercase">
+                        <p className="text-sm font-bold tracking-[0.15em] text-foreground uppercase">
                             VERIFICACIÓN PENDIENTE
                         </p>
                         <p className="text-[10px] text-muted-foreground tracking-[0.1em]">
@@ -182,7 +182,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     <button
                         onClick={handleRefreshOnboarding}
                         disabled={isPending}
-                        className="flex items-center gap-2 px-6 py-3 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity disabled:opacity-50"
+                        className="flex items-center gap-2 px-6 py-3 liquid-button rounded-full text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
                         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
                         {isPending ? "CARGANDO..." : "COMPLETAR VERIFICACIÓN"}
@@ -190,7 +190,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
 
                     <button
                         onClick={() => router.refresh()}
-                        className="flex items-center gap-2 px-5 py-3 border border-border text-muted-foreground rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                        className="flex items-center gap-2 px-5 py-3 liquid-control text-muted-foreground rounded-full text-[10px] font-bold tracking-[0.2em] uppercase hover:text-foreground hover:border-foreground transition-colors"
                     >
                         <RefreshCw className="w-3.5 h-3.5" />
                         VERIFICAR ESTADO
@@ -199,7 +199,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                     <button
                         onClick={handleDisconnect}
                         disabled={isDisconnecting}
-                        className="flex items-center gap-2 px-5 py-3 border border-border text-red-500 rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-red-500/5 transition-colors disabled:opacity-50"
+                        className="flex items-center gap-2 px-5 py-3 border border-border text-foreground rounded-xl text-[10px] font-bold tracking-[0.2em] uppercase hover:bg-foreground/5 transition-colors disabled:opacity-50"
                     >
                         {isDisconnecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Unlink className="w-3.5 h-3.5" />}
                         CANCELAR
@@ -236,8 +236,8 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                         desc: "Tus clientes pagan y el dinero llega a tu cuenta",
                     },
                 ].map((item) => (
-                    <div key={item.step} className="border border-border bg-card p-5 rounded-2xl space-y-3 text-center group hover:border-[#08b6ff]/30 transition-colors">
-                        <div className="text-3xl font-bold font-mono text-muted-foreground/30 group-hover:text-[#08b6ff]/40 transition-colors">
+                    <div key={item.step} className="border border-border bg-card p-5 rounded-2xl space-y-3 text-center group hover:border-foreground/30 transition-colors">
+                        <div className="text-3xl font-bold font-mono text-muted-foreground/30 group-hover:text-foreground/40 transition-colors">
                             {item.step}
                         </div>
                         <item.icon className="w-5 h-5 text-foreground mx-auto" />
@@ -267,7 +267,7 @@ export function MetodoCobroUI({ initialStatus }: MetodoCobroUIProps) {
                 <button
                     onClick={handleSetup}
                     disabled={isPending}
-                    className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="w-full flex items-center justify-center gap-3 px-8 py-4 liquid-button rounded-full text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0"
                 >
                     {isPending ? (
                         <>

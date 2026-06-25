@@ -95,7 +95,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
 
                 {/* Logo + Title */}
                 <div className="text-center space-y-2">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#08b6ff]/30 bg-[#08b6ff]/5 text-[#08b6ff] text-xs font-bold tracking-widest uppercase">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-foreground/30 bg-foreground/5 text-foreground text-xs font-bold tracking-widest uppercase">
                         <Sparkles className="w-3.5 h-3.5" />
                         Configuración inicial
                     </div>
@@ -115,16 +115,16 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                 onClick={() => step > s.id && setStep(s.id)}
                                 className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all ${
                                     step === s.id
-                                        ? "bg-[#08b6ff] text-black"
+                                        ? "liquid-button"
                                         : step > s.id
-                                        ? "bg-[#08b6ff]/20 text-[#08b6ff] border border-[#08b6ff]/40"
+                                        ? "bg-foreground/20 text-foreground border border-foreground/40"
                                         : "bg-white/5 text-white/30 border border-white/10"
                                 }`}
                             >
                                 {step > s.id ? <CheckCircle2 className="w-4 h-4" /> : s.id}
                             </button>
                             {i < STEPS.length - 1 && (
-                                <div className={`w-12 h-px mx-1 ${step > s.id ? "bg-[#08b6ff]/40" : "bg-white/10"}`} />
+                                <div className={`w-12 h-px mx-1 ${step > s.id ? "bg-foreground/40" : "bg-white/10"}`} />
                             )}
                         </div>
                     ))}
@@ -133,7 +133,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                 {/* Card */}
                 <div className="bg-[hsl(0,0%,7%)] border border-[hsl(0,0%,14.9%)] rounded-2xl p-8 space-y-6">
                     <div className="flex items-center gap-3 border-b border-[hsl(0,0%,14.9%)] pb-5">
-                        {(() => { const Icon = STEPS[step - 1].icon; return <Icon className="w-5 h-5 text-[#08b6ff]" />; })()}
+                        {(() => { const Icon = STEPS[step - 1].icon; return <Icon className="w-5 h-5 text-foreground" />; })()}
                         <div>
                             <h2 className="text-base font-bold text-white tracking-wide">
                                 Paso {step} — {STEPS[step - 1].label}
@@ -152,7 +152,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                     value={data.businessName}
                                     onChange={e => update("businessName", e.target.value)}
                                     placeholder="Mi Clínica / Mi Tienda"
-                                    className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors placeholder:text-white/30"
+                                    className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors placeholder:text-white/30"
                                 />
                             </Field>
                             <Field label="Descripción breve">
@@ -161,7 +161,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                     onChange={e => update("description", e.target.value)}
                                     rows={2}
                                     placeholder="¿A qué se dedica tu negocio?"
-                                    className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors placeholder:text-white/30 resize-none"
+                                    className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors placeholder:text-white/30 resize-none"
                                 />
                             </Field>
                             <div className="grid grid-cols-2 gap-4">
@@ -170,7 +170,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         value={data.phone}
                                         onChange={e => update("phone", e.target.value)}
                                         placeholder="+52 55 1234 5678"
-                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors placeholder:text-white/30"
+                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors placeholder:text-white/30"
                                     />
                                 </Field>
                                 <Field label="Ciudad / Dirección">
@@ -178,7 +178,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         value={data.address}
                                         onChange={e => update("address", e.target.value)}
                                         placeholder="Ciudad de México"
-                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors placeholder:text-white/30"
+                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors placeholder:text-white/30"
                                     />
                                 </Field>
                             </div>
@@ -200,16 +200,16 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         onClick={() => update("selectedModule", opt.value)}
                                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                                             data.selectedModule === opt.value
-                                                ? "border-[#08b6ff] bg-[#08b6ff]/10"
-                                                : "border-[hsl(0,0%,14.9%)] hover:border-[#08b6ff]/30"
+                                                ? "border-foreground bg-foreground/10"
+                                                : "border-[hsl(0,0%,14.9%)] hover:border-foreground/30"
                                         }`}
                                     >
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className={`text-sm font-bold ${data.selectedModule === opt.value ? "text-[#08b6ff]" : "text-white"}`}>
+                                            <span className={`text-sm font-bold ${data.selectedModule === opt.value ? "text-foreground" : "text-white"}`}>
                                                 {opt.label}
                                             </span>
                                             {data.selectedModule === opt.value && (
-                                                <CheckCircle2 className="w-4 h-4 text-[#08b6ff]" />
+                                                <CheckCircle2 className="w-4 h-4 text-foreground" />
                                             )}
                                         </div>
                                         <p className="text-xs text-white/40">{opt.desc}</p>
@@ -232,8 +232,8 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                             onClick={() => toggleDay(i)}
                                             className={`w-10 h-10 rounded-xl text-xs font-bold transition-all ${
                                                 data.workDays.includes(i)
-                                                    ? "bg-[#08b6ff] text-black"
-                                                    : "border border-[hsl(0,0%,14.9%)] text-white/50 hover:border-[#08b6ff]/30"
+                                                    ? "liquid-button"
+                                                    : "border border-[hsl(0,0%,14.9%)] text-white/50 hover:border-foreground/30"
                                             }`}
                                         >
                                             {day}
@@ -248,7 +248,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         type="time"
                                         value={data.startTime}
                                         onChange={e => update("startTime", e.target.value)}
-                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors"
+                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors"
                                     />
                                 </Field>
                                 <Field label="Hora de cierre">
@@ -256,7 +256,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         type="time"
                                         value={data.endTime}
                                         onChange={e => update("endTime", e.target.value)}
-                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors"
+                                        className="w-full bg-transparent border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors"
                                     />
                                 </Field>
                             </div>
@@ -265,7 +265,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                 <select
                                     value={data.slotDuration}
                                     onChange={e => update("slotDuration", Number(e.target.value))}
-                                    className="w-full bg-[hsl(0,0%,7%)] border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-[#08b6ff]/50 focus:outline-none transition-colors"
+                                    className="w-full bg-[hsl(0,0%,7%)] border border-[hsl(0,0%,14.9%)] text-white px-4 py-3 rounded-xl text-sm focus:border-foreground/50 focus:outline-none transition-colors"
                                 >
                                     {[15, 20, 30, 45, 60, 90, 120].map(m => (
                                         <option key={m} value={m}>{m} min</option>
@@ -292,16 +292,16 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                         onClick={() => update("stripeWanted", opt.value)}
                                         className={`w-full text-left p-4 rounded-xl border transition-all ${
                                             data.stripeWanted === opt.value
-                                                ? "border-[#08b6ff] bg-[#08b6ff]/10"
-                                                : "border-[hsl(0,0%,14.9%)] hover:border-[#08b6ff]/30"
+                                                ? "border-foreground bg-foreground/10"
+                                                : "border-[hsl(0,0%,14.9%)] hover:border-foreground/30"
                                         }`}
                                     >
                                         <div className="flex items-center justify-between mb-1">
-                                            <span className={`text-sm font-bold ${data.stripeWanted === opt.value ? "text-[#08b6ff]" : "text-white"}`}>
+                                            <span className={`text-sm font-bold ${data.stripeWanted === opt.value ? "text-foreground" : "text-white"}`}>
                                                 {opt.label}
                                             </span>
                                             {data.stripeWanted === opt.value && (
-                                                <CheckCircle2 className="w-4 h-4 text-[#08b6ff]" />
+                                                <CheckCircle2 className="w-4 h-4 text-foreground" />
                                             )}
                                         </div>
                                         <p className="text-xs text-white/40">{opt.desc}</p>
@@ -309,8 +309,8 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                                 ))}
                             </div>
 
-                            <div className="p-4 rounded-xl bg-[#08b6ff]/5 border border-[#08b6ff]/20 space-y-1">
-                                <p className="text-xs font-bold text-[#08b6ff]">Resumen de tu configuración</p>
+                            <div className="p-4 rounded-xl bg-foreground/5 border border-foreground/20 space-y-1">
+                                <p className="text-xs font-bold text-foreground">Resumen de tu configuración</p>
                                 <p className="text-xs text-white/50">📛 {data.businessName}</p>
                                 <p className="text-xs text-white/50">🏢 Módulo: {data.selectedModule}</p>
                                 <p className="text-xs text-white/50">🕐 {data.startTime} – {data.endTime} · {data.slotDuration} min/cita</p>
@@ -336,7 +336,7 @@ export function OnboardingWizard({ tenantId, tenantName, accountType }: Props) {
                     <button
                         onClick={step === STEPS.length ? handleFinish : goNext}
                         disabled={isPending || (step === 1 && !data.businessName.trim())}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#08b6ff] hover:opacity-90 text-black text-sm font-bold tracking-wide rounded-xl transition-all disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-2 py-3 liquid-button hover:opacity-90 text-sm font-bold tracking-wide rounded-xl transition-all disabled:opacity-50"
                     >
                         {isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />

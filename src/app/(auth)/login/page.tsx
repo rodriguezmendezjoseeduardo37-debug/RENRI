@@ -149,7 +149,7 @@ function LoginForm() {
                                     setValue("accountType", type.value);
                                 }}
                                 className={`rounded-xl border p-3 text-left transition-all duration-300 ${selectedType === type.value
-                                    ? "border-[#08b6ff] bg-[#08b6ff]/10 text-foreground"
+                                    ? "border-foreground bg-foreground/10 text-foreground"
                                     : "border-border bg-card text-muted-foreground hover:border-foreground/20 hover:text-foreground"
                                     }`}
                             >
@@ -193,7 +193,7 @@ function LoginForm() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     {error && (
-                        <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+                        <div className="rounded-md bg-foreground/10 border border-border/20 p-3 text-sm text-foreground">
                             {error}
                         </div>
                     )}
@@ -206,11 +206,11 @@ function LoginForm() {
                             id="email"
                             type="email"
                             placeholder="tu@email.com"
-                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                             {...register("email", { required: true })}
                         />
                         {errors.email && (
-                            <p className="text-xs text-red-400">{errors.email.message}</p>
+                            <p className="text-xs text-foreground">{errors.email.message}</p>
                         )}
                     </div>
 
@@ -222,11 +222,11 @@ function LoginForm() {
                             id="password"
                             type="password"
                             placeholder="••••••••"
-                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-[#08b6ff]/50 h-12 rounded-xl transition-all"
+                            className="bg-card border-border text-foreground placeholder:text-muted-foreground focus:border-foreground/50 h-12 rounded-xl transition-all"
                             {...register("password", { required: true })}
                         />
                         {errors.password && (
-                            <p className="text-xs text-red-400">
+                            <p className="text-xs text-foreground">
                                 {errors.password.message}
                             </p>
                         )}
@@ -234,7 +234,7 @@ function LoginForm() {
 
                     <Button
                         type="submit"
-                        className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
+                        className="w-full h-12 liquid-button hover:bg-foreground/90 rounded-xl shadow-sm font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] mt-6"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? (
@@ -248,7 +248,7 @@ function LoginForm() {
                     ¿No tienes cuenta?{" "}
                     <Link
                         href="/register"
-                        className="text-foreground font-medium hover:text-[#08b6ff] transition-colors"
+                        className="text-foreground font-medium hover:text-foreground transition-colors"
                     >
                         Regístrate
                     </Link>

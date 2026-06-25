@@ -13,7 +13,7 @@ export default function VerifyPage() {
                         <RenriMark size={48} theme="dark" />
                     </div>
                     <div className="flex justify-center mb-2">
-                        <CheckCircle2 className="h-16 w-16 text-[#08b6ff]" />
+                        <CheckCircle2 className="h-16 w-16 text-foreground" />
                     </div>
                     <CardTitle className="text-2xl text-white">¡Cuenta Verificada!</CardTitle>
                     <CardDescription className="text-white/70">
@@ -21,7 +21,7 @@ export default function VerifyPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-4">
-                    <Button asChild className="w-full h-11 bg-[#08b6ff] text-[#0a0a0a] rounded-xl font-bold hover:opacity-90 transition-opacity">
+                    <Button asChild className="w-full h-11 liquid-button rounded-full font-bold hover:opacity-90 transition-opacity">
                         <Link href="/login">
                             Continuar al Inicio de Sesión
                         </Link>

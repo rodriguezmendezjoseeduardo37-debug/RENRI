@@ -169,14 +169,14 @@ export function ExplorarNegocios({
                                 if (e.key === "Enter") handleSearch();
                             }}
                             placeholder="Buscar por nombre, direccion o Business ID..."
-                            className="w-full bg-background border border-border pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-[#08b6ff] transition-colors rounded-xl"
+                            className="w-full bg-background border border-border pl-11 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors rounded-xl"
                         />
                     </div>
                     <div className="flex gap-2">
                         <button
                             onClick={handleSearch}
                             disabled={isSearching}
-                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                            className="px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 transition-all disabled:opacity-40 flex items-center justify-center gap-2"
                         >
                             {isSearching ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -188,7 +188,7 @@ export function ExplorarNegocios({
                         {searchResults && (
                             <button
                                 onClick={handleClearSearch}
-                                className="px-4 py-3 text-[11px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                                className="px-4 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-colors"
                             >
                                 <X className="h-4 w-4" />
                             </button>
@@ -198,15 +198,15 @@ export function ExplorarNegocios({
 
                 {/* Status messages */}
                 {error && (
-                    <div className="flex items-center gap-3 border border-red-500/20 bg-red-500/5 px-4 py-3 rounded-xl">
-                        <X className="h-4 w-4 text-red-400 flex-shrink-0" />
-                        <p className="text-sm text-red-400">{error}</p>
+                    <div className="flex items-center gap-3 border border-border/20 bg-foreground/5 px-4 py-3 rounded-xl">
+                        <X className="h-4 w-4 text-foreground flex-shrink-0" />
+                        <p className="text-sm text-foreground">{error}</p>
                     </div>
                 )}
                 {success && (
-                    <div className="flex items-center gap-3 border border-[#08b6ff]/20 bg-[#08b6ff]/5 px-4 py-3 rounded-xl">
-                        <Check className="h-4 w-4 text-[#08b6ff] flex-shrink-0" />
-                        <p className="text-sm text-[#08b6ff]">{success}</p>
+                    <div className="flex items-center gap-3 border border-foreground/20 bg-foreground/5 px-4 py-3 rounded-xl">
+                        <Check className="h-4 w-4 text-foreground flex-shrink-0" />
+                        <p className="text-sm text-foreground">{success}</p>
                     </div>
                 )}
             </div>
@@ -245,17 +245,17 @@ export function ExplorarNegocios({
                             id={`business-${business.id}`}
                             className={`border bg-card p-6 space-y-4 relative group transition-all rounded-2xl ${
                                 selectedBusiness === business.id
-                                    ? "border-[#08b6ff] ring-1 ring-[#08b6ff]/30"
+                                    ? "border-foreground ring-1 ring-foreground/30"
                                     : business.isLinked
-                                    ? "border-[#10b981]/40"
-                                    : "border-border hover:border-[#08b6ff]/30"
+                                    ? "border-foreground/40"
+                                    : "border-border hover:border-foreground/30"
                             }`}
                             onClick={() => setSelectedBusiness(business.id)}
                         >
                             {/* Linked badge */}
                             {business.isLinked && (
                                 <div className="absolute top-4 right-4">
-                                    <span className="px-2 py-0.5 bg-[#10b981] text-black text-[9px] font-bold tracking-widest uppercase rounded-lg">
+                                    <span className="px-2 py-0.5 liquid-button text-[9px] font-bold tracking-widest uppercase rounded-lg">
                                         ENLAZADO
                                     </span>
                                 </div>
@@ -263,7 +263,7 @@ export function ExplorarNegocios({
 
                             {/* Header */}
                             <div className="flex items-start gap-4">
-                                <div className="w-12 h-12 bg-[#08b6ff]/5 border border-border flex items-center justify-center flex-shrink-0 rounded-xl">
+                                <div className="w-12 h-12 bg-foreground/5 border border-border flex items-center justify-center flex-shrink-0 rounded-xl">
                                     {business.logoUrl ? (
                                         <img
                                             src={business.logoUrl}
@@ -322,7 +322,7 @@ export function ExplorarNegocios({
                                             handleLink(business.id, business.name);
                                         }}
                                         disabled={isLinking && linkingId === business.id}
-                                        className="flex-1 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+                                        className="flex-1 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 transition-all disabled:opacity-40 flex items-center justify-center gap-2"
                                     >
                                         {isLinking && linkingId === business.id ? (
                                             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -334,7 +334,7 @@ export function ExplorarNegocios({
                                             : "ENLAZAR"}
                                     </button>
                                 ) : (
-                                    <div className="flex-1 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase text-[#10b981] flex items-center justify-center gap-2">
+                                    <div className="flex-1 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase text-foreground flex items-center justify-center gap-2">
                                         <Check className="h-3.5 w-3.5" />
                                         YA ENLAZADO
                                     </div>
@@ -342,7 +342,7 @@ export function ExplorarNegocios({
                                 <Link
                                     href={`/negocio/${business.id}`}
                                     onClick={(e) => e.stopPropagation()}
-                                    className="flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase border border-border rounded-xl hover:border-[#08b6ff] text-foreground transition-colors"
+                                    className="flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control rounded-full hover:border-foreground text-foreground transition-colors"
                                 >
                                     <ExternalLink className="w-3.5 h-3.5" />
                                     VER

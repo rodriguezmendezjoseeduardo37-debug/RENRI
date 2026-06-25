@@ -94,7 +94,7 @@ export function ProductForm({
                     className={inputClass}
                 />
                 {errors.name && (
-                    <p className="text-[10px] text-red-400 mt-1">
+                    <p className="text-[10px] text-foreground mt-1">
                         {errors.name.message}
                     </p>
                 )}
@@ -171,7 +171,7 @@ export function ProductForm({
                         className={inputClass}
                     />
                     {errors.price && (
-                        <p className="text-[10px] text-red-400 mt-1">
+                        <p className="text-[10px] text-foreground mt-1">
                             {errors.price.message}
                         </p>
                     )}
@@ -196,7 +196,7 @@ export function ProductForm({
                                 MARGEN BRUTO (EFECTIVO)
                             </span>
                             <span
-                                className={`text-xl font-bold font-mono ${Number(margin) >= 30 ? "text-green-400" : Number(margin) >= 15 ? "text-foreground" : "text-red-400"
+                                className={`text-xl font-bold font-mono ${Number(margin) >= 30 ? "text-foreground" : Number(margin) >= 15 ? "text-foreground" : "text-foreground"
                                     }`}
                             >
                                 {margin}%
@@ -205,12 +205,12 @@ export function ProductForm({
                     )}
                     
                     {/* Stripe Online Payment Calculation */}
-                    <div className={`p-4 ${stripeEatsTooMuch ? "bg-red-950/20" : ""}`}>
+                    <div className={`p-4 ${stripeEatsTooMuch ? "bg-foreground/5" : ""}`}>
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase flex items-center gap-2">
                                 GANANCIA NETA (STRIPE EN LÍNEA)
                             </span>
-                            <span className={`text-sm font-bold font-mono ${stripeEatsTooMuch ? "text-red-400" : "text-foreground"}`}>
+                            <span className={`text-sm font-bold font-mono ${stripeEatsTooMuch ? "text-foreground" : "text-foreground"}`}>
                                 ${Math.max(0, netProfitWithStripe).toFixed(2)} MXN
                             </span>
                         </div>
@@ -221,7 +221,7 @@ export function ProductForm({
                             }
                         </div>
                         {stripeEatsTooMuch && (
-                            <div className="mt-3 text-[10px] text-red-400 font-medium">
+                            <div className="mt-3 text-[10px] text-foreground font-medium">
                                 ⚠️ El costo base de procesamiento ($3.00 + 3.6%) reduce drásticamente las ganancias de este artículo de bajo costo. Te sugerimos mantenerlo desactivado de &quot;Venta en Línea&quot; y que el cobro sea físico en mostrador.
                             </div>
                         )}

@@ -62,7 +62,7 @@ export function NavbarRenri() {
       <div className="flex items-center gap-4">
         <Link 
           href="/register" 
-          className="bg-[#12b4ff] text-black text-[13px] font-bold tracking-wide px-4 sm:px-5 py-2 rounded-full hover:bg-[#00a0e6] transition-colors uppercase"
+          className="liquid-button text-[13px] font-bold tracking-wide px-4 sm:px-5 py-2 rounded-full hover:bg-foreground/90 transition-colors uppercase"
         >
           Comenzar gratis
         </Link>

@@ -29,7 +29,7 @@ export default async function MisCitasPage() {
                     <Link
                         href={`/portal/${tenant.slug}`}
                         target="_blank"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 transition-all"
                     >
                         NUEVA CITA
                     </Link>
@@ -51,7 +51,7 @@ export default async function MisCitasPage() {
                     {appointments.map((appointment) => (
                         <div
                             key={appointment.id}
-                            className="border border-border bg-card p-6 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between rounded-2xl hover:border-[#08b6ff]/30 transition-colors"
+                            className="border border-border bg-card p-6 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between rounded-2xl hover:border-foreground/30 transition-colors"
                         >
                             <div className="space-y-2">
                                 <div className="flex items-center gap-3">
@@ -78,7 +78,7 @@ export default async function MisCitasPage() {
                             <div className="flex flex-wrap gap-3">
                                 <Link
                                     href={`/cliente/mis-citas/${appointment.id}`}
-                                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase bg-[#08b6ff] text-black rounded-xl hover:opacity-90 transition-all"
+                                    className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full hover:opacity-90 transition-all"
                                 >
                                     VER DETALLE
                                 </Link>
@@ -86,7 +86,7 @@ export default async function MisCitasPage() {
                                     <Link
                                         href={`/portal/${tenant.slug}`}
                                         target="_blank"
-                                        className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase border border-border text-muted-foreground rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-all"
+                                        className="px-4 py-2 text-[10px] font-bold tracking-[0.2em] uppercase liquid-control text-muted-foreground rounded-full hover:text-foreground hover:border-foreground transition-all"
                                     >
                                         AGENDAR OTRA
                                     </Link>

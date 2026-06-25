@@ -17,7 +17,7 @@ export function LogoRenri(props: SVGProps<SVGSVGElement>) {
       <circle cx="86" cy="20" r="12" fill="none" stroke="currentColor" strokeWidth="4" />
       <circle cx="14" cy="20" r="12" fill="none" stroke="currentColor" strokeWidth="4" />
       <circle cx="50" cy="86" r="12" fill="none" stroke="currentColor" strokeWidth="4" />
-      <circle cx="86" cy="20" r="6" fill="#12b4ff" opacity="0.8" />
+      <circle cx="86" cy="20" r="6" fill="currentColor" opacity="0.8" />
     </svg>
   );
 }

@@ -38,7 +38,7 @@ export default async function MetodoCobroPage({
                     </div>
                     <Link
                         href="/dashboard/configuracion"
-                        className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                        className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-foreground transition-colors"
                     >
                         <ArrowLeft className="w-3.5 h-3.5" />
                         VOLVER
@@ -58,7 +58,7 @@ export default async function MetodoCobroPage({
                     </p>
                     <Link
                         href="/dashboard/configuracion/planes"
-                        className="mt-4 px-8 py-3 bg-[#08b6ff] text-black rounded-xl text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity"
+                        className="mt-4 px-8 py-3 liquid-button rounded-full text-[11px] font-bold tracking-[0.2em] uppercase hover:opacity-90 transition-opacity"
                     >
                         VER PLANES
                     </Link>
@@ -84,7 +84,7 @@ export default async function MetodoCobroPage({
                 </div>
                 <Link
                     href="/dashboard/configuracion"
-                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-[#08b6ff] transition-colors"
+                    className="flex items-center gap-2 px-4 py-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase border border-border rounded-xl hover:text-foreground hover:border-foreground transition-colors"
                 >
                     <ArrowLeft className="w-3.5 h-3.5" />
                     VOLVER
@@ -92,13 +92,13 @@ export default async function MetodoCobroPage({
             </div>
 
             {params.success === "true" && (
-                <div className="bg-[#08b6ff]/10 border border-[#08b6ff]/30 text-[#08b6ff] px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
+                <div className="bg-foreground/10 border border-foreground/30 text-foreground px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
                     ✅ Verificación completada. Tu cuenta de cobros está activa.
                 </div>
             )}
 
             {params.refresh === "true" && (
-                <div className="bg-amber-500/10 border border-amber-500/30 text-amber-400 px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
+                <div className="bg-foreground/10 border border-border/30 text-foreground px-5 py-3 rounded-2xl text-sm tracking-wide flex items-center gap-3">
                     ⚠️ La verificación no se completó. Por favor intenta de nuevo.
                 </div>
             )}

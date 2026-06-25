@@ -48,7 +48,7 @@ export function PlansActions({
                     onClick={handleCustomerPortal}
                     disabled={isPending}
                     title="Gestionar mi suscripción"
-                    className="w-full flex items-center justify-center gap-2 border border-[#08b6ff] bg-[#08b6ff]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#08b6ff] rounded-xl hover:bg-[#08b6ff]/20 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 border border-foreground bg-foreground/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-foreground rounded-xl hover:bg-foreground/20 transition-colors"
                 >
                     {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isPending ? "ABRIENDO..." : "GESTIONAR SUSCRIPCIÓN"}
@@ -61,7 +61,7 @@ export function PlansActions({
                 type="button"
                 disabled
                 title="Plan actual"
-                className="w-full cursor-not-allowed border border-[#08b6ff] bg-[#08b6ff]/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-[#08b6ff] opacity-80 rounded-xl"
+                className="w-full cursor-not-allowed border border-foreground bg-foreground/10 px-4 py-4 text-center text-[11px] font-bold tracking-[0.2em] uppercase text-foreground opacity-80 rounded-xl"
             >
                 PLAN ACTUAL
             </button>
@@ -105,8 +105,8 @@ export function PlansActions({
             disabled={isPending}
             className={`w-full px-4 py-4 flex items-center justify-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase transition-all rounded-xl ${
                 recommended
-                    ? "bg-[#08b6ff] text-black shadow-sm hover:opacity-90 disabled:opacity-70"
-                    : "border border-border text-foreground hover:border-[#08b6ff] hover:text-[#08b6ff] disabled:opacity-70"
+                    ? "liquid-button shadow-sm hover:opacity-90 disabled:opacity-70"
+                    : "border border-border text-foreground hover:border-foreground hover:text-foreground disabled:opacity-70"
             }`}
         >
             {isPending && <Loader2 className="w-4 h-4 animate-spin" />}

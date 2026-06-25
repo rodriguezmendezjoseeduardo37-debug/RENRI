@@ -17,11 +17,11 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
     });
 
     const statusColors: Record<string, string> = {
-        pending: "border-l-[#08b6ff]",
-        processing: "border-l-[#888888]",
-        completed: "border-l-[#444444]",
-        cancelled: "border-l-red-500",
-        refunded: "border-l-[#666666]",
+        pending: "border-l-foreground",
+        processing: "border-l-muted-foreground",
+        completed: "border-l-foreground/70",
+        cancelled: "border-l-foreground",
+        refunded: "border-l-muted-foreground/70",
     };
 
     const firstItem = order.items?.[0];
@@ -30,7 +30,7 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
     return (
         <Link
             href={`/dashboard/pedidos/${order.id}`}
-            className={`block border border-border bg-card rounded-2xl shadow-sm hover:shadow-md hover:border-[#08b6ff] transition-all border-l-[3px] overflow-hidden ${statusColors[order.status] || "border-l-[#08b6ff]"} ${compact ? "p-4" : "p-5"}`}
+            className={`block border border-border bg-card rounded-2xl shadow-sm hover:shadow-md hover:border-foreground transition-all border-l-[3px] overflow-hidden ${statusColors[order.status] || "border-l-foreground"} ${compact ? "p-4" : "p-5"}`}
         >
             <div className="flex items-start gap-3">
                 {/* Thumbnail */}
