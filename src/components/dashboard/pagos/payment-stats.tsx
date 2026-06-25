@@ -15,12 +15,12 @@ export function PaymentStats({
         new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(val);
 
     const StatBox = ({ label, value, sub }: { label: string; value: string | number; sub?: string }) => (
-        <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-6 flex flex-col justify-between h-32 hover:ring-foreground/30 transition-all group">
-            <span className="text-[10px] font-bold tracking-[0.25em] text-muted-foreground uppercase">
+        <div className="bg-card ring-1 ring-border rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col justify-between min-h-28 sm:h-32 hover:ring-foreground/30 transition-all group">
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.16em] sm:tracking-[0.25em] text-muted-foreground uppercase">
                 {label}
             </span>
             <div>
-                <span className="text-3xl md:text-4xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)]">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)]">
                     {value}
                 </span>
                 {sub && (

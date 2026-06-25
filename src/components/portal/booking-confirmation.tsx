@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, Copy, CreditCard, Loader2 } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { createCheckoutSession } from "@/actions/portal";
@@ -18,6 +17,7 @@ interface BookingConfirmationProps {
     amount: number | null;
     clientEmail: string;
     canPayOnline: boolean;
+    onReturnHome: () => void;
 }
 
 export function BookingConfirmation({
@@ -31,6 +31,7 @@ export function BookingConfirmation({
     amount,
     clientEmail,
     canPayOnline,
+    onReturnHome,
 }: BookingConfirmationProps) {
     const [isPaying, startPayment] = useTransition();
     const [paymentError, setPaymentError] = useState<string | null>(null);
@@ -212,12 +213,13 @@ export function BookingConfirmation({
                 transition={{ delay: 0.8 }}
                 className="mt-12"
             >
-                <Link
-                    href={`/portal/${tenantSlug}`}
+                <button
+                    type="button"
+                    onClick={onReturnHome}
                     className="inline-block border-b border-border text-[10px] font-bold tracking-[0.2em] text-muted-foreground pb-1 hover:text-foreground hover:border-foreground transition-colors uppercase"
                 >
                     Volver al Inicio
-                </Link>
+                </button>
             </motion.div>
         </div>
     );

@@ -62,10 +62,10 @@ export function AppointmentCard({
                 </div>
 
                 {/* Right: status + actions */}
-                <div className="flex flex-wrap items-center gap-3 flex-shrink-0">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 flex-shrink-0">
                     <TurnBadge status={appointment.status} />
 
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 sm:flex gap-2">
                         {appointment.status === "pending" && onConfirm && (
                             <button
                                 onClick={onConfirm}
@@ -96,12 +96,12 @@ export function AppointmentCard({
 
             {/* Inline cancel confirmation */}
             {confirmingCancel && (
-                <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-sm rounded-2xl border border-border/30 flex items-center justify-center gap-4 px-6">
+                <div className="absolute inset-0 z-10 bg-background/90 backdrop-blur-sm rounded-2xl border border-border/30 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4 sm:px-6 text-center sm:text-left">
                     <AlertTriangle className="w-5 h-5 text-foreground flex-shrink-0" />
                     <p className="text-xs font-medium text-foreground tracking-wide">
                         ¿Cancelar esta cita?
                     </p>
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
                         <button
                             onClick={onCancelConfirm}
                             className="px-4 py-2 text-[10px] font-bold tracking-[0.15em] uppercase liquid-button rounded-full hover:bg-foreground transition-colors"

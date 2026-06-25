@@ -45,7 +45,7 @@ export interface CreateOrderInput {
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
     pending: "PENDIENTE",
-    processing: "EN PROCESO",
+    processing: "ACEPTADO",
     completed: "COMPLETADO",
     cancelled: "CANCELADO",
     refunded: "REEMBOLSADO",

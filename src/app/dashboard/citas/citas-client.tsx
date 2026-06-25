@@ -162,20 +162,20 @@ export function CitasClient({
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-[0.04em] sm:tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         CITAS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                    <p className="mt-2 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] sm:tracking-[0.3em] text-muted-foreground uppercase">
                         GESTIONA LAS RESERVAS Y CITAS
                     </p>
                 </div>
                 <button
                     onClick={() => setFormOpen(true)}
-                    className="flex items-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:bg-foreground/90 transition-all"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 h-12 text-[11px] font-bold tracking-[0.16em] sm:tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVA CITA
@@ -183,20 +183,20 @@ export function CitasClient({
             </div>
 
             {/* Stats bar */}
-            <div className="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm">
-                <span className="text-muted-foreground">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 sm:gap-4 md:gap-6 text-xs md:text-sm">
+                <span className="rounded-xl border border-border bg-card px-3 py-2 text-muted-foreground">
                     HOY:{" "}
                     <span className="text-foreground font-bold">{stats.total}</span>
                 </span>
-                <span className="text-muted-foreground">
+                <span className="rounded-xl border border-border bg-card px-3 py-2 text-muted-foreground">
                     CONFIRMADAS:{" "}
                     <span className="text-foreground font-bold">{stats.confirmed}</span>
                 </span>
-                <span className="text-muted-foreground">
+                <span className="rounded-xl border border-border bg-card px-3 py-2 text-muted-foreground">
                     PENDIENTES:{" "}
                     <span className="text-foreground font-bold">{stats.pending}</span>
                 </span>
-                <span className="text-muted-foreground">
+                <span className="rounded-xl border border-border bg-card px-3 py-2 text-muted-foreground">
                     CANCELADAS:{" "}
                     <span className="text-foreground font-bold">{stats.cancelled}</span>
                 </span>
@@ -208,7 +208,7 @@ export function CitasClient({
 
             {/* View toggle */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border gap-4 sm:gap-0 pb-4 sm:pb-0">
-                <div className="flex gap-6 sm:gap-8">
+                <div className="grid grid-cols-2 sm:flex gap-4 sm:gap-8">
                     <button
                         onClick={() => setViewMode("list")}
                         className={`pb-3 flex items-center gap-2 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors relative ${viewMode === "list" ? "text-foreground" : "text-muted-foreground hover:text-foreground"

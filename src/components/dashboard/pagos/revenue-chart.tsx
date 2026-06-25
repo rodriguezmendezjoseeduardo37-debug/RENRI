@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export function RevenueChart({ data }: RevenueChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="w-full h-[300px] ring-1 ring-border rounded-2xl flex items-center justify-center bg-background shadow-sm">
+            <div className="w-full h-[240px] sm:h-[300px] ring-1 ring-border rounded-2xl flex items-center justify-center bg-background shadow-sm">
                 <span className="text-[10px] font-bold tracking-[0.3em] text-foreground uppercase">
                     SIN DATOS SUFICIENTES
                 </span>
@@ -50,7 +50,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
     }
 
     return (
-        <div className="w-full h-[300px] ring-1 ring-border bg-card p-4 pt-8 rounded-2xl overflow-hidden shadow-sm">
+        <div className="w-full h-[240px] sm:h-[300px] ring-1 ring-border bg-card p-3 sm:p-4 sm:pt-8 rounded-2xl overflow-hidden shadow-sm">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} />

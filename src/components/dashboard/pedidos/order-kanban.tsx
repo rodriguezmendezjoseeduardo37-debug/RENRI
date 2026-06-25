@@ -10,13 +10,13 @@ const KANBAN_COLUMNS: OrderStatus[] = ["pending", "processing", "completed", "ca
 
 export function OrderKanban({ orders }: OrderKanbanProps) {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 min-h-[400px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 min-h-[400px]">
             {KANBAN_COLUMNS.map((status) => {
                 const columnOrders = orders.filter((o) => o.status === status);
                 return (
                     <div
                         key={status}
-                        className="border border-border bg-background flex flex-col"
+                        className="border border-border bg-background flex flex-col rounded-2xl overflow-hidden min-w-0"
                     >
                         {/* Column header */}
                         <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
@@ -29,7 +29,7 @@ export function OrderKanban({ orders }: OrderKanbanProps) {
                         </div>
 
                         {/* Cards */}
-                        <div className="flex-1 p-2 space-y-2 overflow-y-auto max-h-[60vh]">
+                        <div className="flex-1 p-2 space-y-2 overflow-y-auto max-h-[70vh] sm:max-h-[60vh]">
                             {columnOrders.length > 0 ? (
                                 columnOrders.map((order) => (
                                     <OrderCard

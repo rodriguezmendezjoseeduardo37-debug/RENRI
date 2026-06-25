@@ -96,7 +96,7 @@ export function NotificationsBell() {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 glass-panel rounded-2xl shadow-2xl border border-border/50 animate-in fade-in slide-in-from-top-4 duration-300 z-50 overflow-hidden">
+                <div className="fixed left-3 right-3 top-20 sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-80 glass-panel rounded-2xl shadow-2xl border border-border/50 animate-in fade-in slide-in-from-top-4 duration-300 z-50 overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
                         <h3 className="text-[11px] font-bold tracking-[0.2em] uppercase text-foreground">
                             Notificaciones {unreadCount > 0 && <span className="ml-1 text-muted-foreground">({unreadCount})</span>}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ServiceCard } from "@/components/portal/service-card";
 import { TimeSlotPicker } from "@/components/portal/time-slot-picker";
 import { BookingConfirmation } from "@/components/portal/booking-confirmation";
@@ -76,6 +76,7 @@ export function BookingStepper(props: BookingStepperProps) {
     const [confirmed, setConfirmed] = useState(false);
     const [appointmentId, setAppointmentId] = useState<string | null>(null);
 
+    const router = useRouter();
     const searchParams = useSearchParams();
 
     useEffect(() => {
@@ -165,6 +166,22 @@ export function BookingStepper(props: BookingStepperProps) {
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleReturnHome = () => {
+        setStep(0);
+        setConfirmed(false);
+        setAppointmentId(null);
+        setSelectedService(null);
+        setSelectedStaff(null);
+        setSelectedDate("");
+        setSelectedTime(null);
+        setSlots([]);
+        setClientName(currentUser?.name || "");
+        setClientEmail(currentUser?.email || "");
+        setClientPhone("");
+        setNotes("");
+        router.replace(`/portal/${tenantSlug}`, { scroll: true });
     };
 
     const canNext =
@@ -513,6 +530,7 @@ export function BookingStepper(props: BookingStepperProps) {
                                 amount={selectedService?.price ? Number(selectedService.price) : null}
                                 clientEmail={clientEmail}
                                 canPayOnline={canPayOnline}
+                                onReturnHome={handleReturnHome}
                             />
                         </motion.div>
                     )}

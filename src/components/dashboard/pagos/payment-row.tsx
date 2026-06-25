@@ -51,7 +51,7 @@ export function PaymentRow({ payment, clientName, concept }: PaymentRowProps) {
             <td className="px-6 py-4 text-sm text-muted-foreground font-medium tracking-[0.05em]">
                 {clientName}
             </td>
-            <td className="px-6 py-4 text-xs text-muted-foreground tracking-[0.1em] uppercase">
+            <td className="px-6 py-4 text-xs text-muted-foreground tracking-[0.06em] uppercase max-w-[260px] truncate">
                 {concept}
             </td>
             <td className="px-6 py-4 text-sm font-mono text-foreground">

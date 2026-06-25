@@ -108,13 +108,13 @@ export default async function DashboardPage() {
             : { href: "/dashboard/citas", label: "Nueva cita" };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div className="space-y-6 sm:space-y-8">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
                 <div>
-                    <p className="text-[11px] font-semibold tracking-[0.2em] text-muted-foreground uppercase mb-2">
+                    <p className="text-[10px] sm:text-[11px] font-semibold tracking-[0.12em] sm:tracking-[0.2em] text-muted-foreground uppercase mb-2">
                         RESUMEN DEL DIA · {formatDate()}
                     </p>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)] mb-2">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground font-[family-name:var(--font-heading)] mb-2">
                         <ClientGreeting firstName={firstName} />
                     </h1>
                     <p className="text-[14px] font-medium text-muted-foreground">
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
 
                 <Button
                     asChild
-                    className={liquidGlassButtonClass}
+                    className={`${liquidGlassButtonClass} w-full sm:w-auto`}
                 >
                     <Link href={primaryAction.href} className="flex items-center gap-2">
                         <Plus className="w-4 h-4" />
@@ -164,22 +164,22 @@ function StatCard({
     footer?: string | null;
 }) {
     return (
-        <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
+        <div className="bg-card rounded-3xl ring-1 ring-border p-4 sm:p-6 shadow-sm flex flex-col justify-between min-h-[128px] sm:min-h-[160px]">
             <div className="flex items-start gap-4">
                 <div className="w-11 h-11 rounded-2xl border border-border bg-background/50 text-foreground flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                     {icon}
                 </div>
                 <div>
-                    <span className="text-muted-foreground text-[11px] font-bold tracking-[0.1em] uppercase block mb-3">
+                    <span className="text-muted-foreground text-[10px] sm:text-[11px] font-bold tracking-[0.08em] sm:tracking-[0.1em] uppercase block mb-2 sm:mb-3">
                         {label}
                     </span>
-                    <span className="text-foreground text-4xl font-bold tracking-tight block">
+                    <span className="text-foreground text-3xl sm:text-4xl font-bold tracking-tight block">
                         {value}
                     </span>
                 </div>
             </div>
             {footer ? (
-                <span className="text-muted-foreground text-[13px] font-medium mt-4">
+                <span className="text-muted-foreground text-xs sm:text-[13px] font-medium mt-3 sm:mt-4">
                     {footer}
                 </span>
             ) : null}
@@ -208,7 +208,7 @@ function QuickAccessPanel({
     }>;
 }) {
     return (
-        <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm p-6 flex flex-col gap-5">
+        <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm p-4 sm:p-6 flex flex-col gap-4 sm:gap-5">
             <h3 className="text-[16px] font-bold tracking-tight text-foreground">
                 Acceso rapido
             </h3>
@@ -225,7 +225,7 @@ function QuickAccessPanel({
                             </div>
                             <div className="min-w-0">
                                 <p className="text-sm font-bold text-foreground">{item.title}</p>
-                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
                                     {item.description}
                                 </p>
                             </div>
@@ -373,8 +373,8 @@ async function ServiciosDashboard({
 
             <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)] gap-6">
                 <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col overflow-x-auto">
-                    <div className="min-w-[600px]">
-                        <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                    <div className="min-w-[560px]">
+                        <div className="flex items-center justify-between px-5 sm:px-8 py-5 sm:py-6 border-b border-border/50">
                             <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
                                 Actividad reciente
                             </h3>
@@ -385,7 +385,7 @@ async function ServiciosDashboard({
                                 Ver todos <ArrowRight className="w-4 h-4" />
                             </Link>
                         </div>
-                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
+                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-5 sm:px-8 py-4 border-b border-border/50 text-[10px] sm:text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
                             <div>Cliente</div>
                             <div>Servicio</div>
                             <div>Hora</div>
@@ -398,7 +398,7 @@ async function ServiciosDashboard({
                             recientesCitas.map((cita) => (
                                 <div
                                     key={cita.id}
-                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
+                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-5 sm:px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
                                 >
                                     <div className="text-foreground text-[14px] font-bold">
                                         {cita.clientName || "Cliente anonimo"}
@@ -502,7 +502,7 @@ async function PymeDashboard({
 
     const statusLabel: Record<string, string> = {
         pending: "Pendiente",
-        processing: "Procesando",
+        processing: "Aceptado",
         completed: "Completado",
         cancelled: "Cancelado",
         refunded: "Reembolsado",
@@ -561,8 +561,8 @@ async function PymeDashboard({
 
             <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)] gap-6">
                 <div className="bg-card rounded-3xl ring-1 ring-border shadow-sm flex-1 overflow-hidden flex flex-col overflow-x-auto">
-                    <div className="min-w-[600px]">
-                        <div className="flex items-center justify-between px-8 py-6 border-b border-border/50">
+                    <div className="min-w-[560px]">
+                        <div className="flex items-center justify-between px-5 sm:px-8 py-5 sm:py-6 border-b border-border/50">
                             <h3 className="text-[12px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
                                 Actividad reciente
                             </h3>
@@ -573,7 +573,7 @@ async function PymeDashboard({
                                 Ver todos <ArrowRight className="w-4 h-4" />
                             </Link>
                         </div>
-                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-4 border-b border-border/50 text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
+                        <div className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-5 sm:px-8 py-4 border-b border-border/50 text-[10px] sm:text-[11px] font-bold tracking-[0.1em] text-muted-foreground/70 uppercase">
                             <div>Cliente</div>
                             <div>Pedido</div>
                             <div>Hora</div>
@@ -586,7 +586,7 @@ async function PymeDashboard({
                             recientesPedidos.map((pedido) => (
                                 <div
                                     key={pedido.id}
-                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
+                                    className="grid grid-cols-[2fr,1.5fr,1fr,1fr] gap-4 px-5 sm:px-8 py-5 border-b border-border/50 items-center hover:bg-foreground/5 dark:hover:bg-white/5 transition-colors last:border-0"
                                 >
                                     <div className="text-foreground text-[14px] font-bold">
                                         {pedido.clientName || pedido.clientUser || "Cliente anonimo"}

@@ -8,6 +8,7 @@ import { TAX_RATE, COMMISSION_RATES } from "@/lib/constants";
 import { createPaymentIntent as stripeCreatePaymentIntent } from "@/lib/stripe";
 import { getTenantStripeAccountId } from "@/actions/stripe-connect";
 import { signSignedToken, verifySignedToken } from "@/lib/signed-token";
+import { createTenantNotification } from "@/lib/notifications";
 
 // Checkout token TTL: 2 horas. Suficiente para completar el pago.
 const CHECKOUT_TOKEN_TTL_SECONDS = 2 * 60 * 60;
@@ -205,6 +206,14 @@ export async function createProductCheckout(input: CheckoutInput) {
     revalidatePath("/dashboard/pagos");
     revalidatePath("/dashboard/pedidos");
     revalidatePath("/dashboard/inventario");
+
+    await createTenantNotification({
+        tenantId: businessId,
+        type: "order",
+        title: "Nuevo pedido",
+        content: `${product.name} x${quantity} para ${clientName}.`,
+        actionUrl: `/dashboard/pedidos/${result.orderId}`,
+    });
 
     // ── Signed checkout token ─────────────────────────────────────────
     // Prevents arbitrary paymentIds from being processed by processOrderPayment.
@@ -433,7 +442,16 @@ export async function confirmOrderPayment(paymentId: string, checkoutToken: stri
     });
 
     revalidatePath("/dashboard/pedidos");
+    revalidatePath(`/dashboard/pedidos/${payment.referenceId}`);
     revalidatePath("/dashboard/pagos");
+
+    await createTenantNotification({
+        tenantId: payment.tenantId,
+        type: "order",
+        title: "Pedido aceptado",
+        content: "El pago fue procesado correctamente y el pedido se marco como aceptado.",
+        actionUrl: `/dashboard/pedidos/${payment.referenceId}`,
+    });
 
     return { success: true, alreadyCompleted: false };
 }

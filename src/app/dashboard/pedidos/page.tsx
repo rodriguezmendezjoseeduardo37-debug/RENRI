@@ -37,20 +37,20 @@ export default async function PedidosPage({
     const ordersList = ordersData as OrderWithItems[];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-[0.04em] sm:tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         PEDIDOS
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                    <p className="mt-2 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] sm:tracking-[0.3em] text-muted-foreground uppercase">
                         GESTIÓN DE ÓRDENES Y VENTAS
                     </p>
                 </div>
                 <Link
                     href="/dashboard/pedidos/nuevo"
-                    className="flex items-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:opacity-90 transition-all"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 text-[11px] font-bold tracking-[0.16em] sm:tracking-[0.2em] uppercase liquid-button rounded-full shadow-sm hover:opacity-90 transition-all"
                 >
                     <Plus className="h-4 w-4" />
                     NUEVO PEDIDO
@@ -58,18 +58,18 @@ export default async function PedidosPage({
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-[1px] bg-border rounded-2xl overflow-hidden border border-border">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-[1px] bg-border rounded-2xl overflow-hidden border border-border">
                 {[
                     { label: "TOTAL", value: stats.total, icon: ShoppingCart },
                     { label: "PENDIENTES", value: stats.pending, icon: Clock },
-                    { label: "EN PROCESO", value: stats.processing, icon: Clock },
+                    { label: "ACEPTADOS", value: stats.processing, icon: Clock },
                     { label: "COMPLETADOS", value: stats.completed, icon: CheckCircle },
                     { label: "CANCELADOS", value: stats.cancelled, icon: XCircle },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-card p-4 flex flex-col">
+                    <div key={stat.label} className="bg-card p-3 sm:p-4 flex flex-col min-w-0">
                         <div className="flex items-center gap-2 mb-2">
                             <stat.icon className="w-3 h-3 text-muted-foreground" />
-                            <span className="text-[9px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
+                            <span className="text-[9px] font-bold tracking-[0.14em] sm:tracking-[0.3em] text-muted-foreground uppercase truncate">
                                 {stat.label}
                             </span>
                         </div>
@@ -81,17 +81,17 @@ export default async function PedidosPage({
             </div>
 
             {/* View toggle + filters */}
-            <div className="flex flex-wrap items-center gap-3">
-                <div className="flex gap-[1px]">
+            <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-[1px] w-full sm:w-auto">
                     <Link
                         href={`?view=kanban`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
+                        className={`text-center px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "kanban" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         KANBAN
                     </Link>
                     <Link
                         href={`?view=list`}
-                        className={`px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
+                        className={`text-center px-4 py-2.5 text-[10px] font-bold tracking-[0.2em] uppercase transition-colors ${viewMode === "list" ? "liquid-button rounded-full shadow-sm" : "bg-card text-muted-foreground hover:text-foreground rounded-xl"}`}
                     >
                         LISTA
                     </Link>
@@ -104,7 +104,7 @@ export default async function PedidosPage({
 
             {/* Content */}
             {ordersList.length === 0 ? (
-                <div className="border border-border p-16 text-center rounded-2xl">
+                <div className="border border-border p-8 sm:p-16 text-center rounded-2xl">
                     <ShoppingCart className="w-8 h-8 text-foreground mx-auto mb-4" />
                     <p className="text-sm font-mono text-muted-foreground">
                         No se encontraron pedidos.

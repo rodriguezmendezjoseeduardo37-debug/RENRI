@@ -14,6 +14,7 @@ import {
 } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-helpers";
 import { timeToMinutes, minutesToTime } from "@/lib/time-utils";
+import { createTenantNotification } from "@/lib/notifications";
 
 export async function getTenantBySlug(slug: string) {
     const tenant = await db.query.tenants.findFirst({
@@ -290,6 +291,14 @@ export async function bookAppointment(data: {
     revalidatePath("/cliente");
     revalidatePath("/cliente/mis-citas");
     revalidatePath("/cliente/mis-pagos");
+
+    await createTenantNotification({
+        tenantId: data.tenantId,
+        type: "appointment",
+        title: "Nueva cita",
+        content: `${appointment.serviceName} para ${data.date} a las ${data.startTime}.`,
+        actionUrl: `/dashboard/citas/${appointment.id}`,
+    });
     
     return { appointment, clientId: appointment.clientId };
 }
@@ -445,4 +454,3 @@ export async function createCheckoutSession(data: {
 
     return { url: session.url };
 }
-

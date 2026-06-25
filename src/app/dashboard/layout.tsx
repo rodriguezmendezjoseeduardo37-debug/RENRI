@@ -69,7 +69,7 @@ export default async function DashboardLayout({
             />
 
             {/* Main content area — offset by floating sidebar (240px + 12px margin + 12px gap) */}
-            <div className="md:ml-[264px] min-h-screen flex flex-col">
+            <div className="md:ml-[264px] min-h-screen flex flex-col overflow-x-hidden">
                 <div>
                     <Topbar
                         tenantName={tenant?.name ?? "RENRI"}
@@ -80,7 +80,7 @@ export default async function DashboardLayout({
                         userRole={user.role}
                     />
                 </div>
-                <main className="flex-1 p-4 md:px-6 pt-4 md:pt-4 md:pb-8">{children}</main>
+                <main className="flex-1 w-full max-w-full p-3 sm:p-4 md:px-6 pt-3 sm:pt-4 md:pt-4 md:pb-8 overflow-x-hidden">{children}</main>
             </div>
         </div>
     );

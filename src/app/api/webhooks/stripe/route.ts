@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { claimEvent, releaseEvent } from "@/lib/webhook-idempotency";
+import { createTenantNotification } from "@/lib/notifications";
 import {
     appointments,
     orders,
@@ -240,6 +241,15 @@ export async function POST(req: Request) {
 
                     revalidatePath("/dashboard/pagos");
                     revalidatePath("/cliente/mis-pagos");
+                    if (meta.tenantId) {
+                        await createTenantNotification({
+                            tenantId: meta.tenantId,
+                            type: "payment",
+                            title: "Pago fallido",
+                            content: reason,
+                            actionUrl: `/dashboard/pagos/${meta.paymentId}`,
+                        });
+                    }
                     console.log(`💾 Pago ${meta.paymentId} marcado como fallido`);
                 }
                 break;
@@ -327,8 +337,7 @@ async function handlePaymentSucceeded(params: {
 }) {
     const { paymentId, tenantId, referenceId, referenceType, stripePaymentIntentId } = params;
 
-    await db.transaction(async (tx) => {
-        // 1. Obtener el pago
+    const notification = await db.transaction(async (tx) => {
         const payment = await tx.query.payments.findFirst({
             where: and(
                 eq(payments.id, paymentId),
@@ -337,17 +346,15 @@ async function handlePaymentSucceeded(params: {
         });
 
         if (!payment) {
-            console.error(`❌ handlePaymentSucceeded: pago ${paymentId} no encontrado`);
-            return;
+            console.error(`handlePaymentSucceeded: pago ${paymentId} no encontrado`);
+            return null;
         }
 
-        // Idempotencia: ya estaba completed
         if (payment.status === "completed") {
-            console.log(`⏭ Pago ${paymentId} ya está completado, ignorando`);
-            return;
+            console.log(`Pago ${paymentId} ya esta completado, ignorando`);
+            return null;
         }
 
-        // 2. Marcar pago como completado
         await tx
             .update(payments)
             .set({
@@ -357,7 +364,6 @@ async function handlePaymentSucceeded(params: {
             })
             .where(eq(payments.id, paymentId));
 
-        // 3. Actualizar la entidad relacionada según tipo
         const effectiveRefId = referenceId ?? payment.referenceId;
         const effectiveRefType = referenceType ?? payment.referenceType;
 
@@ -373,20 +379,28 @@ async function handlePaymentSucceeded(params: {
                 );
 
             revalidatePath("/dashboard/citas");
+            revalidatePath(`/dashboard/citas/${effectiveRefId}`);
             revalidatePath("/dashboard/pagos");
             revalidatePath("/cliente/mis-citas");
             revalidatePath("/cliente/mis-pagos");
 
-            console.log(`✅ Cita ${effectiveRefId} confirmada por pago online`);
+            console.log(`Cita ${effectiveRefId} confirmada por pago online`);
 
-            // 4. Notificación por email (best-effort, no falla la tx si el email falla)
             try {
                 await sendPaymentConfirmationEmail(effectiveRefId, tenantId, tx);
             } catch (emailErr) {
-                console.warn("⚠️ Email de confirmación falló (pago ya procesado):", emailErr);
+                console.warn("Email de confirmacion fallo (pago ya procesado):", emailErr);
             }
 
-        } else if (effectiveRefType === "order" && effectiveRefId) {
+            return {
+                type: "payment",
+                title: "Pago recibido",
+                content: "Una cita fue confirmada automaticamente porque el pago se proceso correctamente.",
+                actionUrl: `/dashboard/citas/${effectiveRefId}`,
+            };
+        }
+
+        if (effectiveRefType === "order" && effectiveRefId) {
             await tx
                 .update(orders)
                 .set({ status: "processing", updatedAt: new Date() })
@@ -398,13 +412,29 @@ async function handlePaymentSucceeded(params: {
                 );
 
             revalidatePath("/dashboard/pedidos");
+            revalidatePath(`/dashboard/pedidos/${effectiveRefId}`);
             revalidatePath("/dashboard/pagos");
 
-            console.log(`✅ Pedido ${effectiveRefId} actualizado a "processing" por pago`);
-        }
-    });
-}
+            console.log(`Pedido ${effectiveRefId} marcado como aceptado por pago`);
 
+            return {
+                type: "order",
+                title: "Pedido aceptado",
+                content: "El pago fue procesado correctamente y el pedido se marco como aceptado.",
+                actionUrl: `/dashboard/pedidos/${effectiveRefId}`,
+            };
+        }
+
+        return null;
+    });
+
+    if (notification) {
+        await createTenantNotification({
+            tenantId,
+            ...notification,
+        });
+    }
+}
 /**
  * Envía email de confirmación de pago de cita.
  * Se ejecuta best-effort desde la transacción del webhook.

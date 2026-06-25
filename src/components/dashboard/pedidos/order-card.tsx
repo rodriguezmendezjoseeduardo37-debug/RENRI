@@ -51,7 +51,7 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-2 min-w-0">
                         <div className="min-w-0">
                             <span className="text-[10px] font-bold font-mono text-foreground block leading-none mb-1">
                                 #{order.id.slice(0, 8).toUpperCase()}
@@ -70,7 +70,7 @@ export function OrderCard({ order, compact = false }: OrderCardProps) {
                                 </p>
                             )}
                         </div>
-                        <span className="text-xs font-bold font-mono text-foreground whitespace-nowrap">
+                        <span className="text-xs font-bold font-mono text-foreground whitespace-nowrap shrink-0">
                             ${Number(order.total).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                         </span>
                     </div>

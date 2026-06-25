@@ -24,9 +24,9 @@ export function AppointmentFilters({
     staffList = [],
 }: FiltersProps) {
     return (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:flex xl:flex-wrap xl:items-center gap-3">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative sm:col-span-2 xl:col-span-1 xl:flex-1 xl:min-w-[220px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                     type="text"
@@ -38,17 +38,17 @@ export function AppointmentFilters({
             </div>
 
             {/* Date */}
-            <div className="relative">
+            <div className="relative min-w-0">
                 <input
                     type="date"
                     value={filters.date ?? ""}
                     onChange={(e) => onChange({ ...filters, date: e.target.value || undefined })}
-                    className="bg-card ring-1 ring-border text-foreground text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all dark:[color-scheme:dark]"
+                    className="w-full bg-card ring-1 ring-border text-foreground text-sm px-4 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all dark:[color-scheme:dark]"
                 />
             </div>
 
             {/* Status filter */}
-            <div className="relative">
+            <div className="relative min-w-0">
                 <select
                     value={filters.status ?? ""}
                     onChange={(e) =>
@@ -57,7 +57,7 @@ export function AppointmentFilters({
                             status: (e.target.value as AppointmentStatus) || undefined,
                         })
                     }
-                    className="appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all cursor-pointer"
+                    className="w-full appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all cursor-pointer"
                 >
                     {STATUS_OPTIONS.map((opt) => (
                         <option key={opt.value} value={opt.value}>
@@ -70,13 +70,13 @@ export function AppointmentFilters({
 
             {/* Staff filter */}
             {staffList.length > 0 && (
-                <div className="relative">
+                <div className="relative min-w-0">
                     <select
                         value={filters.staffId ?? ""}
                         onChange={(e) =>
                             onChange({ ...filters, staffId: e.target.value || undefined })
                         }
-                        className="appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all cursor-pointer"
+                        className="w-full appearance-none bg-card ring-1 ring-border text-foreground text-sm pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-foreground transition-all cursor-pointer"
                     >
                         <option value="">TODOS STAFF</option>
                         {staffList.map((s) => (

@@ -12,10 +12,10 @@ export function UsageMeter({
   const isAtLimit = max !== Infinity && pct >= 100;
 
   return (
-    <div className="space-y-1.5">
-      <div className="flex justify-between text-[10px] tracking-widest uppercase">
-        <span className="text-muted-foreground font-semibold">{label}</span>
-        <span className="text-foreground font-bold">
+    <div className="space-y-1.5 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-[10px] tracking-[0.14em] sm:tracking-widest uppercase">
+        <span className="text-muted-foreground font-semibold truncate">{label}</span>
+        <span className="text-foreground font-bold whitespace-nowrap">
           {current} / {max === Infinity ? "sin limite" : max}
         </span>
       </div>

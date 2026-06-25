@@ -124,7 +124,7 @@ export function SearchBar({ accountType = "servicios" }: SearchBarProps) {
     };
 
     return (
-        <div ref={containerRef} className="relative w-full max-w-md">
+        <div ref={containerRef} className="relative w-full max-w-md min-w-0">
             {/* ── Search pill input ─────────────────── */}
             <div className="search-input-pill flex items-center gap-2.5 h-10 px-3.5 rounded-full">
                 {isPending ? (

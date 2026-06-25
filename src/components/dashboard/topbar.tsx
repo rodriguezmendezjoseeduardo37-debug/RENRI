@@ -56,8 +56,8 @@ export function Topbar({
     }, [mobileMenuOpen]);
 
     return (
-        <div className="relative z-30 mx-3 mt-4 md:mt-6 sticky top-4 md:top-6" ref={menuRef}>
-            <header className="flex h-14 items-center justify-between rounded-2xl glass-panel px-4 md:px-5 transition-all duration-300">
+        <div className="relative z-30 mx-2 sm:mx-3 mt-3 md:mt-6 sticky top-3 md:top-6" ref={menuRef}>
+            <header className="flex min-h-14 items-center justify-between gap-2 rounded-2xl glass-panel px-3 sm:px-4 md:px-5 transition-all duration-300">
                 {/* Left: hamburger (mobile) + tenant name */}
                 <div className="flex items-center gap-3 min-w-0">
                     <button 
@@ -67,7 +67,7 @@ export function Topbar({
                     >
                         {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
                     </button>
-                    <span className="text-[11px] font-bold tracking-[0.28em] text-foreground uppercase truncate max-w-[120px] sm:max-w-[200px]">
+                    <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.18em] sm:tracking-[0.28em] text-foreground uppercase truncate max-w-[42vw] sm:max-w-[200px]">
                         {accountType === "cliente" && tenantName === "PORTAL DE USUARIO" ? "RENRI CLIENTES" : tenantName}
                     </span>
                 </div>
@@ -80,7 +80,7 @@ export function Topbar({
                 )}
 
                 {/* Right: theme toggle + notifications + user menu */}
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                     <ThemeToggle />
                     <NotificationsBell />
                     <UserMenu accountType={accountType} />

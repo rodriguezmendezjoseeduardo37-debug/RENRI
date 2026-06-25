@@ -142,14 +142,14 @@ export default async function PagosPage() {
     });
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-8 sm:space-y-10">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-border pb-6">
                 <div>
-                    <h1 className="text-3xl md:text-4xl font-bold tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-[0.03em] sm:tracking-[0.05em] text-foreground font-[family-name:var(--font-heading)] uppercase">
                         {isPyme ? "VENTAS & INGRESOS" : "PAGOS & INGRESOS"}
                     </h1>
-                    <p className="mt-2 text-[11px] font-medium tracking-[0.3em] text-muted-foreground uppercase">
+                    <p className="mt-2 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] sm:tracking-[0.3em] text-muted-foreground uppercase">
                         {isPyme ? "TRANSACCIONES DE PRODUCTOS" : "RESUMEN CONTABLE Y TRANSACCIONES"}
                     </p>
                 </div>
@@ -182,8 +182,8 @@ export default async function PagosPage() {
                     </h2>
                 </div>
 
-                <div className="ring-1 ring-border rounded-2xl overflow-hidden bg-background shadow-sm">
-                    <table className="w-full text-left">
+                <div className="ring-1 ring-border rounded-2xl overflow-x-auto bg-background shadow-sm">
+                    <table className="w-full min-w-[860px] text-left">
                         <thead className="bg-card border-b border-border">
                             <tr>
                                 {["REFERENCIA", "CLIENTE", "CONCEPTO", "MONTO", "ESTADO", "FECHA", "ACCIÓN"].map((h) => (

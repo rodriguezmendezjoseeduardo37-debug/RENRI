@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="relative min-h-[100svh] bg-[#0a0a0a] flex flex-col font-sans selection:bg-foreground/30 selection:text-white">
+    <div className="dark relative min-h-[100svh] bg-[#0a0a0a] flex flex-col font-sans selection:bg-foreground/30 selection:text-white">
       {/* SaaS Background (Grid + Gradients) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]"></div>
