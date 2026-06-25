@@ -57,6 +57,15 @@ function formatTime(value: string | Date | null): string {
     return `${hour || 12}:${parts[1]} ${ampm}`;
 }
 
+const liquidGlassButtonClass =
+    "h-12 px-6 shrink-0 rounded-full border border-black/15 bg-white/75 text-black backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85),inset_0_-18px_28px_rgba(0,0,0,0.12),0_16px_36px_rgba(0,0,0,0.18)] hover:bg-white/90 hover:text-black dark:border-white/20 dark:bg-white/10 dark:text-white dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.22),inset_0_-18px_30px_rgba(255,255,255,0.06),0_18px_42px_rgba(0,0,0,0.35)] dark:hover:bg-white/15";
+
+const liquidGlassRowClass =
+    "border border-black/10 bg-white/45 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.75),inset_0_-14px_24px_rgba(0,0,0,0.08),0_10px_26px_rgba(0,0,0,0.08)] hover:border-black/25 hover:bg-white/65 dark:border-white/10 dark:bg-white/5 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.14),inset_0_-14px_24px_rgba(255,255,255,0.04),0_12px_28px_rgba(0,0,0,0.24)] dark:hover:border-white/25 dark:hover:bg-white/10";
+
+const monochromeStatusClass =
+    "border border-border bg-foreground/5 text-foreground dark:bg-white/5";
+
 export default async function DashboardPage() {
     const user = await getCurrentUser();
     if (!user) redirect("/login");
@@ -115,7 +124,7 @@ export default async function DashboardPage() {
 
                 <Button
                     asChild
-                    className="h-12 px-5 shrink-0 rounded-xl bg-[#08b6ff] text-black hover:bg-[#08b6ff]/90 shadow-sm"
+                    className={liquidGlassButtonClass}
                 >
                     <Link href={primaryAction.href} className="flex items-center gap-2">
                         <Plus className="w-4 h-4" />
@@ -157,7 +166,7 @@ function StatCard({
     return (
         <div className="bg-card rounded-3xl ring-1 ring-border p-6 shadow-sm flex flex-col justify-between min-h-[160px]">
             <div className="flex items-start gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-2xl border border-border bg-background/50 text-foreground flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                     {icon}
                 </div>
                 <div>
@@ -208,10 +217,10 @@ function QuickAccessPanel({
                     <Link
                         key={item.href}
                         href={item.href}
-                        className="flex items-center justify-between gap-4 rounded-2xl border border-border/70 bg-background/20 px-4 py-4 hover:border-[#08b6ff]/60 transition-colors"
+                        className={`flex items-center justify-between gap-4 rounded-2xl px-4 py-4 transition-colors ${liquidGlassRowClass}`}
                     >
                         <div className="flex items-center gap-4 min-w-0">
-                            <div className="w-10 h-10 rounded-xl bg-foreground/5 dark:bg-white/5 ring-1 ring-border/50 flex items-center justify-center shrink-0">
+                            <div className="w-10 h-10 rounded-full border border-border bg-background/50 text-foreground flex items-center justify-center shrink-0">
                                 {item.icon}
                             </div>
                             <div className="min-w-0">
@@ -318,16 +327,16 @@ async function ServiciosDashboard({
     const statusClass = (status: string) => {
         switch (status) {
             case "completed":
-                return "text-[#10b981] bg-[#10b981]/10";
+                return monochromeStatusClass;
             case "waiting":
-                return "text-amber-500 bg-amber-500/10";
+                return monochromeStatusClass;
             case "in_progress":
-                return "text-blue-500 bg-blue-500/10";
+                return monochromeStatusClass;
             case "cancelled":
             case "no_show":
-                return "text-destructive bg-destructive/10";
+                return monochromeStatusClass;
             default:
-                return "text-muted-foreground bg-foreground/5 dark:bg-white/5";
+                return monochromeStatusClass;
         }
     };
 
@@ -502,16 +511,16 @@ async function PymeDashboard({
     const statusClass = (status: string) => {
         switch (status) {
             case "completed":
-                return "text-[#10b981] bg-[#10b981]/10";
+                return monochromeStatusClass;
             case "pending":
-                return "text-amber-500 bg-amber-500/10";
+                return monochromeStatusClass;
             case "processing":
-                return "text-blue-500 bg-blue-500/10";
+                return monochromeStatusClass;
             case "cancelled":
             case "refunded":
-                return "text-destructive bg-destructive/10";
+                return monochromeStatusClass;
             default:
-                return "text-muted-foreground bg-foreground/5 dark:bg-white/5";
+                return monochromeStatusClass;
         }
     };
 
