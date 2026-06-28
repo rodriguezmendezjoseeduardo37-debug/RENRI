@@ -6,12 +6,12 @@ const TAG_LENGTH = 16;
 
 /**
  * Derives a 32-byte encryption key from environment variables.
- * Prefers ENCRYPTION_KEY, falls back to AUTH_SECRET (hashed to 32 bytes).
+ * Requires ENCRYPTION_KEY.
  */
 function getEncryptionKey(): Buffer {
-    const raw = process.env.ENCRYPTION_KEY || process.env.AUTH_SECRET;
+    const raw = process.env.ENCRYPTION_KEY;
     if (!raw) {
-        throw new Error("ENCRYPTION_KEY or AUTH_SECRET must be set for encryption");
+        throw new Error("ENCRYPTION_KEY must be set for encryption");
     }
 
     // If key is already 64 hex chars (32 bytes), use directly
